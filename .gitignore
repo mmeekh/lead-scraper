@@ -1,0 +1,12 @@
+# Toplanan veri asla repoya girmez (kisisel/ticari iletisim verisi)
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
+*.csv
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
