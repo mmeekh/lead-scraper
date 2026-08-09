@@ -38,8 +38,12 @@ import requests
 
 BASE = Path(__file__).parent
 DB_PATH = BASE / "leads.sqlite3"
-CAMPAIGN_CSV = Path("/root/projects/nl-job-outreach/firmalar.csv")
-CAMPAIGN_LOG = Path("/root/projects/nl-job-outreach/sent-log.csv")
+# Export sirasinda mukerrer elemek icin okunan mevcut kampanya dosyalari.
+# Ortam degiskeniyle degistirilebilir; yoksa export yine calisir.
+CAMPAIGN_CSV = Path(os.environ.get(
+    "CAMPAIGN_CSV", "/root/projects/nl-job-outreach/firmalar.csv"))
+CAMPAIGN_LOG = Path(os.environ.get(
+    "CAMPAIGN_LOG", "/root/projects/nl-job-outreach/sent-log.csv"))
 
 UA = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/126.0 Safari/537.36")

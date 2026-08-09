@@ -1,5 +1,7 @@
 # Lead Scraper
 
+![Company records scattered across Europe are funnelled through filtering stages into a single structured dataset](docs/banner.png)
+
 Multi-country company data pipeline: discovers businesses from OpenStreetMap, crawls each company's own website, and extracts **published** contact emails into a deduplicated dataset.
 
 Built to power an automated job-application outreach system across 20+ countries.
