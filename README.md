@@ -45,6 +45,8 @@ python3 scrape.py emails --limit 200 --workers 6
 python3 scrape.py export --out new-companies.csv
 
 python3 scrape.py stats
+python3 scrape.py retry-errors      # only transient network/server failures
+python3 scrape.py reclean           # re-apply current email quality rules
 ```
 
 Batch mode across a preset list of ~100 European and Asian cities:
@@ -52,8 +54,41 @@ Batch mode across a preset list of ~100 European and Asian cities:
 ```bash
 python3 harvest_all.py              # all cities
 python3 harvest_all.py --only PL,CZ,HU
-./run_pipeline.sh                   # discover → extract → export, unattended
+./run_pipeline.sh                   # DE+NL discover → extract → export, unattended
+
+# Optional: override the default country focus
+SCRAPER_COUNTRIES=DE,NL ./run_pipeline.sh
+
+# Ireland + Sweden/Denmark/Norway + Malta (serialized behind pipeline.lock)
+./run-ie-scandinavia-malta.sh
+
+# CV-aware target run: ATS discovery + wide OSM + deep company scoring
+./run-ultra-targets.sh
 ```
+
+`run_pipeline.sh` uses a process lock, so a second start cannot create a
+concurrent scraper run.
+
+## CV-aware matching
+
+The ultra pipeline scores only evidence published by the company. It combines
+five tracks from Emin's CV: finance operations, automation/AI, backend/platform,
+data/BI, and finance software. It also reads live job titles, careers signals,
+English/international signals, and stores the reasons behind every score.
+
+`deep_enrich.py` revisits product, service, careers and contact pages and records
+the exact HTTPS page where the selected email appeared. The final campaign CSV
+requires a score of at least 35, a qualified status, and that source-page proof.
+An audit CSV contains the score, matching tracks, careers URL, job titles and
+email source URL for manual review. Nothing is appended to the outreach queue
+automatically.
+
+ATS discovery uses public Greenhouse, Ashby, Lever and Recruitee endpoints. Its
+company/board catalogue is downloaded from the open-source
+[Colophon Group Job Seek](https://github.com/colophon-group/jobseek) dataset at
+the commit pinned in `ats_discovery.py`. Job Seek code is MIT-licensed; its data
+is CC BY-NC 4.0 and is used here with attribution for this personal,
+non-commercial job search.
 
 ## Requirements
 

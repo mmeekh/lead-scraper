@@ -4,9 +4,13 @@
 *.sqlite3-shm
 *.csv
 *.log
+*-preview.md
 
 # Python
 __pycache__/
 *.py[cod]
 .venv/
 venv/
+
+# Calisma sirasinda olusan kilit dosyalari (runtime)
+*.lock

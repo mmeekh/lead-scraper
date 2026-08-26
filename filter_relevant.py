@@ -33,12 +33,18 @@ FINANS = (
 ISE_ALIM = (
     "recruit", "personal", "staffing", "talent", "human resource", "career",
     "arbeit", "uitzend", "werving", "praca", "kadr", "employ", "hiring", "staffmill",
+    "job", "vermittlung", "zeitarbeit",
 )
 # bariz alakasiz alanlar (OSM etiket hatasi) - sinyal olsa bile ele
 GURULTU = (
     "coaching", "hypnose", "therap", "ernährung", "wund", "lern-", "fitness",
     "yoga", "massage", "kosmetik", "friseur", "restaurant", "immobilien",
     "ingenieur", "architek", "bau ", "baufi", "reise", "travel", "auto",
+    # kamu kurumu - is basvurusu alacak bir isveren degil
+    "jobcenter", "arbeitsagentur", "bundesagentur", ".gov.",
+    "psycholog",
+    # "beratung/consult" genis eslesiyor - finans disi danismanlik turleri
+    "seelsorge", "energieberatung", "landberatung", "hotel",
 )
 
 

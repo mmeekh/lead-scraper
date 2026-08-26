@@ -16,7 +16,7 @@ import time
 
 import requests
 
-from scrape import OSM_ENDPOINTS, OSM_UA, add_lead, db, norm_domain, EMAIL_RE
+from scrape import OSM_ENDPOINTS, OSM_UA, add_lead, clean_emails, db, lead_key, EMAIL_RE
 
 # (ulke kodu, [OSM alan adi varyantlari])  - yerel isim once
 CITIES: list[tuple[str, list[str]]] = [
@@ -42,7 +42,6 @@ CITIES: list[tuple[str, list[str]]] = [
     ("IT", ["Bologna"]),
     ("GR", ["Αθήνα", "Athens"]), ("GR", ["Θεσσαλονίκη", "Thessaloniki"]),
     ("MT", ["Valletta"]), ("MT", ["Sliema"]), ("MT", ["Birkirkara"]), ("MT", ["San Ġiljan"]),
-    ("CY", ["Λευκωσία", "Nicosia"]), ("CY", ["Λεμεσός", "Limassol"]),
     # --- Bati / Kuzey Avrupa ---
     ("IE", ["Dublin"]), ("IE", ["Cork"]), ("IE", ["Galway"]), ("IE", ["Limerick"]),
     ("SE", ["Stockholm"]), ("SE", ["Göteborg", "Gothenburg"]), ("SE", ["Malmö"]),
@@ -53,6 +52,13 @@ CITIES: list[tuple[str, list[str]]] = [
     ("AT", ["Wien", "Vienna"]), ("AT", ["Graz"]),
     ("BE", ["Brussel", "Bruxelles", "Brussels"]), ("BE", ["Antwerpen"]),
     ("CH", ["Zürich"]), ("CH", ["Genève", "Geneva"]),
+    # --- İngilizce ana çalışma dili olan, büyük şehirli hedef pazarlar ---
+    # İngiltere için ISO kodu GB'dir. Küçük yerleşimler bilinçli olarak yok.
+    ("GB", ["London"]), ("GB", ["Manchester"]), ("GB", ["Birmingham"]),
+    ("GB", ["Edinburgh"]), ("GB", ["Glasgow"]), ("GB", ["Bristol"]),
+    ("CA", ["Toronto"]), ("CA", ["Vancouver"]), ("CA", ["Calgary"]),
+    ("CA", ["Ottawa"]),
+    ("NZ", ["Auckland"]), ("NZ", ["Wellington"]), ("NZ", ["Christchurch"]),
     # --- Almanya (Turk nufusu yogun sehirler dahil) ---
     ("DE", ["Berlin"]), ("DE", ["Frankfurt am Main"]), ("DE", ["München"]),
     ("DE", ["Hamburg"]), ("DE", ["Düsseldorf"]), ("DE", ["Köln"]),
@@ -70,13 +76,29 @@ CITIES: list[tuple[str, list[str]]] = [
 OFFICE_TYPES = "accountant|tax_advisor|financial|financial_advisor|employment_agency|consulting"
 
 
-def fetch_area(area: str) -> list[dict] | None:
+def fetch_area(area: str, country: str = "", wide: bool = False) -> list[dict] | None:
+    if wide:
+        selectors = """
+  nwr["office"]["website"](area.a);
+  nwr["office"]["contact:website"](area.a);
+  nwr["office"]["email"](area.a);
+  nwr["office"]["contact:email"](area.a);
+  nwr["craft"~"^(software|electronics|financial_advice)$"]["website"](area.a);
+"""
+    else:
+        selectors = f"""
+  nwr["office"~"^({OFFICE_TYPES})$"](area.a);
+"""
+    country_scope = (
+        f'area["ISO3166-1"="{country}"]["admin_level"="2"]->.country;\n'
+        f'area["name"="{area}"](area.country)->.a;'
+        if country else f'area["name"="{area}"]->.a;'
+    )
     query = f"""
 [out:json][timeout:45];
-area["name"="{area}"]->.a;
+{country_scope}
 (
-  node["office"~"^({OFFICE_TYPES})$"](area.a);
-  way["office"~"^({OFFICE_TYPES})$"](area.a);
+{selectors}
 );
 out center tags;
 """
@@ -97,6 +119,8 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--only", default="", help="virgullu ulke kodlari")
     parser.add_argument("--sleep", type=int, default=8, help="sorgular arasi saniye")
+    parser.add_argument("--wide", action="store_true",
+                        help="web sitesi/e-postasi olan tum ofisleri topla; derin CV filtresi sonra uygulanir")
     args = parser.parse_args()
 
     wanted = {c.strip().upper() for c in args.only.split(",") if c.strip()}
@@ -109,7 +133,7 @@ def main() -> None:
         elements = None
         used = ""
         for name in names:
-            elements = fetch_area(name)
+            elements = fetch_area(name, country, args.wide)
             if elements:
                 used = name
                 break
@@ -124,17 +148,18 @@ def main() -> None:
             tags = element.get("tags", {})
             site = tags.get("website") or tags.get("contact:website") or ""
             mail = (tags.get("email") or tags.get("contact:email") or "").strip()
-            domain = norm_domain(site) or (mail.split("@")[-1].lower() if mail else "")
+            domain = lead_key(site, mail)
             if not domain:
                 continue
             city = tags.get("addr:city") or used
             if add_lead(conn, domain, tags.get("name", ""), city, country, f"osm:{used}"):
                 new += 1
-            if mail and EMAIL_RE.fullmatch(mail):
+            direct = clean_emails({mail}, domain) if mail and EMAIL_RE.fullmatch(mail) else []
+            if direct:
                 conn.execute(
                     "UPDATE leads SET status='done', email=?, note='OSM etiketinden', "
                     "checked_at=datetime('now') WHERE domain=? AND status='pending'",
-                    (mail, domain))
+                    (direct[0], domain))
                 mails += 1
         conn.commit()
         grand_new += new

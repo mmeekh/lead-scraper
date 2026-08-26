@@ -67,7 +67,9 @@ JUNK_SUBSTR = (
     "u003e", "email@", "your@", "name@", "test@", "abc@", "xxx@",
 )
 JUNK_LOCAL = {"noreply", "no-reply", "donotreply", "postmaster", "abuse",
-              "webmaster", "hostmaster", "privacy", "dpo", "avg", "gdpr"}
+              "webmaster", "globalwebmaster", "hostmaster", "privacy", "dpo",
+              "avg", "gdpr", "support", "help", "sales", "customerservice",
+              "klantenservice"}
 # platform/ajans adresleri - firmanin kendisi degil
 JUNK_DOMAIN = {
     "sentry.io", "wordpress.com", "wix.com", "jouwweb.nl", "squarespace.com",
@@ -77,7 +79,10 @@ JUNK_DOMAIN = {
 # genel mail saglayicilarina izin var (kucuk ofisler kullaniyor)
 FREEMAIL = {"gmail.com", "hotmail.com", "outlook.com", "yahoo.com", "gmx.de",
             "gmx.net", "web.de", "t-online.de", "hetnet.nl", "ziggo.nl",
-            "live.nl", "kpnmail.nl", "planet.nl", "icloud.com"}
+            "live.nl", "kpnmail.nl", "planet.nl", "icloud.com", "aol.com",
+            "aol.de", "freenet.de", "online.de", "magenta.de", "outlook.de",
+            "hotmail.de", "yahoo.de", "protonmail.com", "proton.me",
+            "mailbox.org"}
 
 OSM_ENDPOINTS = [
     "https://overpass-api.de/api/interpreter",
@@ -89,6 +94,19 @@ OSM_ENDPOINTS = [
 OSM_CONTACT = os.environ.get("SCRAPER_CONTACT", "set SCRAPER_CONTACT env var")
 OSM_UA = f"lead-scraper/1.0 (research use; {OSM_CONTACT})"
 OSM_DEFAULT_TYPES = "accountant,tax_advisor,financial,employment_agency"
+
+PROFILE_COLUMNS = {
+    "fit_score": "INTEGER NOT NULL DEFAULT 0",
+    "fit_tracks": "TEXT",
+    "fit_reasons": "TEXT",
+    "fit_keywords": "TEXT",
+    "career_url": "TEXT",
+    "email_source_url": "TEXT",
+    "job_titles": "TEXT",
+    "english_signal": "INTEGER NOT NULL DEFAULT 0",
+    "profile_status": "TEXT NOT NULL DEFAULT 'unscored'",
+    "profile_checked_at": "TEXT",
+}
 
 
 # ---------------------------------------------------------------- veritabani
@@ -110,6 +128,15 @@ def db() -> sqlite3.Connection:
             checked_at TEXT
         )
     """)
+    existing = {row[1] for row in conn.execute("PRAGMA table_info(leads)")}
+    for name, definition in PROFILE_COLUMNS.items():
+        if name not in existing:
+            conn.execute(f"ALTER TABLE leads ADD COLUMN {name} {definition}")
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_leads_profile_queue "
+        "ON leads(country, profile_status, fit_score)"
+    )
+    conn.commit()
     return conn
 
 
@@ -141,10 +168,10 @@ def add_lead(conn, domain, name="", city="", country="", source="") -> bool:
     if not domain or domain in JUNK_DOMAIN:
         return False
     try:
-        conn.execute(
+        cursor = conn.execute(
             "INSERT OR IGNORE INTO leads(domain,name,city,country,source) VALUES(?,?,?,?,?)",
             (domain, name, city, country, source))
-        return conn.total_changes > 0
+        return cursor.rowcount == 1
     except sqlite3.Error:
         return False
 
@@ -190,11 +217,12 @@ out center tags;
             continue
         if add_lead(conn, domain, name, city, args.country, f"osm:{args.area}"):
             added += 1
-        if mail and EMAIL_RE.fullmatch(mail.strip()):
+        direct_mails = clean_emails({mail}, domain) if mail and EMAIL_RE.fullmatch(mail.strip()) else []
+        if direct_mails:
             conn.execute(
                 "UPDATE leads SET status='done', email=?, note='OSM etiketinden', "
                 "checked_at=datetime('now') WHERE domain=? AND status='pending'",
-                (mail.strip(), domain))
+                (direct_mails[0], domain))
             direct += 1
     conn.commit()
     total = conn.execute("SELECT COUNT(*) FROM leads").fetchone()[0]
@@ -250,6 +278,35 @@ def cf_decode(hexstr: str) -> str:
         return ""
 
 
+def _base_label(host: str) -> str:
+    """Public-suffix kutuphanesi gerektirmeyen temkinli kurum etiketi."""
+    labels = [part for part in host.lower().split(".") if part]
+    if len(labels) < 2:
+        return labels[0] if labels else ""
+    # example.com.tr / example.co.uk gibi yaygin iki parcali uzantilar.
+    if len(labels) >= 3 and len(labels[-1]) == 2 and labels[-2] in {
+        "co", "com", "org", "net",
+    }:
+        return labels[-3]
+    return labels[-2]
+
+
+def email_matches_domain(mail: str, domain: str) -> bool:
+    local, _, host = mail.partition("@")
+    if not local or not host:
+        return False
+    # Sitesi olmayan dogrudan e-posta kayitlarinda anahtar adresin kendisidir.
+    if "@" in domain:
+        return mail == domain.lower()
+    if host in FREEMAIL:
+        return True
+    if (host == domain or host.endswith("." + domain)
+            or domain.endswith("." + host)):
+        return True
+    # Ayni kurumun farkli ulke uzantilari (firma.de / firma.com) kabul edilir.
+    return _base_label(host) == _base_label(domain)
+
+
 def clean_emails(raw: set[str], domain: str) -> list[str]:
     out = []
     for mail in raw:
@@ -262,16 +319,18 @@ def clean_emails(raw: set[str], domain: str) -> list[str]:
         if local in JUNK_LOCAL or host in JUNK_DOMAIN:
             continue
         # sadece firmanin kendi alan adi veya bilinen freemail kabul
-        root = ".".join(domain.split(".")[-2:])
-        if not (host == domain or host.endswith("." + domain)
-                or root in host or host in FREEMAIL):
+        if not email_matches_domain(mail, domain):
             continue
         out.append(mail)
-    # tercih sirasi: info/contact gibi genel adresler once
-    priority = ("info", "contact", "kontakt", "office", "mail", "kantoor",
-                "administratie", "bewerbung", "career", "jobs", "hr")
+    # Is basvurusu adresleri once, genel kurum adresleri sonra, kisisel adresler en son.
+    priority = (
+        "career", "careers", "jobs", "job", "hr", "recruiting", "recruitment",
+        "bewerbung", "bewerbungen", "karriere", "werkenbij", "talent", "personal",
+        "info", "contact", "kontakt", "office", "mail", "kantoor", "administratie",
+    )
+    rank = {local: index for index, local in enumerate(priority)}
     out = sorted(set(out), key=lambda m: (
-        0 if m.split("@")[0] in priority else 1, len(m)))
+        rank.get(m.split("@")[0], len(priority)), len(m)))
     return out
 
 
@@ -323,6 +382,7 @@ def cmd_emails(args) -> None:
         (args.limit,)).fetchall()
     if not rows:
         print("islenecek bekleyen aday yok")
+        conn.close()
         return
     print(f"{len(rows)} site taranacak (es zamanli {args.workers})")
 
@@ -330,7 +390,12 @@ def cmd_emails(args) -> None:
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
         futures = {pool.submit(scrape_site, r): r["domain"] for r in rows}
         for future in as_completed(futures):
-            domain, status, mails, note = future.result()
+            try:
+                domain, status, mails, note = future.result()
+            except Exception as exc:
+                domain = futures[future]
+                status, mails = "error", []
+                note = f"worker:{type(exc).__name__}"
             conn.execute(
                 "UPDATE leads SET status=?, email=?, all_mails=?, note=?, "
                 "checked_at=datetime('now') WHERE domain=?",
@@ -345,6 +410,67 @@ def cmd_emails(args) -> None:
                 print(f"  [{done}/{len(rows)}] ...", flush=True)
     conn.close()
     print(f"bitti: {ok}/{len(rows)} sitede yayinlanmis e-posta bulundu")
+
+
+def cmd_retry_errors(args) -> None:
+    """Yalnizca gecici ag/sunucu hatalarini yeniden kuyruğa alir."""
+    transient = (
+        "ConnectionError", "SSLError", "ConnectTimeout", "ReadTimeout",
+        "HTTP 429", "HTTP 500", "HTTP 502", "HTTP 503",
+    )
+    conn = db()
+    placeholders = ",".join("?" for _ in transient)
+    cursor = conn.execute(
+        f"UPDATE leads SET status='pending', email=NULL, all_mails=NULL, "
+        f"checked_at=NULL WHERE note IN ({placeholders})",
+        transient,
+    )
+    conn.commit()
+    conn.close()
+    print(f"{cursor.rowcount} gecici hata yeniden kuyruga alindi")
+
+
+def cmd_reclean(args) -> None:
+    """Daha once bulunan adresleri guncel kalite kurallariyla yeniden temizler.
+
+    Bir kaydin tum adresleri elenirse site silinmez; daha iyi bir adres
+    bulunabilmesi icin yeniden tarama kuyruguna alinir.
+    """
+    conn = db()
+    conn.row_factory = sqlite3.Row
+    rows = conn.execute(
+        "SELECT domain,email,all_mails FROM leads "
+        "WHERE status='done' AND email IS NOT NULL"
+    ).fetchall()
+    updated = pending = 0
+    for row in rows:
+        candidates = {
+            mail.strip() for mail in (row["all_mails"] or "").split(",")
+            if mail.strip()
+        }
+        candidates.add(row["email"].strip())
+        cleaned = clean_emails(candidates, row["domain"])
+        if cleaned:
+            new_primary = cleaned[0]
+            new_all = ",".join(cleaned[:6])
+            if new_primary != row["email"] or new_all != (row["all_mails"] or ""):
+                conn.execute(
+                    "UPDATE leads SET email=?, all_mails=? WHERE domain=?",
+                    (new_primary, new_all, row["domain"]),
+                )
+                updated += 1
+        else:
+            conn.execute(
+                "UPDATE leads SET status='pending', "
+                "note='recheck: dusuk kaliteli adres elendi', checked_at=NULL "
+                "WHERE domain=?",
+                (row["domain"],),
+            )
+            pending += 1
+    conn.commit()
+    conn.close()
+    print(f"{updated} kaydin adres sirasi/icerigi temizlendi")
+    print(f"{pending} kayit daha iyi adres icin yeniden kuyruga alindi")
 
 
 # ------------------------------------------------------------------ export
@@ -393,17 +519,30 @@ def cmd_export(args) -> None:
     conn.row_factory = sqlite3.Row
     rows = conn.execute(
         "SELECT * FROM leads WHERE status='done' AND email IS NOT NULL "
-        "ORDER BY country, domain").fetchall()
+        "ORDER BY CASE WHEN fit_reasons LIKE '%turkish_company:%' THEN 0 ELSE 1 END, "
+        "fit_score DESC, country, domain").fetchall()
     conn.close()
 
     fresh: list[list[str]] = []
-    skipped = {"mail": 0, "kurum": 0, "ulkesiz": 0}
+    skipped = {"mail": 0, "kurum": 0, "ulkesiz": 0, "kaynaksiz": 0}
+    wanted_countries = {
+        code.strip().upper() for code in args.countries.split(",") if code.strip()
+    }
     for row in rows:
         mail = (row["email"] or "").strip().lower()
         domain = row["domain"]
         country = (row["country"] or "").strip().upper()
         if not country:
             skipped["ulkesiz"] += 1
+            continue
+        if wanted_countries and country not in wanted_countries:
+            continue
+        if row["fit_score"] < args.min_fit_score:
+            continue
+        if args.min_fit_score > 0 and row["profile_status"] != "qualified":
+            continue
+        if args.require_email_source and not (row["email_source_url"] or "").startswith("https://"):
+            skipped["kaynaksiz"] += 1
             continue
         tag = f"{country}-EN"
         # freemail/site-siz kayitlarda site sutunu bos birakilir; kampanya
@@ -420,6 +559,8 @@ def cmd_export(args) -> None:
         known_orgs.add(org)
         fresh.append([tag, row["name"] or mail.split("@")[0], row["city"] or "",
                       mail, site_value, row["note"] or ""])
+        if args.limit and len(fresh) >= args.limit:
+            break
 
     out = Path(args.out)
     with open(out, "w", encoding="utf-8", newline="") as handle:
@@ -428,7 +569,7 @@ def cmd_export(args) -> None:
         writer.writerows(fresh)
     print(f"{len(fresh)} yeni satir -> {out}")
     print(f"  elenen: ayni e-posta {skipped['mail']}, ayni kurum {skipped['kurum']}, "
-          f"ulkesiz {skipped['ulkesiz']}")
+          f"ulkesiz {skipped['ulkesiz']}, kaynak-linki-yok {skipped['kaynaksiz']}")
 
 
 def cmd_stats(args) -> None:
@@ -477,10 +618,24 @@ def main() -> None:
     p = sub.add_parser("export", help="kampanya formatinda CSV uret")
     p.add_argument("--out", default="yeni-firmalar.csv")
     p.add_argument("--tag", default="NL-EN", help="oncelik etiketi (NL-EN, DE-EN...)")
+    p.add_argument("--countries", default="",
+                   help="virgullu ulke filtresi (ornegin IE,SE,DK,NO,MT)")
+    p.add_argument("--min-fit-score", type=int, default=0,
+                   help="yalnizca bu CV uyum puani ve uzerini aktar")
+    p.add_argument("--limit", type=int, default=0,
+                   help="en yuksek puanli en fazla N yeni kaydi aktar (0=tumu)")
+    p.add_argument("--require-email-source", action="store_true",
+                   help="yalnizca HTTPS kaynak sayfasinda yeniden dogrulanan adresleri aktar")
     p.set_defaults(func=cmd_export)
 
     p = sub.add_parser("stats", help="durum ozeti")
     p.set_defaults(func=cmd_stats)
+
+    p = sub.add_parser("retry-errors", help="gecici ag/sunucu hatalarini yeniden dene")
+    p.set_defaults(func=cmd_retry_errors)
+
+    p = sub.add_parser("reclean", help="bulunan adresleri guncel kalite kurallariyla temizle")
+    p.set_defaults(func=cmd_reclean)
 
     args = parser.parse_args()
     args.func(args)
