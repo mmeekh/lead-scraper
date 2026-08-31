@@ -84,6 +84,14 @@ class RelevanceTests(unittest.TestCase):
                      "ALT"):
             self.assertFalse(huk.name_relevant(name), name)
 
+    def test_generic_consulting_or_solutions_do_not_rescue_wrong_sector(self):
+        for name in ("Adeo Estates Property Consultants",
+                     "ABC Education Consultancy",
+                     "Advanced Interior Solutions",
+                     "AD Security Solutions",
+                     "A Energy Solutions"):
+            self.assertFalse(huk.name_relevant(name), name)
+
     def test_taxi_is_not_matched_by_tax_keyword(self):
         # "tax" parcasi "taxi" icinde gecer; dislama once uygulanmali
         self.assertFalse(huk.name_relevant("Speedy Taxi Ltd"))

@@ -71,6 +71,8 @@ EXCLUDE_KEYWORDS: tuple[str, ...] = (
     "barber", "beauty", "hotel", "hostel", "school", "academy",
     "university", "church", "mosque", "garage", "motor", "vehicle",
     "driving", "textile", "garment", "fashion", "warehouse",
+    "property", "estate", "interior", "security", "solar", " energy",
+    "entertainment", "tourism", "education",
 )
 # Park/placeholder sayfa sinyalleri (probe metni kucuk harfli aranir).
 PARK_SIGNALS: tuple[str, ...] = (
