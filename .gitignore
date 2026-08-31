@@ -14,3 +14,6 @@ venv/
 
 # Calisma sirasinda olusan kilit dosyalari (runtime)
 *.lock
+
+# Sicil/veri onbellegi (kisisel/ticari veri repoya girmez)
+catalog/

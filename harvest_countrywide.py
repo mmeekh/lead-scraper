@@ -52,7 +52,8 @@ out center tags;'''
     return code, None
 
 
-def store_country(code: str, elements: list[dict], limit: int) -> tuple[int, int]:
+def store_country(code: str, elements: list[dict], limit: int,
+                  source_label: str) -> tuple[int, int]:
     conn = db()
     new = direct = 0
     try:
@@ -65,7 +66,8 @@ def store_country(code: str, elements: list[dict], limit: int) -> tuple[int, int
                 continue
             city = tags.get("addr:city") or COUNTRY_NAMES[code]
             inserted = add_lead(
-                conn, domain, tags.get("name", ""), city, code, f"osm-countrywide:{code.lower()}"
+                conn, domain, tags.get("name", ""), city, code,
+                f"{source_label}:{code.lower()}"
             )
             if inserted:
                 new += 1
@@ -90,6 +92,8 @@ def main() -> None:
     parser.add_argument("--countries", required=True)
     parser.add_argument("--new-per-country", type=int, default=200)
     parser.add_argument("--workers", type=int, default=3)
+    parser.add_argument("--source-label", default="osm-countrywide",
+                        help="bu turu izlemek icin kaynak etiketi")
     args = parser.parse_args()
     codes = [code.strip().upper() for code in args.countries.split(",") if code.strip()]
     unknown = sorted(set(codes) - set(COUNTRY_NAMES))
@@ -103,7 +107,7 @@ def main() -> None:
             if elements is None:
                 print(f"{code}: no OSM response", flush=True)
                 continue
-            new, direct = store_country(code, elements, args.new_per_country)
+            new, direct = store_country(code, elements, args.new_per_country, args.source_label)
             print(f"{code}: raw={len(elements)} new={new} direct_tag={direct}", flush=True)
 
 

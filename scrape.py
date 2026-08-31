@@ -377,9 +377,21 @@ def scrape_site(row: sqlite3.Row) -> tuple[str, str, list[str], str]:
 def cmd_emails(args) -> None:
     conn = db()
     conn.row_factory = sqlite3.Row
+    countries = [code.strip().upper() for code in args.countries.split(",") if code.strip()]
+    clauses = ["status='pending'"]
+    values: list[str | int] = []
+    if countries:
+        clauses.append("country IN (" + ",".join("?" for _ in countries) + ")")
+        values.extend(countries)
+    if args.source_prefix:
+        # substr: etiketteki '_'/'%' LIKE jokeri olarak islemesin
+        clauses.append("substr(source,1,?)=?")
+        values.extend([len(args.source_prefix), args.source_prefix])
+    values.append(args.limit)
     rows = conn.execute(
-        "SELECT * FROM leads WHERE status='pending' ORDER BY rowid LIMIT ?",
-        (args.limit,)).fetchall()
+        "SELECT * FROM leads WHERE " + " AND ".join(clauses) + " ORDER BY rowid LIMIT ?",
+        values,
+    ).fetchall()
     if not rows:
         print("islenecek bekleyen aday yok")
         conn.close()
@@ -613,6 +625,8 @@ def main() -> None:
     p = sub.add_parser("emails", help="bekleyen sitelerden e-posta cikar")
     p.add_argument("--limit", type=int, default=100)
     p.add_argument("--workers", type=int, default=6)
+    p.add_argument("--countries", default="", help="yalnizca bu ulke kodlari")
+    p.add_argument("--source-prefix", default="", help="yalnizca bu kaynakla baslayan adaylar")
     p.set_defaults(func=cmd_emails)
 
     p = sub.add_parser("export", help="kampanya formatinda CSV uret")

@@ -11,6 +11,7 @@ import argparse
 import json
 import re
 import sqlite3
+import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
@@ -19,9 +20,15 @@ from urllib.parse import urljoin, urlparse
 import requests
 from bs4 import BeautifulSoup
 
+import sponsor_registry
 from profile_fit import role_fit, score_profile
 from scrape import (CFEMAIL_RE, EMAIL_RE, HEADERS, cf_decode, clean_emails, db,
                     norm_domain)
+from sponsor_registry import SPONSOR_GATE_COUNTRIES
+
+# SERT KAPI: GB/NL lead'i resmi sponsor sicilinde eslesmeden ASLA 'qualified'
+# olamaz (degismez kural). Kapi --no-sponsor-gate ile kapatilabilir.
+SPONSOR_REJECT_REASON = "sponsor kaydi yok (sicil: GB-UKVI / NL-IND)"
 
 PAGE_HINTS = (
     "career", "careers", "jobs", "vacanc", "join-us", "join-our", "work-with",
@@ -160,6 +167,45 @@ def _link_job_titles(html: str) -> list[str]:
     return titles
 
 
+# baslik icindeki "Firma | Slogan" gibi parcalari ayirmak icin
+_NAME_SEP_RE = re.compile(r"\s*\|\s*|\s+-\s+|\s*[–—·•]\s*|\s*::\s*")
+
+
+def _site_name_candidates(pages: list[Page]) -> list[str]:
+    """Ana sayfanin <title> ve og:site_name/og:title metalarindan isim adaylari."""
+    if not pages:
+        return []
+    soup = BeautifulSoup(pages[0].html, "lxml")
+    raw: list[str] = []
+    if soup.title and soup.title.string:
+        raw.append(soup.title.string)
+    for selector in ('meta[property="og:site_name"]', 'meta[property="og:title"]',
+                     'meta[name="application-name"]'):
+        for node in soup.select(selector):
+            content = (node.get("content") or "").strip()
+            if content:
+                raw.append(content)
+    names: list[str] = []
+    for value in raw:
+        value = " ".join(value.split())
+        if not value:
+            continue
+        names.append(value)
+        names.extend(part.strip() for part in _NAME_SEP_RE.split(value) if part.strip())
+    return list(dict.fromkeys(names))[:8]
+
+
+def _sponsor_gate_pass(conn: sqlite3.Connection, code: str, row: dict) -> bool:
+    """Crawl oncesi kapi: lead adi sicille eslesiyorsa gecer.
+
+    ':uksr' kaynagina otomatik gecis BILEREK yok: o isimler zaten sicilden
+    geldigi icin tam eslesme bedavaya gecer; otomatik gecis ise yanlis domain'e
+    cozulmus bir kaydin kapiyi bypass etmesine izin verirdi (31 Agu incelemesi).
+    """
+    name = (row.get("name") or "").strip()
+    return bool(name) and sponsor_registry.is_sponsor(conn, code, name)
+
+
 def crawl_company(domain: str, max_pages: int) -> tuple[list[Page], list[str], str]:
     if "@" in domain or domain in PLATFORM_HOSTS:
         return [], [], "site_yok_veya_platform"
@@ -250,11 +296,12 @@ def enrich_row(row: dict, max_pages: int, min_score: int) -> dict:
         "crawl_note": note,
         "pages": len(pages),
         "resolved": bool(pages),
+        "site_names": _site_name_candidates(pages),
     }
 
 
 def load_rows(countries: set[str], limit: int, rescore: bool,
-              retry_errors: bool) -> list[dict]:
+              retry_errors: bool, source_prefix: str = "") -> list[dict]:
     conn = db()
     conn.row_factory = sqlite3.Row
     placeholders = ",".join("?" for _ in countries)
@@ -264,10 +311,16 @@ def load_rows(countries: set[str], limit: int, rescore: bool,
         status_clause = "AND profile_status IN ('unscored','error')"
     else:
         status_clause = "AND profile_status='unscored'"
+    # substr karsilastirmasi: etiketteki '_'/'%' LIKE jokeri olarak islemesin
+    source_clause = "AND substr(source,1,?)=?" if source_prefix else ""
+    values: list[object] = [*sorted(countries)]
+    if source_prefix:
+        values.extend([len(source_prefix), source_prefix])
+    values.append(limit)
     rows = conn.execute(
-        f"SELECT * FROM leads WHERE country IN ({placeholders}) {status_clause} "
+        f"SELECT * FROM leads WHERE country IN ({placeholders}) {status_clause} {source_clause} "
         "ORDER BY CASE source WHEN 'jobseek-ats' THEN 0 ELSE 1 END, rowid LIMIT ?",
-        (*sorted(countries), limit),
+        values,
     ).fetchall()
     conn.close()
     return [dict(row) for row in rows]
@@ -282,19 +335,57 @@ def main() -> None:
     parser.add_argument("--min-score", type=int, default=35)
     parser.add_argument("--rescore", action="store_true")
     parser.add_argument("--retry-errors", action="store_true")
+    parser.add_argument("--source-prefix", default="", help="yalnizca bu kaynakla baslayan adaylar")
+    parser.add_argument("--no-sponsor-gate", action="store_true",
+                        help="GB/NL sponsor sicil kapisini devre disi birak")
     args = parser.parse_args()
     countries = {c.strip().upper() for c in args.countries.split(",") if c.strip()}
     countries.discard("CY")  # campaign-level exclusion: Southern Cyprus removed
     if not countries:
         print("hedef ulke kampanyadan cikarilmis; islem yapilmadi")
         return
-    rows = load_rows(countries, args.limit, args.rescore, args.retry_errors)
+
+    conn = db()
+    gate_countries: set[str] = set() if args.no_sponsor_gate else (
+        countries & SPONSOR_GATE_COUNTRIES)
+    if gate_countries:
+        sponsor_registry.ensure_table(conn)
+        empty_registry = {
+            code for code in sorted(gate_countries)
+            if sponsor_registry.sponsor_count(conn, code) == 0}
+        if empty_registry:
+            # sicil bos/eksikken GB/NL sessizce gecirilmez (fail-closed);
+            # ama karma listede diger ulkelerin isi engellenmez
+            print(f"sponsors tablosu bos ({','.join(sorted(empty_registry))}): once "
+                  f"'python3 sponsor_registry.py refresh --countries GB,NL' calistir")
+            countries -= empty_registry
+            gate_countries -= empty_registry
+            if not countries:
+                conn.close()
+                sys.exit(1)
+            print(f"UYARI: {','.join(sorted(empty_registry))} bu turda ATLANDI; "
+                  f"kalan ulkelerle devam ediliyor", flush=True)
+
+    rows = load_rows(countries, args.limit, args.rescore, args.retry_errors, args.source_prefix)
     if not rows:
         print("puanlanacak sirket yok")
+        conn.close()
         return
 
+    # SERT KAPI on kontrolu: isim eslesmesi gecenler isaretlenir. Eslesmeyen
+    # lead HEMEN reddedilmez - ticari ad ile tescilli ad sistematik ayrisir
+    # ('Kayak' vs 'Kayak Software (UK) Limited'); karar crawl sonrasi site
+    # basligi/metadan bir kez daha denendikten sonra verilir (31 Agu inceleme
+    # bulgusu: on-crawl red kalici sahte negatif uretiyordu).
+    row_country = {row["domain"]: (row.get("country") or "").strip().upper()
+                   for row in rows}
+    gate_passed: set[str] = set()
+    for row in rows:
+        code = row_country[row["domain"]]
+        if code not in gate_countries or _sponsor_gate_pass(conn, code, row):
+            gate_passed.add(row["domain"])
+
     print(f"{len(rows)} sirket derin taranacak; workers={args.workers}", flush=True)
-    conn = db()
     done = qualified = with_email = 0
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
         futures = {
@@ -314,6 +405,24 @@ def main() -> None:
                     "profile_status": "error", "crawl_note": type(exc).__name__, "pages": 0,
                     "resolved": False,
                 }
+            code = row_country.get(domain, "")
+            if code in gate_countries and domain not in gate_passed:
+                # isim eslesmedi: site basligi/metadan bir kez daha dene.
+                # Baslik parcalari GUVENILMEZ aday oldugu icin yalnizca TAM
+                # eslesme sayilir (is_sponsor_strict); 'Home'/'London' gibi
+                # jenerik parcalar kapiyi acamaz (31 Agu inceleme bulgusu).
+                if result["resolved"] and any(
+                        sponsor_registry.is_sponsor_strict(conn, code, candidate)
+                        for candidate in result.get("site_names") or []):
+                    gate_passed.add(domain)
+                elif result["resolved"] or result["profile_status"] == "qualified":
+                    # degismez kural: sicil eslesmesi olmadan GB/NL qualified olamaz
+                    result["profile_status"] = "rejected"
+                    reasons = result.get("fit_reasons") or ""
+                    if SPONSOR_REJECT_REASON not in reasons:
+                        result["fit_reasons"] = (
+                            f"{reasons} | {SPONSOR_REJECT_REASON}" if reasons
+                            else SPONSOR_REJECT_REASON)
             new_status = "done" if result["email"] else "noemail"
             conn.execute(
                 "UPDATE leads SET email=CASE WHEN ? THEN ? ELSE email END, "
