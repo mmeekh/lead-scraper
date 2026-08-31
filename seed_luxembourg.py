@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Luksemburg kuratorlu kalite kanali: sadece buyuk oyuncular havuza girer.
+"""Luksemburg kuratorlu kalite kanali: uzman ve ulasilabilir firmalar.
 
-Kapsam KARARI (kullanici): SADECE bankalar, fon yonetimi / fund
-administration, Big Four, regtech, fintech ve buyuk uluslararasi
-danismanlik firmalari. Kucuk muhasebe ofisi, butik firma, yerel kobi
-ASLA girmez. Liste elle secildi; e-postalar deep_enrich tarafindan
-sitelerinden CIKARILIR, tahmin edilmez.
+Kapsam: fon yonetimi / fund administration, regtech, fintech, finans
+yazilimi ve uzman danismanlik firmalari. Big Four ile cok buyuk global
+markalar bilerek disarida tutulur; soguk basvuruyu okuma ihtimali daha yuksek
+bagimsiz ve orta olcekli ekipler tercih edilir. Liste elle secildi; e-postalar
+deep_enrich tarafindan sitelerinden CIKARILIR, tahmin edilmez.
 
 Akis:
   1) SEEDS listesi kategorilere gore donusumlu siralanir (cesitlilik).
@@ -27,18 +27,13 @@ import sys
 from scrape import add_lead, db, norm_domain
 
 # gecerli kategoriler (self-check bunlara karsi denetler)
-VALID_CATEGORIES = {"big4", "fund-admin", "bank", "fintech", "regtech", "consulting"}
+VALID_CATEGORIES = {"fund-admin", "bank", "fintech", "regtech", "consulting"}
 
 DNS_TIMEOUT = 5.0    # saniye, aday basina
 DNS_WORKERS = 6      # VPS tek cekirdek: hafif tutuldu
 
 # (domain, firma adi, kategori) - hepsi LU merkezli ya da guclu LU ofisli
 SEEDS: list[tuple[str, str, str]] = [
-    # --- Big Four (LU ofisleri) ---
-    ("pwc.lu", "PwC Luxembourg", "big4"),
-    ("deloitte.lu", "Deloitte Luxembourg", "big4"),
-    ("kpmg.lu", "KPMG Luxembourg", "big4"),
-    ("ey.com", "EY Luxembourg", "big4"),
     # --- fon yonetimi / fund administration ---
     ("alterdomus.com", "Alter Domus", "fund-admin"),
     ("iqeq.com", "IQ-EQ", "fund-admin"),
@@ -56,26 +51,26 @@ SEEDS: list[tuple[str, str, str]] = [
     ("efa.eu", "European Fund Administration", "fund-admin"),
     ("zedra.com", "Zedra", "fund-admin"),
     ("ipconcept.com", "IPConcept", "fund-admin"),
+    ("finexis.lu", "Finexis", "fund-admin"),
+    ("ias-fid.lu", "IAS Fiduciaire", "fund-admin"),
+    ("orientis.lu", "Orientis Partners", "fund-admin"),
+    ("paddock.lu", "Paddock Fund Solutions", "fund-admin"),
+    ("aifmservices.com", "AIF Management Services", "fund-admin"),
+    ("ufundservices.com", "U Fund Services", "fund-admin"),
+    ("standishmanagement.lu", "Standish Management Luxembourg", "fund-admin"),
     # --- bankalar ---
     ("spuerkeess.lu", "Spuerkeess (BCEE)", "bank"),
     ("bil.com", "Banque Internationale a Luxembourg", "bank"),
-    ("bgl.lu", "BGL BNP Paribas", "bank"),
     ("raiffeisen.lu", "Banque Raiffeisen", "bank"),
     ("quintet.com", "Quintet Private Bank", "bank"),
-    ("ing.lu", "ING Luxembourg", "bank"),
     ("swissquote.lu", "Swissquote Bank Europe", "bank"),
     ("advanzia.com", "Advanzia Bank", "bank"),
     ("bankingcircle.com", "Banking Circle", "bank"),
     ("banquedeluxembourg.com", "Banque de Luxembourg", "bank"),
-    ("statestreet.com", "State Street Bank Luxembourg", "bank"),
-    ("northerntrust.com", "Northern Trust Luxembourg", "bank"),
     ("pictet.com", "Pictet Luxembourg", "bank"),
-    ("societegenerale.lu", "Societe Generale Luxembourg", "bank"),
     ("dz-privatbank.com", "DZ Privatbank", "bank"),
     ("vpbank.com", "VP Bank Luxembourg", "bank"),
     # --- fintech (LU lisansli / LU merkezli odeme ve varlik teknolojisi) ---
-    ("paypal.com", "PayPal Europe", "fintech"),
-    ("pay.amazon.eu", "Amazon Payments Europe", "fintech"),
     ("mangopay.com", "Mangopay", "fintech"),
     ("satispay.com", "Satispay Europe", "fintech"),
     ("finologee.com", "Finologee", "fintech"),
@@ -89,8 +84,8 @@ SEEDS: list[tuple[str, str, str]] = [
     ("scorechain.com", "Scorechain", "regtech"),
     ("governance.com", "Governance.com", "regtech"),
     ("fundsquare.net", "Fundsquare", "regtech"),
-    # --- buyuk uluslararasi danismanlik / finans yazilimi ---
-    ("accenture.com", "Accenture Luxembourg", "consulting"),
+    ("in-edit.lu", "InEdit", "regtech"),
+    # --- uzman danismanlik / finans yazilimi ---
     ("bdo.lu", "BDO Luxembourg", "consulting"),
     ("grantthornton.lu", "Grant Thornton Luxembourg", "consulting"),
     ("reply.com", "Avantage Reply", "consulting"),
@@ -98,7 +93,6 @@ SEEDS: list[tuple[str, str, str]] = [
     ("linedata.com", "Linedata", "consulting"),
     ("broadridge.com", "Broadridge", "consulting"),
     ("arendt.com", "Arendt & Medernach", "consulting"),
-    ("capgemini.com", "Capgemini Luxembourg", "consulting"),
     ("mazars.lu", "Forvis Mazars Luxembourg", "consulting"),
     ("wavestone.com", "Wavestone Luxembourg", "consulting"),
     ("sia-partners.com", "Sia Partners", "consulting"),

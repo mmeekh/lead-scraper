@@ -46,8 +46,8 @@ python3 sponsor_registry.py status >> "$log" 2>&1
 
 # --- Kesif -----------------------------------------------------------------
 # Kullanici onayli dagilim: DE 800, GB 500, IE 400, NL 200, FI 25, MT 25,
-# LU 50 (LU yalnizca banka/fon yonetimi/Big4/regtech/fintech/buyuk
-# danismanlik - kuratorlu liste).
+# LU 50 (LU yalnizca banka/fon yonetimi/regtech/fintech/uzman danismanlik;
+# Big Four ve cok buyuk global markalar haric - kuratorlu liste).
 
 for target in "DE 800" "NL 200" "IE 400"; do
     set -- $target
