@@ -18,12 +18,13 @@ import sys
 import time
 from pathlib import Path
 
-sys.path.insert(0, "/root/projects/lead-scraper")
-sys.path.insert(0, "/root/projects/nl-job-outreach")
+PERSONAL_ROOT = "/root/projects/otomasyon-paneli/apps/personal-job-outreach"
+sys.path.insert(0, f"{PERSONAL_ROOT}/lead-scraper")
+sys.path.insert(0, f"{PERSONAL_ROOT}/nl-job-outreach")
 
-BASE = Path("/root/projects/lead-scraper")
-CAMPAIGN = Path("/root/projects/nl-job-outreach/firmalar.csv")
-BACKUP = Path("/root/projects/nl-job-outreach/firmalar.csv.oto-yedek")
+BASE = Path(f"{PERSONAL_ROOT}/lead-scraper")
+CAMPAIGN = Path(f"{PERSONAL_ROOT}/nl-job-outreach/firmalar.csv")
+BACKUP = Path(f"{PERSONAL_ROOT}/nl-job-outreach/firmalar.csv.oto-yedek")
 
 # kaynak -> kampanya etiketi (ulke kodundan turetilemeyen ozel kollar)
 SOURCE_TAG = {
@@ -93,7 +94,7 @@ def main() -> None:
          "rows=load_rows(); preflight(rows, require_password=False);"
          "[render_for(r) for r in rows];"
          "print('OK', len(rows))"],
-        cwd="/root/projects/nl-job-outreach", capture_output=True, text=True)
+        cwd=f"{PERSONAL_ROOT}/nl-job-outreach", capture_output=True, text=True)
 
     if kontrol.returncode != 0:
         shutil.copy2(BACKUP, CAMPAIGN)
@@ -103,7 +104,7 @@ def main() -> None:
 
     print("kampanya dogrulandi:", kontrol.stdout.strip(), flush=True)
     testler = subprocess.run(["python3", "test_automation.py"],
-                             cwd="/root/projects/nl-job-outreach",
+                             cwd=f"{PERSONAL_ROOT}/nl-job-outreach",
                              capture_output=True, text=True)
     print("test paketi:", "GECTI" if testler.returncode == 0 else "KIRILDI")
     if testler.returncode != 0:

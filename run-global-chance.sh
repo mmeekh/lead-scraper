@@ -2,7 +2,7 @@
 # Up to 200 country-wide discovery candidates per under-served market. Existing
 # high-volume GB and the already-running NL/DE rounds are intentionally omitted.
 set -u
-cd /root/projects/lead-scraper || exit 1
+cd /root/projects/otomasyon-paneli/apps/personal-job-outreach/lead-scraper || exit 1
 
 exec 9>global-chance.lock
 flock 9

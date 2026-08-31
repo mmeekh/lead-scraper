@@ -7,7 +7,7 @@
 # (gunluk tavan + saat penceresi). Wave 2 bitince son bir tarama yapip cikar.
 set -uo pipefail
 
-OUTREACH=/root/projects/nl-job-outreach
+OUTREACH=/root/projects/otomasyon-paneli/apps/personal-job-outreach/nl-job-outreach
 PUBLOG="$OUTREACH/runtime/logs/incremental-publish.log"
 mkdir -p "$OUTREACH/runtime/logs"
 
@@ -19,7 +19,7 @@ WORKER_PID=$!
 trap 'kill "$WORKER_PID" 2>/dev/null || true' EXIT INT TERM
 echo "$(date '+%F %T') publish worker basladi pid=$WORKER_PID" >> "$PUBLOG"
 
-bash /root/projects/lead-scraper/run-visa-priority-2000-wave2.sh
+bash /root/projects/otomasyon-paneli/apps/personal-job-outreach/lead-scraper/run-visa-priority-2000-wave2.sh
 rc=$?
 
 kill "$WORKER_PID" 2>/dev/null || true

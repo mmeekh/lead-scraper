@@ -1,6 +1,6 @@
 #!/bin/bash
 # Hasat + e-posta cikarma dongusu. Arka planda calisir, kesilirse veri kaybolmaz.
-cd /root/projects/lead-scraper || exit 1
+cd /root/projects/otomasyon-paneli/apps/personal-job-outreach/lead-scraper || exit 1
 
 # Ayni pipeline iki kez baslatilirsa ayni siteleri paralel taramasin.
 exec 9>pipeline.lock

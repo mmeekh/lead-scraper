@@ -11,8 +11,9 @@ from pathlib import Path
 
 from scrape import CAMPAIGN_CSV, CAMPAIGN_LOG, FREEMAIL, campaign_country, norm_domain
 
-IN_CSV = Path("/root/projects/lead-scraper/dogrulanan-liste.csv")
-OUT_CSV = Path("/root/projects/lead-scraper/eklenecek-firmalar.csv")
+BASE = Path("/root/projects/otomasyon-paneli/apps/personal-job-outreach/lead-scraper")
+IN_CSV = BASE / "dogrulanan-liste.csv"
+OUT_CSV = BASE / "eklenecek-firmalar.csv"
 
 COUNTRY_CODE = {
     "Estonia": "EE", "Latvia": "LV", "Lithuania": "LT", "Bulgaria": "BG",

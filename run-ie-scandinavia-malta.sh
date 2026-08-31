@@ -2,7 +2,7 @@
 # IE + Scandinavia (SE/DK/NO) + Malta hedef turu.
 # DE/NL pipeline ile ayni SQLite kilidini kullanir; paralel tarama yapmaz.
 set -u
-cd /root/projects/lead-scraper || exit 1
+cd /root/projects/otomasyon-paneli/apps/personal-job-outreach/lead-scraper || exit 1
 
 exec 9>pipeline.lock
 flock 9

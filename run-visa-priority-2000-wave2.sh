@@ -7,7 +7,7 @@
 # Ayni kilidi kullanir: wave 1 hala calisiyorsa arkasina siralanir.
 set -euo pipefail
 
-cd /root/projects/lead-scraper
+cd /root/projects/otomasyon-paneli/apps/personal-job-outreach/lead-scraper
 exec 9>visa-priority-2000.lock
 flock 9
 

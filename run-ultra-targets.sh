@@ -3,7 +3,7 @@
 # dili olan GB/CA/NZ'nin yalnızca büyük şehirleri. Gönderim kuyruğuna yazmaz.
 # CSV uretir; outreach kuyruguna otomatik eklemez.
 set -u
-cd /root/projects/lead-scraper || exit 1
+cd /root/projects/otomasyon-paneli/apps/personal-job-outreach/lead-scraper || exit 1
 
 exec 9>pipeline.lock
 flock 9
@@ -47,7 +47,7 @@ python3 export_fit_audit.py \
     yeni-firmalar-english-priority.csv \
     yeni-firmalar-english-priority-audit.csv \
     >> export-targets.log 2>&1
-python3 /root/projects/nl-job-outreach/personalize_outreach.py \
+python3 /root/projects/otomasyon-paneli/apps/personal-job-outreach/nl-job-outreach/personalize_outreach.py \
     yeni-firmalar-english-priority-audit.csv \
     yeni-firmalar-english-priority-personalizations.csv \
     --preview yeni-firmalar-english-priority-preview.md \
@@ -56,7 +56,7 @@ python3 /root/projects/nl-job-outreach/personalize_outreach.py \
 # Kanitli kayıtlar ancak kuyruk, gönderim geçmişi, exclusion ve SQLite teslim
 # defteriyle tekrar karşılaştırıldıktan sonra atomik olarak yayımlanır. Bu adım
 # hiçbir zaman aynı e-posta/şirkete ikinci kez ekleme yapmaz.
-python3 /root/projects/nl-job-outreach/publish_verified_batch.py \
+python3 /root/projects/otomasyon-paneli/apps/personal-job-outreach/nl-job-outreach/publish_verified_batch.py \
     yeni-firmalar-english-priority-audit.csv \
     yeni-firmalar-english-priority-personalizations.csv \
     --apply >> export-targets.log 2>&1
@@ -64,7 +64,7 @@ python3 /root/projects/nl-job-outreach/publish_verified_batch.py \
 # Yeni kayıtlar çalışma saatinde beklemesin. Gönderici kendi kilidi ve günlük
 # 450 limitini uygular; başka bir teslim süreci varsa güvenle çıkar.
 systemd-run --collect --unit="outreach-auto-dispatch-$(date +%s)" \
-    /usr/bin/python3 /root/projects/nl-job-outreach/daily_batch.py \
+    /usr/bin/python3 /root/projects/otomasyon-paneli/apps/personal-job-outreach/nl-job-outreach/daily_batch.py \
     >> export-targets.log 2>&1 || echo "otomatik gonderici baslatilamadi" >> export-targets.log
 
 echo "=== $(date '+%F %T') ULTRA hedef turu bitti ==="

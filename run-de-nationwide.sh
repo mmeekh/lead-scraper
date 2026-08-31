@@ -2,7 +2,7 @@
 # Germany-only, no city restriction. The incremental publisher owns queueing
 # and delivery; this process only discovers, validates and scores candidates.
 set -u
-cd /root/projects/lead-scraper || exit 1
+cd /root/projects/otomasyon-paneli/apps/personal-job-outreach/lead-scraper || exit 1
 
 exec 9>de-nationwide.lock
 flock 9

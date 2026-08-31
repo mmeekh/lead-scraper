@@ -41,9 +41,9 @@ DB_PATH = BASE / "leads.sqlite3"
 # Export sirasinda mukerrer elemek icin okunan mevcut kampanya dosyalari.
 # Ortam degiskeniyle degistirilebilir; yoksa export yine calisir.
 CAMPAIGN_CSV = Path(os.environ.get(
-    "CAMPAIGN_CSV", "/root/projects/nl-job-outreach/firmalar.csv"))
+    "CAMPAIGN_CSV", "/root/projects/otomasyon-paneli/apps/personal-job-outreach/nl-job-outreach/firmalar.csv"))
 CAMPAIGN_LOG = Path(os.environ.get(
-    "CAMPAIGN_LOG", "/root/projects/nl-job-outreach/sent-log.csv"))
+    "CAMPAIGN_LOG", "/root/projects/otomasyon-paneli/apps/personal-job-outreach/nl-job-outreach/sent-log.csv"))
 
 UA = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/126.0 Safari/537.36")

@@ -2,7 +2,7 @@
 # Netherlands-only, no city restriction. The incremental publisher handles
 # queueing and delivery; this script only discovers, verifies and scores.
 set -u
-cd /root/projects/lead-scraper || exit 1
+cd /root/projects/otomasyon-paneli/apps/personal-job-outreach/lead-scraper || exit 1
 
 exec 9>nl-nationwide.lock
 flock 9
