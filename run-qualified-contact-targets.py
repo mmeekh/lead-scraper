@@ -21,7 +21,7 @@ OUTREACH = BASE.parent / "nl-job-outreach"
 sys.path.insert(0, str(OUTREACH))
 from country_campaign import (CAMPAIGN, COUNTRIES, MIN_FIT_SCORE,
                               RESEARCH_COUNTRIES, TARGET_PER_COUNTRY,
-                              accepted_counts)
+                              accepted_counts, target_for)
 from project_paths import RUNTIME_DIR
 from send_mails import CSV_PATH, queue_lock
 
@@ -222,7 +222,7 @@ def main():
         while True:
             counts = accepted()
             active = sorted(
-                (c for c in RESEARCH_COUNTRIES if counts[c] < TARGET_PER_COUNTRY),
+                (c for c in RESEARCH_COUNTRIES if counts[c] < target_for(c)),
                 key=lambda country: (RESEARCH_ORDER.index(country), counts[country]),
             )
             if not active:
@@ -260,7 +260,7 @@ def main():
                 # safely skips. It only needs waking after actual research.
                 if country_worked:
                     run(sys.executable, OUTREACH / "incremental_publish_worker.py", "--once")
-                print(f"STATUS {country}: accepted={accepted()[country]}/{TARGET_PER_COUNTRY} "
+                print(f"STATUS {country}: accepted={accepted()[country]}/{target_for(country)} "
                       f"pending={pending(country)}", flush=True)
                 save(progress)
                 did_work = did_work or country_worked
