@@ -101,11 +101,14 @@ PROFILE_COLUMNS = {
     "fit_reasons": "TEXT",
     "fit_keywords": "TEXT",
     "career_url": "TEXT",
+    "job_urls": "TEXT",
+    "ats_priority": "INTEGER NOT NULL DEFAULT 0",
     "email_source_url": "TEXT",
     "job_titles": "TEXT",
     "english_signal": "INTEGER NOT NULL DEFAULT 0",
     "profile_status": "TEXT NOT NULL DEFAULT 'unscored'",
     "profile_checked_at": "TEXT",
+    "browser_checked_at": "TEXT",
 }
 
 
@@ -135,6 +138,13 @@ def db() -> sqlite3.Connection:
     conn.execute(
         "CREATE INDEX IF NOT EXISTS idx_leads_profile_queue "
         "ON leads(country, profile_status, fit_score)"
+    )
+    # 6 Eyl 2026: export_fit_audit.py her aday icin lower(email) uzerinden
+    # arama yapiyor. Indekssiz halde 573 bin satirlik tam tarama demekti
+    # (sorgu basina ~311 ms); 3.000 adayli bir yayin turu 15 dakikayi asip
+    # yayincinin 180 sn'lik adim zaman asimina takiliyordu.
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_leads_email_lower ON leads(lower(email))"
     )
     conn.commit()
     return conn

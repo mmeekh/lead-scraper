@@ -98,10 +98,15 @@ NOISE_TERMS = (
 
 MAJOR_CITIES: dict[str, tuple[str, ...]] = {
     "IE": ("dublin", "cork", "galway", "limerick"),
+    "PL": ("warszawa", "warsaw", "kraków", "krakow", "wrocław", "wroclaw",
+           "poznań", "poznan", "gdańsk", "gdansk", "katowice", "łódź", "lodz"),
+    "NL": ("amsterdam", "rotterdam", "utrecht", "eindhoven", "den haag",
+           "the hague", "groningen", "tilburg", "breda", "arnhem"),
     "SE": ("stockholm", "göteborg", "gothenburg", "malmö", "malmo"),
     "DK": ("københavn", "copenhagen", "aarhus", "århus"),
     "NO": ("oslo", "bergen"),
     "MT": ("valletta", "sliema", "birkirkara", "san ġiljan", "st julian", "saint julian"),
+    "LU": ("luxembourg city", "esch-sur-alzette", "kirchberg"),
     # İngiltere için ISO kodu GB; yalnızca kullanıcının kabul ettiği büyük şehirler.
     "GB": ("london", "manchester", "birmingham", "edinburgh", "glasgow", "bristol"),
     "CA": ("toronto", "vancouver", "calgary", "ottawa"),
@@ -117,8 +122,15 @@ COUNTRY_LOCATION_TERMS: dict[str, tuple[str, ...]] = {
     "CH": ("switzerland", "schweiz", "suisse"), "SE": ("sweden", "sverige"),
     "DK": ("denmark", "danmark"), "LU": ("luxembourg",),
     "NO": ("norway", "norge"), "FI": ("finland", "suomi"),
-    "PT": ("portugal",),
+    "PT": ("portugal",), "PL": ("poland", "polska"),
 }
+
+
+# 6 Eyl 2026: uygunluk esigi tek kaynaktan gelir. Onceden 35 degeri
+# profile_fit, deep_enrich, incremental_publish_worker ve publish_verified_batch
+# icinde ayri ayri sabit kodluydu; deep_enrich'e --min-score verilse bile
+# buradaki 35 kazandigi icin baraj gercekte hic inmiyordu.
+QUALIFY_MIN_SCORE = 25
 
 
 @dataclass(frozen=True)
@@ -171,7 +183,8 @@ def target_country_from_location(location: str,
 
 
 def score_profile(text: str, *, name: str = "", domain: str = "",
-                  job_titles: tuple[str, ...] = ()) -> FitResult:
+                  job_titles: tuple[str, ...] = (),
+                  min_score: int = QUALIFY_MIN_SCORE) -> FitResult:
     haystack = normalize_text(" ".join((name, domain, text, " ".join(job_titles))))
     score = 0
     matched_tracks: list[str] = []
@@ -241,7 +254,7 @@ def score_profile(text: str, *, name: str = "", domain: str = "",
         reasons.append(f"unrelated:-{penalty}")
 
     score = max(0, min(100, score))
-    qualified = bool(matched_tracks) and score >= 35
+    qualified = bool(matched_tracks) and score >= min_score
     return FitResult(
         score=score,
         tracks=tuple(matched_tracks),

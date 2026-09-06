@@ -21,7 +21,7 @@ import requests
 from bs4 import BeautifulSoup
 
 import sponsor_registry
-from profile_fit import role_fit, score_profile
+from profile_fit import QUALIFY_MIN_SCORE, role_fit, score_profile
 from scrape import (CFEMAIL_RE, EMAIL_RE, HEADERS, cf_decode, clean_emails, db,
                     norm_domain)
 from sponsor_registry import SPONSOR_GATE_COUNTRIES
@@ -206,22 +206,41 @@ def _sponsor_gate_pass(conn: sqlite3.Connection, code: str, row: dict) -> bool:
     return bool(name) and sponsor_registry.is_sponsor(conn, code, name)
 
 
-def crawl_company(domain: str, max_pages: int) -> tuple[list[Page], list[str], str]:
+def _ats_seed_urls(value: str) -> list[str]:
+    urls: list[str] = []
+    allowed = ("greenhouse.io", "ashbyhq.com", "lever.co", "recruitee.com")
+    for raw in (value or "").split("|"):
+        url = raw.strip()
+        parsed = urlparse(url)
+        host = (parsed.hostname or "").casefold()
+        if (parsed.scheme == "https" and host and any(
+                host == suffix or host.endswith("." + suffix) for suffix in allowed)):
+            urls.append(url.split("#", 1)[0])
+    return list(dict.fromkeys(urls))[:3]
+
+
+def crawl_company(domain: str, max_pages: int,
+                  seed_urls: tuple[str, ...] = (), *, company_name: str = "",
+                  min_score: int = QUALIFY_MIN_SCORE) -> tuple[list[Page], list[str], str]:
     if "@" in domain or domain in PLATFORM_HOSTS:
         return [], [], "site_yok_veya_platform"
     session = requests.Session()
     session.headers.update(HEADERS)
     root = _root_page(session, domain)
-    if root is None:
+    if root is None and not seed_urls:
         session.close()
         return [], [], "ana_sayfa_alinamadi"
 
-    official = norm_domain(root.url) or domain
+    official = norm_domain(root.url) if root is not None else domain
+    official = official or domain
     pages: list[Page] = []
     titles: list[str] = []
     visited: set[str] = set()
-    queue: list[tuple[int, str]] = [(100, root.url)]
-    queued = {root.url}
+    queue: list[tuple[int, str]] = [(10_000, url) for url in seed_urls]
+    queued = set(seed_urls)
+    if root is not None:
+        queue.append((20_000, root.url))
+        queued.add(root.url)
 
     while queue and len(pages) < max_pages:
         queue.sort(reverse=True)
@@ -229,7 +248,7 @@ def crawl_company(domain: str, max_pages: int) -> tuple[list[Page], list[str], s
         if url in visited:
             continue
         visited.add(url)
-        response = root if not pages and url == root.url else _fetch(session, url)
+        response = root if root is not None and url == root.url else _fetch(session, url)
         if response is None:
             continue
         html = response.text[:2_000_000]
@@ -237,18 +256,49 @@ def crawl_company(domain: str, max_pages: int) -> tuple[list[Page], list[str], s
         pages.append(Page(response.url, text, html))
         titles.extend(_jsonld_titles(html))
         titles.extend(_link_job_titles(html))
-        for priority, link in _page_links(response.url, html, official):
-            if link not in visited and link not in queued:
-                queue.append((priority, link))
-                queued.add(link)
+        response_host = norm_domain(response.url)
+        is_ats_page = any(
+            response_host == suffix or response_host.endswith("." + suffix)
+            for suffix in ("greenhouse.io", "ashbyhq.com", "lever.co", "recruitee.com")
+        )
+        # Exact ATS posting seeds are evidence inputs, not crawl frontiers.
+        # Otherwise one board can consume the whole company/contact page budget.
+        if not is_ats_page:
+            for priority, link in _page_links(response.url, html, official):
+                if link not in visited and link not in queued:
+                    queue.append((priority, link))
+                    queued.add(link)
+        # Once both independently checkable gates are already satisfied, more
+        # pages add latency without improving publishability. Four pages leaves
+        # room for home + ATS posting + careers/contact evidence while avoiding
+        # eight-page crawls for companies that are already fully proven.
+        if len(pages) >= 4:
+            published_emails = {
+                email.strip().lower()
+                for crawled in pages for email in _emails_on_page(crawled.html)
+            }
+            current_fit = score_profile(
+                " ".join(crawled.text for crawled in pages),
+                name=company_name, domain=domain,
+                job_titles=tuple(dict.fromkeys(titles)),
+                min_score=min_score,
+            )
+            if (clean_emails(published_emails, domain)
+                    and current_fit.qualified and current_fit.score >= min_score):
+                break
         time.sleep(0.25)
     session.close()
-    return pages, list(dict.fromkeys(titles))[:40], "ok"
+    note = "ok" if root is not None else "yalnizca_ats_ilani"
+    return pages, list(dict.fromkeys(titles))[:40], note
 
 
 def enrich_row(row: dict, max_pages: int, min_score: int) -> dict:
     domain = row["domain"]
-    pages, discovered_titles, note = crawl_company(domain, max_pages)
+    job_urls = _ats_seed_urls(row.get("job_urls") or "")
+    pages, discovered_titles, note = crawl_company(
+        domain, max_pages, tuple(job_urls),
+        company_name=row.get("name") or "", min_score=min_score,
+    )
     prior_titles = [x.strip() for x in (row.get("job_titles") or "").split("|") if x.strip()]
     titles = list(dict.fromkeys(prior_titles + discovered_titles))[:40]
     combined_text = " ".join(page.text for page in pages)
@@ -257,6 +307,7 @@ def enrich_row(row: dict, max_pages: int, min_score: int) -> dict:
         name=row.get("name") or "",
         domain=domain,
         job_titles=tuple(titles),
+        min_score=min_score,
     )
 
     raw_emails: set[str] = set()
@@ -317,9 +368,14 @@ def load_rows(countries: set[str], limit: int, rescore: bool,
     if source_prefix:
         values.extend([len(source_prefix), source_prefix])
     values.append(limit)
+    order = (
+        "CASE WHEN source LIKE '%jobseek-ats%' THEN 0 ELSE 1 END, "
+        "ats_priority DESC, "
+        "COALESCE(profile_checked_at,''), rowid"
+    )
     rows = conn.execute(
         f"SELECT * FROM leads WHERE country IN ({placeholders}) {status_clause} {source_clause} "
-        "ORDER BY CASE source WHEN 'jobseek-ats' THEN 0 ELSE 1 END, rowid LIMIT ?",
+        f"ORDER BY {order} LIMIT ?",
         values,
     ).fetchall()
     conn.close()
@@ -332,7 +388,7 @@ def main() -> None:
     parser.add_argument("--limit", type=int, default=250)
     parser.add_argument("--workers", type=int, default=5)
     parser.add_argument("--max-pages", type=int, default=8)
-    parser.add_argument("--min-score", type=int, default=35)
+    parser.add_argument("--min-score", type=int, default=QUALIFY_MIN_SCORE)
     parser.add_argument("--rescore", action="store_true")
     parser.add_argument("--retry-errors", action="store_true")
     parser.add_argument("--source-prefix", default="", help="yalnizca bu kaynakla baslayan adaylar")
