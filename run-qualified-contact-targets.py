@@ -10,6 +10,7 @@ import csv
 import fcntl
 import json
 import os
+import re
 import sqlite3
 import subprocess
 import sys
@@ -112,7 +113,8 @@ def browser_enrich(country):
 def default_progress():
     return {c: {"discovery_rounds": 0, "empty_rounds": 0,
                 "retry_rounds": 0, "overture_done": False, "wikidata_done": False,
-                "next_probe_at": 0.0, "status": "running"} for c in RESEARCH_COUNTRIES}
+                "next_probe_at": 0.0, "sponsor_offset": 0,
+                "status": "running"} for c in RESEARCH_COUNTRIES}
 
 
 def load_progress():
@@ -150,8 +152,48 @@ def run(*args):
     subprocess.run(list(map(str, args)), cwd=BASE, check=True)
 
 
+def run_capture(*args) -> str:
+    """Ciktisi okunmasi gereken adimlar icin; log'a da aynen basar."""
+    print("+", " ".join(map(str, args)), flush=True)
+    result = subprocess.run(list(map(str, args)), cwd=BASE, check=True,
+                            text=True, capture_output=True)
+    print(result.stdout, end="", flush=True)
+    if result.stderr:
+        print(result.stderr, end="", flush=True)
+    return result.stdout
+
+
+def sponsor_harvest(country, progress):
+    """UKVI sponsor sicilinden yeni aday cikar (yalnizca GB).
+
+    6 Eyl 2026: sicilde sektore uygun 12.696 firma var ve bunlarin ancak
+    1.532'si lead'e donusmus. Sponsor lisansi, AB disi bir adayi ise alma
+    yetkisi demek; Turk vatandasi icin en yuksek donusum ihtimali olan havuz
+    burasi. OSM taramasi bu firmalari isim/adres uzerinden bulamiyor.
+    """
+    if country != "GB":
+        return False
+    offset = int(progress.get("sponsor_offset", 0))
+    output = run_capture(sys.executable, "harvest_uk_sponsors.py",
+                         "--limit", "300", "--workers", "2",
+                         "--offset", str(offset),
+                         "--source-label", CAMPAIGN)
+    match = re.search(r"restart icin: --offset (\d+)", output)
+    if match:
+        progress["sponsor_offset"] = int(match.group(1))
+    added = re.search(r"eklendi=(\d+)", output)
+    return bool(added and int(added.group(1)))
+
+
 def discover(country, progress):
     before = pending(country)
+    # GB icin once sponsor sicili: OSM'den cok daha yuksek donusumlu kaynak.
+    if country == "GB" and sponsor_harvest(country, progress):
+        progress["discovery_rounds"] += 1
+        progress["empty_rounds"] = 0
+        progress["retry_rounds"] = 0
+        progress["next_probe_at"] = time.time() + SOURCE_RECHECK_SECONDS
+        return True
     # Public company websites from Wikidata add genuine new domains rather
     # than repeatedly probing the same maps source. Website/contact evidence
     # still has to come from the company's own pages before publication.
