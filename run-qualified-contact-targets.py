@@ -255,6 +255,58 @@ def refresh_ats_if_due():
     return True
 
 
+def selfcheck() -> list[str]:
+    """Tarama baslamadan yapilandirmayi dogrula; sorun listesi dondur.
+
+    7 Eyl 2026: bir liste uyusmazligi servisi 398 kez cokertti ve gece bosa
+    gitti. Buradaki kontrollerin her biri o gece yasanan ya da yasanabilecek
+    bir arizayi tarama baslamadan yakalar. Ayni fonksiyon test_orchestrator
+    tarafindan da cagrilir; ikisi ayrismasin diye tek yerde durur.
+    """
+    from harvest_countrywide import COUNTRY_NAMES, MAJOR_CITIES
+    from harvest_wikidata import COUNTRY_QIDS
+    from send_mails import route_for
+
+    problems: list[str] = []
+    for country in RESEARCH_COUNTRIES:
+        if country not in COUNTRIES:
+            problems.append(f"{country}: RESEARCH_COUNTRIES icinde ama COUNTRIES'te yok")
+        if country not in COUNTRY_NAMES:
+            problems.append(f"{country}: harvest_countrywide.COUNTRY_NAMES eksik")
+        if not MAJOR_CITIES.get(country):
+            problems.append(f"{country}: harvest_countrywide.MAJOR_CITIES bos")
+        if country not in COUNTRY_QIDS:
+            problems.append(f"{country}: harvest_wikidata.COUNTRY_QIDS eksik")
+        try:
+            routed, language = route_for({"oncelik": f"{country}-EN"})
+        except ValueError as exc:
+            problems.append(f"{country}: route_for hata verdi ({exc})")
+        else:
+            if (routed, language) != (country, "en"):
+                problems.append(f"{country}: route_for {routed}/{language} dondurdu")
+        if target_for(country) <= 0:
+            problems.append(f"{country}: arastirma hedefi 0, hic aday uretilmeyecek")
+    for country in RESEARCH_COUNTRIES:
+        # Aktif ulke siralamasi tam olarak 6-7 Eyl gecesi coken ifade.
+        try:
+            RESEARCH_COUNTRIES.index(country)
+        except ValueError as exc:  # pragma: no cover - savunma amacli
+            problems.append(f"{country}: siralama hatasi ({exc})")
+    if not BASE.joinpath("leads.sqlite3").is_file():
+        problems.append("leads.sqlite3 bulunamadi")
+    if not CSV_PATH.is_file():
+        problems.append(f"kuyruk dosyasi yok: {CSV_PATH}")
+    try:
+        accepted(attempts=3, wait=2.0)
+    except Exception as exc:
+        problems.append(f"accepted() okunamadi: {type(exc).__name__}: {exc}")
+    try:
+        load_progress()
+    except Exception as exc:
+        problems.append(f"progress dosyasi yuklenemedi: {type(exc).__name__}: {exc}")
+    return problems
+
+
 def source_probe_due(progress) -> bool:
     try:
         return time.time() >= float(progress.get("next_probe_at", 0))
@@ -263,6 +315,20 @@ def source_probe_due(progress) -> bool:
 
 
 def main():
+    if "--selfcheck" in sys.argv[1:]:
+        problems = selfcheck()
+        for problem in problems:
+            print("SORUN:", problem, flush=True)
+        print("selfcheck:", "BASARISIZ" if problems else "OK", flush=True)
+        raise SystemExit(1 if problems else 0)
+    # Tarama her baslangicta once kendini denetler. Sorun varsa hemen ve
+    # acik bir mesajla cikar; systemd StartLimitBurst ile birkac dakikada
+    # 'failed' olur, sabah raporu bunu alarm olarak bildirir.
+    problems = selfcheck()
+    if problems:
+        for problem in problems:
+            print("SORUN:", problem, flush=True)
+        raise SystemExit("selfcheck basarisiz; tarama baslatilmadi")
     LOCK.touch(exist_ok=True)
     with LOCK.open("r+") as handle:
         try:
