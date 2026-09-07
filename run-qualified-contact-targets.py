@@ -24,7 +24,7 @@ from country_campaign import (CAMPAIGN, COUNTRIES, MIN_FIT_SCORE,
                               RESEARCH_COUNTRIES, TARGET_PER_COUNTRY,
                               accepted_counts, target_for)
 from project_paths import RUNTIME_DIR
-from send_mails import CSV_PATH, queue_lock
+from send_mails import CSV_PATH, AlreadyRunningError, queue_lock
 
 DB = BASE / "leads.sqlite3"
 BROWSER_PYTHON = BASE / ".venv-camoufox" / "bin" / "python"
@@ -45,16 +45,30 @@ IDLE_SLEEP_SECONDS = 60
 # Overture's local data is useful for these two countries. The others have no
 # relevant Overture rows, so they are not needlessly scanned.
 OVERTURE_COUNTRIES = {"IE", "NL"}
-# Research throughput and email-delivery fairness are deliberately separate.
-# 6 Eyl 2026: sira olculen kaynak derinligine gore. NL/GB/IE/PL'de binlerce
-# islenmemis veya baraj altinda kalmis kayit var; Iskandinav/Alp ulkeleri
-# kucuk ama temiz havuzlar, en sona alindi.
-RESEARCH_ORDER = ("NL", "GB", "IE", "PL", "FI", "CH", "AT", "BE", "PT", "SE", "NO")
+# Arastirma sirasi country_campaign.RESEARCH_COUNTRIES'ten gelir (agirliga
+# gore azalan). Burada ikinci bir liste tutulmuyor: 6-7 Eyl gecesi ayri
+# tutulan RESEARCH_ORDER kumeyle uyusmadi ve `.index()` ValueError'u servisi
+# 398 kez cokertip butun geceyi bosa harcadi.
 
 
-def accepted():
-    with queue_lock(), CSV_PATH.open(encoding="utf-8-sig", newline="") as handle:
-        return accepted_counts(csv.DictReader(handle))
+def accepted(attempts: int = 10, wait: float = 6.0):
+    """Kuyruk sayimlarini oku; kilit meshgulse bekleyip yeniden dene.
+
+    7 Eyl 2026: yayinci 120 saniyede bir kuyruk kilidini aliyor. Kilit o anda
+    meshgulse `queue_lock()` AlreadyRunningError firlatiyordu ve bu istisna
+    butun arastirma servisini oldururuyordu -- gecici bir kilit cakismasi
+    icin fazlasiyla sert bir sonuc. Kilit gercekten birakilmiyorsa hata yine
+    yukselir, sessizce yanlis sayiyla devam edilmez.
+    """
+    for remaining in range(attempts - 1, -1, -1):
+        try:
+            with queue_lock(), CSV_PATH.open(encoding="utf-8-sig",
+                                             newline="") as handle:
+                return accepted_counts(csv.DictReader(handle))
+        except AlreadyRunningError:
+            if not remaining:
+                raise
+            time.sleep(wait)
 
 
 def pending(country):
@@ -265,7 +279,7 @@ def main():
             counts = accepted()
             active = sorted(
                 (c for c in RESEARCH_COUNTRIES if counts[c] < target_for(c)),
-                key=lambda country: (RESEARCH_ORDER.index(country), counts[country]),
+                key=lambda country: (RESEARCH_COUNTRIES.index(country), counts[country]),
             )
             if not active:
                 # Target doldugunda process kapanmaz; kontrollu ATS yenilemesi
