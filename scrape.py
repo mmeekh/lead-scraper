@@ -146,6 +146,9 @@ def db() -> sqlite3.Connection:
     conn.execute(
         "CREATE INDEX IF NOT EXISTS idx_leads_email_lower ON leads(lower(email))"
     )
+    # Panel "son taranan 25" listesi checked_at'e gore siralar; indekssiz halde
+    # 573 bin satirlik siralama demekti.
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_leads_checked_at ON leads(checked_at)")
     conn.commit()
     return conn
 
