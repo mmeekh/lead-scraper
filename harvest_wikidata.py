@@ -9,6 +9,7 @@ must still find that address on the company's own HTTPS pages.
 from __future__ import annotations
 
 import argparse
+import re
 import time
 from urllib.parse import urlparse
 
@@ -57,6 +58,10 @@ def harvest(code: str, limit: int, source_label: str) -> tuple[int, int]:
         for item in bindings:
             website = item.get("website", {}).get("value", "")
             name = item.get("itemLabel", {}).get("value", "").strip()
+            # Etiketi olmayan ogeler icin Wikidata etiket yerine kimligi (Q123456)
+            # dondurur. 9 Eyl 2026: 30 mail "Dear Q9375345" diye gitti.
+            if re.fullmatch(r"Q\d{4,}", name):
+                continue
             if not name or not allowed_website(website):
                 skipped += 1
                 continue
