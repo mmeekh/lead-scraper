@@ -82,6 +82,16 @@ TURKISH_COMPANY_SIGNALS = (
     "originated in turkey", "originated in türkiye", "türkiye merkezli",
     "türkiye'de kuruldu", "türkiye'de kurulmuş", "istanbul'da kuruldu",
     "türk şirketi", "türk teknoloji şirketi",
+    # 9 Eyl 2026: kampanyanin uc gorusmesi de Turk sahipli muhasebe/vergi
+    # burolarindan geldi (Berlin Steuerberater, Amsterdam administratie, BG
+    # muhasebe). Yurt disindaki Turk sahipli finans burolarinin sitelerinde
+    # Turkce hizmet dili gecer; bunlar da ayni +15 sinyalini alsin.
+    "türkçe konuşan", "türkçe hizmet", "türkçe danışmanlık", "türkçe destek",
+    "muhasebe hizmet", "muhasebe ve vergi", "vergi danışmanlığı", "mali müşavir",
+    "türk toplumu", "türk müşteri", "türk girişimci",
+    "turks sprekend", "turkssprekend", "turkse ondernemers", "turkse gemeenschap",
+    "türkischsprachig", "türkisch sprechend", "türkische unternehmer",
+    "turkish-speaking", "turkish speaking", "turkish community", "turkish entrepreneurs",
 )
 
 SENIOR_TERMS = (
