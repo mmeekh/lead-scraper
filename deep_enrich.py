@@ -331,6 +331,17 @@ def enrich_row(row: dict, max_pages: int, min_score: int) -> dict:
         row.get("career_url"),
     )
     qualified = fit.score >= min_score and fit.qualified
+    # 9 Eyl 2026: Turk is dernegi/odasi uye listesinden gelen firma, sitesinde
+    # Turkce gecmese bile Turk sahiplidir; ayni +15 sinyalini ve anahtar
+    # kelimeyi tasisin ki yayinci turkish-company-priority olarak isaretlesin.
+    reasons = list(fit.reasons)
+    keywords = list(fit.keywords)
+    if (row.get("source") or "").startswith("turkish-directory") and not any(r.startswith("turkish_company:") for r in reasons):
+        reasons.append("turkish_company:+15 (directory)")
+        keywords.append("turkish-company")
+        fit = fit.__class__(score=min(100, fit.score + 15), tracks=fit.tracks, reasons=tuple(reasons),
+                            keywords=tuple(keywords), english_signal=fit.english_signal, qualified=fit.qualified)
+        qualified = fit.score >= min_score and fit.qualified
     return {
         "domain": domain,
         "email": primary,

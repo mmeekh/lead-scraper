@@ -210,3 +210,16 @@ class TurkishServiceSignalTests(unittest.TestCase):
                             name="De Vries", domain="devries.nl")
         self.assertFalse(any(r.startswith("turkish_company:") for r in fit.reasons), fit.reasons)
 
+
+class DirectorySourceTests(unittest.TestCase):
+    def test_turkish_directory_source_carries_the_signal_without_site_text(self):
+        import deep_enrich
+        from unittest.mock import patch
+        page = deep_enrich.Page(url="https://baskan-steuer.de/", text="Steuerberatung, Buchhaltung, Jahresabschluss und Lohnabrechnung für Unternehmen.", html="")
+        with patch.object(deep_enrich, "crawl_company", return_value=([page], [], "ok")):
+            out = deep_enrich.enrich_row({"domain": "baskan-steuer.de", "name": "Baskan Steuerberatung",
+                                          "source": "turkish-directory:td-ihk", "email": "", "all_mails": ""},
+                                         max_pages=2, min_score=25)
+        self.assertIn("turkish_company:+15 (directory)", out["fit_reasons"])
+        self.assertIn("turkish-company", out["fit_keywords"])
+
