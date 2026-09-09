@@ -120,7 +120,10 @@ def browser_enrich(country):
         print("Camoufox ertelendi: yeterli bos RAM yok", flush=True)
         return False
     run(BROWSER_PYTHON, "browser_enrich.py", "--countries", country,
-        "--limit", "2", "--max-pages", "2", "--min-score", str(MIN_FIT_SCORE))
+        # 9 Eyl 2026: ilanli firmalar en sicak kaynak (%2,0 vs %0,6) ama cogu
+        # e-postasini yalniz JavaScript ile yukluyor; 2'lik limit bu havuzu
+        # asla eritmiyordu. Camoufox hala RAM bekcisinin (900 MB) arkasinda.
+        "--limit", "10", "--max-pages", "3", "--min-score", str(MIN_FIT_SCORE))
     return True
 
 
