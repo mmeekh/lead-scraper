@@ -40,10 +40,18 @@ python scrape.py verify stats
 python scrape.py verify run --limit 100            # hepsi sırayla
 
 # ölçüm (docs §6)
-python scrape.py verify gold --out verify/altin-kume.csv   # etiketlenecek CSV üret
-# insan `etiket` sütununu doldurur: evet / hayir / belirsiz
-python scrape.py verify score --in verify/altin-kume.csv   # isabet / kapsama / karışıklık
+python scrape.py verify gold --kor       # verify/altin-kume-kor.csv — KÖR kopya (etiketleme için)
+python scrape.py verify gold             # verify/altin-kume.csv — hattın kararı + kanıtlar (inceleme)
+# insan `insan_karari` sütununu doldurur: evet / hayir / belirsiz
+python scrape.py verify score --etiket verify/altin-kume-kor.csv
+
+python verify/test_verify.py             # 25 test, ağ/model gerektirmez
 ```
+
+**Kör kopya neden:** etiketleyen kişi hattın kararını görürse ölçüm bozulur. `--kor` dosyasında
+yalnız `domain`, `legal_name`, `meslek`, `site_linki`, `hakkinda_linki` ve boş `insan_karari`
+bulunur; hakem kararları, uzlaşma ve alıntılar yoktur. `score` eşleştirmeyi `domain` + `meslek`
+üzerinden yapar, iki CSV biçimini de (`insan_karari` ya da `etiket` sütunu) kabul eder.
 
 Her aşama kaldığı yerden sürer (`domains.status`: `yeni → cekildi → yargilandi → tamam`).
 Kesilirse aynı komut tekrar çalıştırılır; biten iş tekrarlanmaz.
@@ -56,11 +64,24 @@ Kesilirse aynı komut tekrar çalıştırılır; biten iş tekrarlanmaz.
 | çekilen sayfa metinleri | `verify/pages/<domain>/<tur>.txt` (git'e girmez) |
 | çıktı | `verify/verified.jsonl` (git'e girmez) |
 
+## Ölçülen koşu (19 Eyl 2026, 100 alan adı)
+
+96 kayıt yargılandı (4 alan adı hiç yanıt vermedi): **9 evet · 69 hayır · 18 belirsiz**.
+Çekim 99 alan adı / 4 dk; hakem A 5,8 sn/kayıt (9,8 GB VRAM), hakem B 19,3 sn/kayıt
+(%85 GPU / %15 CPU). Ayrıntı ve isabet incelemesi: [RAPOR.md](RAPOR.md).
+
 ## Uzlaşma kuralı
 
-`evet` **yalnız** şu durumda: A ve B'nin ikisi de `yes` **ve** ikisinin de alıntıları sayfa
-metninde birebir geçiyor (boşluk/noktalama normalize edilir). Biri `no` derse → `hayir`.
-Diğer her durum → `belirsiz` (listelenmez). Amaç: listelenende ≥ %95 isabet, kapsam ikincil.
+`evet` **yalnız** şu durumda: A ve B'nin ikisi de `yes`, ikisinin de alıntıları sayfa metninde
+birebir geçiyor (boşluk/noktalama normalize edilir) **ve** kanıt geçidinden geçiyor. Biri `no`
+derse → `hayir`. Diğer her durum → `belirsiz` (listelenmez).
+
+**Kanıt geçidi:** meslek kaydı `beleg_anahtarlar` tanımlıyorsa, doğrulanmış alıntılardan en az
+biri o anahtarlardan birini içermeli (ör. elektroingenieur için *Schaltung, Steuerung, Sensor,
+Antrieb, Elektronik…*). "Entwicklung/Konstruktion" gibi genel sözcüklerle gelen yanlış meslek
+atamalarını deterministik olarak keser; ölçülen etkisi isabet %64 → %78.
+
+Amaç: listelenende ≥ %95 isabet, kapsam ikincil.
 
 ## Nezaket / sınırlar
 

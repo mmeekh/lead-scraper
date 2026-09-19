@@ -40,8 +40,10 @@ def cmd_judge(args) -> None:
     meslekler = _meslekler()
     conn = db()
     satirlar = [dict(r) for r in conn.execute(
-        # 'tamam' da dahil: yeni bir modelle yeniden yargilamak mumkun olsun
-        "SELECT * FROM domains WHERE status IN ('cekildi','yargilandi','tamam') "
+        # 'tamam': yeni bir modelle yeniden yargilamak icin; 'eksik': tek sayfa cekilebilmis
+        # siteler de yargilanir (kanit zayif oldugu icin sonuc genelde unclear olur, ama kayit
+        # kapsam disinda kalmaz - yeni cekim yapilmaz, eldeki sayfa kullanilir)
+        "SELECT * FROM domains WHERE status IN ('cekildi','yargilandi','tamam','eksik') "
         + ("AND meslek = ? " if getattr(args, "meslek", "") else "")
         + "ORDER BY domain LIMIT ?",
         ((args.meslek, args.limit) if getattr(args, "meslek", "") else (args.limit,))).fetchall()]
@@ -100,7 +102,7 @@ def cmd_judge(args) -> None:
     for s in satirlar:
         tam = conn.execute("SELECT COUNT(*) FROM judgments WHERE domain=? AND meslek=?",
                            (s["domain"], s["meslek"])).fetchone()[0]
-        if tam >= len(modeller) and s["status"] == "cekildi":
+        if tam >= len(modeller) and s["status"] in ("cekildi", "eksik"):
             set_status(conn, s["domain"], "yargilandi")
     conn.commit()
     conn.close()
@@ -142,12 +144,16 @@ def cmd_stats(args) -> None:
 
 
 def cmd_gold(args) -> None:
-    yol = Path(args.out) if args.out else BASE / "altin-kume.csv"
-    print(json.dumps(altin.disa(yol, limit=args.limit), ensure_ascii=False, indent=2))
+    if getattr(args, "kor", False):
+        yol = Path(args.out) if args.out else BASE / "altin-kume-kor.csv"
+        print(json.dumps(altin.kor_disa(yol, limit=args.limit), ensure_ascii=False, indent=2))
+    else:
+        yol = Path(args.out) if args.out else BASE / "altin-kume.csv"
+        print(json.dumps(altin.disa(yol, limit=args.limit), ensure_ascii=False, indent=2))
 
 
 def cmd_score(args) -> None:
-    yol = Path(getattr(args, "girdi", "") or (BASE / "altin-kume.csv"))
+    yol = Path(getattr(args, "etiket", "") or getattr(args, "girdi", "") or (BASE / "altin-kume.csv"))
     print(json.dumps(altin.olc(yol), ensure_ascii=False, indent=2))
 
 
@@ -204,9 +210,12 @@ def ekle(sub) -> None:
     q = vs.add_parser("gold", help="altin kume icin etiketlenecek CSV uret")
     q.add_argument("--out", default="")
     q.add_argument("--limit", type=int, default=0)
+    q.add_argument("--kor", action="store_true",
+                   help="KOR kopya: hakem kararlari ve alintilar olmadan (etiketleyen etkilenmesin)")
     q.set_defaults(func=cmd_gold)
 
     q = vs.add_parser("score", help="etiketlenmis CSV'den isabet/kapsama olc")
+    q.add_argument("--etiket", default="", help="etiketlenmis CSV (kor ya da normal bicim)")
     q.add_argument("--in", dest="girdi", default="")
     q.set_defaults(func=cmd_score)
 

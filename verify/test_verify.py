@@ -11,6 +11,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from verify.altin_kume import KOR_BASLIKLAR, _oku_etiketler
 from verify.consensus import job_ads_cikar, kanit_gecidi, uzlas
 from verify.impressum import ad_celisiyor_mu, display_name, legal_name_bul
 from verify.judge import alintilari_dogrula
@@ -120,6 +121,31 @@ class Ilanlar(unittest.TestCase):
 
     def test_gurultu_satirlari_elenir(self):
         self.assertEqual(job_ads_cikar("Jobs\nKarriere\nImpressum", "u"), [])
+
+
+class KorCsv(unittest.TestCase):
+    def test_kor_basliklar_karar_sizdirmaz(self):
+        yasak = ("hat_karari", "agreement", "model_a", "model_b", "alinti_1", "alinti_2", "etiket")
+        for k in yasak:
+            self.assertNotIn(k, KOR_BASLIKLAR, f"kor CSV'de {k} olmamali")
+        self.assertEqual(KOR_BASLIKLAR[:3], ["domain", "legal_name", "meslek"])
+
+    def test_etiket_okuma_iki_bicimi_de_kabul_eder(self):
+        import csv as _csv
+        import tempfile
+        for sutun in ("insan_karari", "etiket"):
+            with tempfile.TemporaryDirectory() as d:
+                yol = Path(d) / "x.csv"
+                with yol.open("w", encoding="utf-8-sig", newline="") as f:
+                    w = _csv.DictWriter(f, fieldnames=["domain", "meslek", sutun, "not"])
+                    w.writeheader()
+                    w.writerow({"domain": "A.DE", "meslek": "berufskraftfahrer", sutun: "Evet", "not": "n"})
+                    w.writerow({"domain": "b.de", "meslek": "elektroingenieur", sutun: "hayır", "not": ""})
+                    w.writerow({"domain": "c.de", "meslek": "marketing_manager", sutun: "", "not": ""})
+                okunan = _oku_etiketler(yol)
+                self.assertEqual(len(okunan), 2, f"{sutun}: bos satir olcume girmemeli")
+                self.assertEqual(okunan[("a.de", "berufskraftfahrer")]["etiket"], "evet")
+                self.assertEqual(okunan[("b.de", "elektroingenieur")]["etiket"], "hayir")
 
 
 if __name__ == "__main__":
