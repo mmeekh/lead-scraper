@@ -62,3 +62,17 @@ Python 3.10+ and `requests`. No headless browser, no paid API — runs comfortab
 ## Responsible use
 
 This tool reads business contact details that organisations publish on their own websites, plus openly licensed OpenStreetMap data. Use it accordingly: respect each site's terms, keep request rates low, and handle collected data under the applicable privacy rules (GDPR in the EU) — including honouring opt-out requests. It is not intended for bulk unsolicited commercial mail.
+
+## Yerel doğrulama modu (`verify`)
+
+Şirketleri **önceden ve çevrimdışı** doğrulayan ayrı bir alt komut: şirketin kendi sitesinden
+5–8 sayfa (Impressum dahil) çekilir, iki bağımsız **yerel** model (Ollama) aynı soruya kanıtlı
+JSON üretir, ikisi uzlaşınca kayıt "doğrulanmış" sayılır. Ücretli/bulut API kullanılmaz;
+ayrı veritabanı (`verify/verify.sqlite3`), mevcut komutlara ve `leads.sqlite3`'e dokunulmaz.
+
+```bash
+python scrape.py verify run --limit 100     # aday -> cekim -> hakem -> uzlasma -> export
+python scrape.py verify stats
+```
+
+Ayrıntı: [verify/README.md](verify/README.md) · ölçüm raporu: [verify/RAPOR.md](verify/RAPOR.md)
