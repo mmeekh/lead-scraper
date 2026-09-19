@@ -43,12 +43,8 @@ def legal_name_bul(impressum_metin: str) -> str:
         m = BICIM_RE.search(satir)
         if not m:
             continue
-        aday = satir
-        # satirda adres de varsa adi adresten once kes
-        adres_m = ADRES.search(aday)
-        if adres_m and adres_m.start() > m.end():
-            aday = aday[:adres_m.start()]
-        aday = temizle(aday)
+        # ad hukuki bicimde biter: sonrasini (adres, telefon, kisi) kes
+        aday = temizle(satir[:m.end()])
         # "Musterfirma GmbH Musterstr. 1" gibi artiklari at
         if 3 <= len(aday) <= 100:
             return aday
