@@ -68,7 +68,13 @@ Kesilirse aynı komut tekrar çalıştırılır; biten iş tekrarlanmaz.
 
 96 kayıt yargılandı (4 alan adı hiç yanıt vermedi): **9 evet · 69 hayır · 18 belirsiz**.
 Çekim 99 alan adı / 4 dk; hakem A 5,8 sn/kayıt (9,8 GB VRAM), hakem B 19,3 sn/kayıt
-(%85 GPU / %15 CPU). Ayrıntı ve isabet incelemesi: [RAPOR.md](RAPOR.md).
+(%85 GPU / %15 CPU).
+
+**İnsan etiketli ölçüm (96 satır, kör):** listelenen satırlarda **%88,9 isabet** (9 listelenen,
+8 doğru), kapsama %37,5. Aynı veride A tek başına %72,0, B tek başına %58,3 → uzlaşma kuralı
+**+17 puan**. Hedef %95 tutturulamadı (tek hata: `maxipress.de`); 9 satırlık örneklemde güven
+aralığı %56,5–98,0, yani ≥%95 iddiası için ~60–100 listelenen satır gerekir.
+Ayrıntı: [RAPOR.md §17](RAPOR.md).
 
 ## Uzlaşma kuralı
 

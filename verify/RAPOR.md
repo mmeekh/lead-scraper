@@ -339,9 +339,83 @@ Veritabanında: 100 alan adı, 421 sayfa, 284 yargı, 96 doğrulanmış kayıt.
 `verify/verified.jsonl` VPS'e gidecek biçimde hazır (96 kayıt; 9'u `evet`).
 Yedekler: `verify-v1-yedek.sqlite3` (istem v1), `-v2-`, `-v3-`, `-v4-elektro-` (keskin tanım deneyi).
 
+## 17. İNSAN ETİKETLİ ÖLÇÜM — gerçek sonuç (20 Eyl 2026)
+
+Emin 96 satırın tamamını **kör** kopyada etiketledi (`altin-kume-kor.csv`: hakem kararı, uzlaşma
+ve alıntı görünmüyordu). Ölçüm: `verify score --etiket verify/altin-kume-etiketli.csv`.
+
+| ölçü | değer |
+|---|---|
+| etiketli satır | 96 (96'sı eşleşti, eşleşmeyen 0) |
+| **listelenen satırda isabet** | **%88,9** (9 listelenen, 8 doğru) |
+| hedef | %95 — **tutturulamadı** (1 hata) |
+| kapsama | insan 24 satıra "evet" dedi, hat 9'unu listeledi → **%37,5** |
+| %95 güven aralığı | **%56,5 – %98,0** (9 satır çok küçük örneklem) |
+
+**Meslek kırılımı:** berufskraftfahrer 2/2 (%100) · marketing_manager 3/3 (%100) ·
+**elektroingenieur 3/4 (%75)** — tek hata yine burada.
+
+**Tek yanlış:** `maxipress.de` — insan "hayır" dedi. Bu, §13'te önceden işaret ettiğim kayıt:
+alıntıları (*"Steuer- und Regelgeräte"*, *"eigener Hydraulik und Elektrik"*) **sattığı makinenin**
+özellikleri, firmanın kendi mühendisliği değil. Kendi incelememde de tek kalan yanlış buydu;
+insan etiketi bunu doğruladı. (İncelememde "sınırda" dediğim `cml.fraunhofer.de`'ye insan "evet"
+demiş — yani ben hattan daha sert davranmışım.)
+
+### Uzlaşma kuralı gerçekten işe yarıyor (ölçüldü)
+
+| yapılandırma | listelenen | doğru | isabet | %95 güven aralığı |
+|---|---|---|---|---|
+| A `gemma4:12b` tek başına | 25 | 18 | %72,0 | 52,4 – 85,7 |
+| B `qwen2.5:14b` tek başına | 24 | 14 | %58,3 | 38,8 – 75,5 |
+| **uzlaşma + alıntı + geçit** | **9** | **8** | **%88,9** | 56,5 – 98,0 |
+
+İki modelin uzlaşması en iyi tek modele göre **+17 puan** isabet getiriyor. Tasarımın temel
+iddiası bu; artık insan etiketiyle ölçülmüş durumda.
+
+### Sıkılık / kapsam eğrisi (aynı veriden, ölçülmüş)
+
+İki model de "evet" dediği halde listelenmeyen 7 kayıt var; hangi kuralın elediği ayrıştırıldı:
+
+| gevşetilen kural | listelenen | doğru | isabet | kapsama (insan evet 24) |
+|---|---|---|---|---|
+| **mevcut** (iki alıntı da doğrulanmalı + geçit) | 9 | 8 | **%88,9** | %33,3 |
+| alıntı kuralı gevşek (bir taraf yeterli) | 14 | 12 | %85,7 | %50,0 |
+| kanıt geçidi kapalı | 11 | 9 | %81,8 | %37,5 |
+
+- Alıntı doğrulaması 5 kaydı düşürdü; 4'ü insan etiketine göre **doğruydu**
+  (assenmacher.net, lessmueller.de, oekom.de, simple.de) — modelin o koşudaki alıntısı birebir
+  değildi, kararı değil. Bu kuralı gevşetmek kapsamı %33 → %50 çıkarıyor, isabeti 3 puan düşürüyor.
+- Kanıt geçidi 2 kaydı düşürdü: `bio-fed.com` (insan: **evet** → geçit yanıldı) ve
+  `wassermann-dental.com` (insan: belirsiz → doğru eleme). Yani geçit net kazanç değil;
+  bir doğruyu da eliyor.
+
+### Neden %95 "kanıtlanamaz" — istatistik
+
+9 listelenen satırda tek hata isabeti 11 puan düşürüyor; güven aralığının alt sınırı %56.
+Bir yapılandırmanın ≥%95 olduğunu **göstermek** için listelenen satır sayısı büyümeli:
+
+| listelenen satır | 1 hata varsa isabet | güven aralığı alt sınırı |
+|---|---|---|
+| 20 | %95,0 | %76,4 |
+| 40 | %97,5 | %87,1 |
+| 60 | %98,3 | %91,1 |
+| 100 | %99,0 | %94,6 |
+
+Yani "≥%95" iddiası için ~60–100 listelenen satırın etiketlenmesi gerekir; bu da ~600–1 000 alan
+adlık bir koşu demek (mevcut listeleme oranı %9). Bu koşunun verdiği şey: **hat %88,9 ölçüldü,
+en iyi tek modelden 17 puan iyi, ve kalan hatanın sınıfı tek ve tarifli.**
+
+### Sıradaki tek somut iş
+
+`maxipress.de` sınıfı hata: ürün özelliğini firmanın kendi işi sanmak. Kanıt geçidine ikinci
+koşul eklenebilir — alıntı, firmayı özne yapan bir fiile bağlı olmalı (*"wir entwickeln",
+"wir konstruieren", "unsere Ingenieure", "entwickelt das Unternehmen"*). Bu koşulun bu veri
+üzerindeki etkisi ölçülmeden açılmamalı: `ing-buero-sommer.de` gibi fiilsiz ama doğru kayıtları
+(*"Elektroplanung · Lichtplanung · KNX"*) düşürme riski var.
+
 ---
 
-# ⏳ Etiket bekleniyor — tek komut
+# ✅ Etiketler geldi — ölçüm yapıldı (§17)
 
 `verify/altin-kume-kor.csv` **kör** kopyadır: içinde hakem kararı, uzlaşma ya da alıntı **yoktur**;
 yalnız `domain`, `legal_name`, `meslek`, `site_linki`, `hakkinda_linki` ve boş `insan_karari` +
@@ -353,8 +427,8 @@ yalnız `domain`, `legal_name`, `meslek`, `site_linki`, `hakkinda_linki` ve boş
 | `elektroingenieur` | Bu şirket **kendi bünyesinde** Ingenieur Elektrotechnik çalıştırır mı? |
 | `marketing_manager` | Bu şirket **kendi bünyesinde** Marketing Manager çalıştırır mı? |
 
-`insan_karari` sütununa **evet / hayir / belirsiz** yaz (boş bırakılan satır ölçüme girmez).
-Bitince tek komut:
+`insan_karari` sütununa **evet / hayir / belirsiz** yazılır (boş bırakılan satır ölçüme girmez).
+Emin 96 satırın tamamını etiketledi; sonuç §17'de. Ölçümü tekrarlamak için:
 
 ```
 python scrape.py verify score --etiket verify/altin-kume-kor.csv
@@ -364,5 +438,6 @@ python scrape.py verify score --etiket verify/altin-kume-kor.csv
 tek başına isabeti, yanlış listelenenler ve kaçırılanlar (domain listesiyle). Eşleştirme
 `domain` + `meslek` üzerinden yapılır; kör CSV'de sütun sırası değişse de çalışır.
 
-Hedef: listelenen satırlarda ≥ %95. Bu sayı gelmeden hiçbir yere "%95" yazılmamalı —
-rapordaki tüm isabet rakamları benim kanıt incelememdir, insan etiketi değildir.
+Etiketli dosya: `verify/altin-kume-etiketli.csv` (git dışında; sürümlemek istersen
+`git add -f verify/altin-kume-etiketli.csv`). Sonuç: **%88,9 isabet, %37,5 kapsama** (§17).
+Hedef %95 tutturulamadı; neden ve ne gerektiği §17'de.

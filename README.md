@@ -75,4 +75,6 @@ python scrape.py verify run --limit 100     # aday -> cekim -> hakem -> uzlasma 
 python scrape.py verify stats
 ```
 
-Ayrıntı: [verify/README.md](verify/README.md) · ölçüm raporu: [verify/RAPOR.md](verify/RAPOR.md)
+İnsan etiketli 96 satırlık kör ölçümde listelenen satırlarda **%88,9 isabet** (tek modelle %72 /
+%58; uzlaşma +17 puan). Ayrıntı: [verify/README.md](verify/README.md) ·
+ölçüm raporu: [verify/RAPOR.md](verify/RAPOR.md)
