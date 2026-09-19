@@ -12,6 +12,10 @@ from .config import MODEL_A, MODEL_B, PROMPT_VERSION
 from .db import db, judgments_of, pages_of, read_page_text, save_verified, set_status
 from .impressum import ad_celisiyor_mu, display_name, legal_name_bul
 
+MESLEK_ANAHTAR = {m["id"]: m.get("beleg_anahtarlar", []) for m in
+                  json.loads((__import__("pathlib").Path(__file__).parent / "meslekler.json")
+                             .read_text(encoding="utf-8"))["meslekler"]}
+
 ILAN_RE = re.compile(r"^.{6,120}$")
 ILAN_ISARET = re.compile(r"\(\s*[mwdx]\s*[/|]\s*[mwdx]\s*([/|]\s*[mwdx]\s*)?\)|\bm/w/d\b|"
                          r"\bgesucht\b|\bin (voll|teil)zeit\b|\bausbildung (zum|zur|als)\b|\bstellenangebot\b", re.I)
@@ -34,6 +38,16 @@ def job_ads_cikar(karriere_metin: str, url: str) -> list[dict]:
         if len(ilanlar) >= 20:
             break
     return ilanlar
+
+
+def kanit_gecidi(kanitlar: list[str], anahtarlar: list[str]) -> bool:
+    """Meslek kaydi anahtar listesi tanimladiysa, dogrulanmis alintilardan en az biri
+    o anahtarlardan birini icermeli. Modelin 'genel muhendislik' sozcugune dayanip
+    yanlis meslek atamasini deterministik olarak keser (istemle cozulemeyen hata sinifi)."""
+    if not anahtarlar:
+        return True
+    havuz = " ".join(kanitlar).lower()
+    return any(a.lower() in havuz for a in anahtarlar)
 
 
 def uzlas(a: dict | None, b: dict | None) -> tuple[str, str]:
@@ -70,6 +84,12 @@ def isle(sadece_yeni: bool = True) -> dict:
         if b:
             b["quotes"] = json.loads(b["quotes_json"] or "[]")
         karar, agreement = uzlas(a, b)
+        # deterministik kanit gecidi: 'evet' icin alintilar meslegin anahtar kelimesini tasimali
+        anahtarlar = MESLEK_ANAHTAR.get(meslek, [])
+        if karar == "evet" and anahtarlar:
+            alintilar = [q for j in (a, b) if j for q in json.loads(j["quotes_json"] or "[]")]
+            if not kanit_gecidi(alintilar, anahtarlar):
+                karar, agreement = "belirsiz", "one"
 
         sayfalar = pages_of(conn, domain)
         tur_url = {p["tur"]: p["url"] for p in sayfalar}

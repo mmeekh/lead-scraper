@@ -11,7 +11,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from verify.consensus import job_ads_cikar, uzlas
+from verify.consensus import job_ads_cikar, kanit_gecidi, uzlas
 from verify.impressum import ad_celisiyor_mu, display_name, legal_name_bul
 from verify.judge import alintilari_dogrula
 
@@ -93,6 +93,23 @@ class TuzelAd(unittest.TestCase):
         self.assertTrue(ad_celisiyor_mu("dubb AG", "Motorradvermietung Hamburg"))
         self.assertFalse(ad_celisiyor_mu("Johann Wunder GmbH", "Johann Wunder"))
         self.assertFalse(ad_celisiyor_mu("", "herhangi"))
+
+
+class KanitGecidi(unittest.TestCase):
+    anahtar = ["elektr", "steuerung", "sensor", "antrieb"]
+
+    def test_anahtar_yoksa_gecer(self):
+        self.assertTrue(kanit_gecidi(["beliebiger Text"], []))
+
+    def test_elektrik_kaniti_varsa_gecer(self):
+        self.assertTrue(kanit_gecidi(["Software, Konstruktion, Elektronik oder Laseroptik"], self.anahtar))
+
+    def test_genel_muhendislik_sozcugu_gecmez(self):
+        self.assertFalse(kanit_gecidi(
+            ["Our research and development department with its own in-house laboratory"], self.anahtar))
+
+    def test_buyuk_kucuk_harf_duyarsiz(self):
+        self.assertTrue(kanit_gecidi(["Zuverlaessige STEUERUNG"], self.anahtar))
 
 
 class Ilanlar(unittest.TestCase):

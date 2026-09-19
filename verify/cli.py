@@ -41,8 +41,10 @@ def cmd_judge(args) -> None:
     conn = db()
     satirlar = [dict(r) for r in conn.execute(
         # 'tamam' da dahil: yeni bir modelle yeniden yargilamak mumkun olsun
-        "SELECT * FROM domains WHERE status IN ('cekildi','yargilandi','tamam') ORDER BY domain LIMIT ?",
-        (args.limit,)).fetchall()]
+        "SELECT * FROM domains WHERE status IN ('cekildi','yargilandi','tamam') "
+        + ("AND meslek = ? " if getattr(args, "meslek", "") else "")
+        + "ORDER BY domain LIMIT ?",
+        ((args.meslek, args.limit) if getattr(args, "meslek", "") else (args.limit,))).fetchall()]
     conn.close()
     if not satirlar:
         print(json.dumps({"islenen": 0, "not": "cekilmis alan adi yok"}, ensure_ascii=False))
@@ -184,6 +186,7 @@ def ekle(sub) -> None:
     q = vs.add_parser("judge", help="iki modeli sirayla kosar")
     q.add_argument("--limit", type=int, default=100)
     q.add_argument("--model", default="", choices=["", "A", "B"])
+    q.add_argument("--meslek", default="", help="yalniz bu meslek kaydini yargila")
     q.add_argument("--yeniden", action="store_true", help="mevcut yargilari da yenile")
     q.set_defaults(func=cmd_judge)
 

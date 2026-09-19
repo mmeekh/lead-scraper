@@ -239,7 +239,57 @@ Ingenieurbüro genügen nicht."* Bu koşudaki 2 yanlışın ikisi de bu sınırl
 (plastik Ar-Ge, makine bayisi). Bu kayıt **bilerek değiştirilmedi**: ölçüm ile veri
 tutarsız kalmasın.
 
-## 12. Şu anki durum ve devam
+## 12. Deney: `elektroingenieur` tanımını keskinleştirmek (sonuç: yetmedi)
+
+§7'deki hataların hepsi tek meslek kaydındaydı, o yüzden öneriyi hemen denedim:
+`meslekler.json`'daki `elektroingenieur` kaydına "kanıt somut bir elektrik/elektronik
+öğesi adlandırmalı; Entwicklung/Konstruktion/Forschung gibi genel sözcükler yetmez"
+(`beleg_pflicht_de`) kuralı eklendi ve o 35 alan adı iki modelle yeniden yargılandı (14 dk).
+
+| | v3 (önce) | keskin tanım (sonra) |
+|---|---|---|
+| listelenen (toplam) | 11 | 10 |
+| listelenen elektro | 6 | 5 |
+| benim değerlendirmemde yanlış olanlar | bio-fed, maxipress | **ikisi de kaldı** |
+
+**Sonuç: istem/tanım yoluyla çözülmedi.** Kaybedilen kayıt (lessmueller) tanım yüzünden değil,
+B'nin alıntılarının o koşuda birebir olmamasından düştü. Yani bu hata sınıfı modelin
+muhakemesinde, sözcüklerde değil.
+
+## 13. Deterministik kanıt geçidi (işe yarayan düzeltme)
+
+İstem yerine koda konan kural: meslek kaydı `beleg_anahtarlar` listesi tanımlıyorsa,
+"evet" için **doğrulanmış alıntılardan en az biri** o anahtarlardan birini içermeli
+(`consensus.kanit_gecidi`). Model çağrısı gerektirmez, saniyeler içinde yeniden hesaplanır.
+
+| ölçü | v3 | v3 + geçit |
+|---|---|---|
+| listelenen | 11 | **8** |
+| incelememde doğru | 7 | **6** |
+| sınırda | 2 | 1 |
+| **yanlış** | **2** | **1** |
+| katı isabet | %64 | **%75** (sınırda doğru sayılırsa %87,5) |
+
+Geçidin tam olarak ne yaptığı (ölçüldü): `bio-fed.com` elendi — alıntıları *"research and
+development department"*, *"engineering department"*; elektrik/elektronik öğesi yok → doğru eleme.
+`wassermann-dental.com` (sınırda) elendi — *"Konstruktion und Produktion"*, *"Feinmechanik"*.
+`lessmueller.de` ve `assenmacher.net` ise geçitten geçiyordu, onları alıntı doğrulama düşürdü.
+
+**Kalan tek yanlış:** `maxipress.de` — alıntılarında *"Steuer- und Regelgeräte"*, *"eigener
+Hydraulik und Elektrik"* geçiyor, ama bunlar **sattığı makinenin** özellikleri; firma üretici
+değil bayi/servis. Bunu ayırmak için kanıtın *"wir entwickeln/konstruieren"* gibi birinci tekil
+bir fiille bağlanması gerekir — sıradaki tur için somut bir fikir.
+
+**İsabet gelişimi (hepsi benim kanıt incelemem, insan etiketi değil):**
+
+| yapılandırma | listelenen | doğru | katı isabet |
+|---|---|---|---|
+| A tek başına | 24 | 13 | %54 |
+| A × B(14B) v2 istemi | 2 | 2 | %100 (örneklem 2) |
+| A × B(14B) v3 istemi | 11 | 7 | %64 |
+| **A × B(14B) v3 + kanıt geçidi** | **8** | **6** | **%75** |
+
+## 14. Şu anki durum ve devam
 
 Çalışan komut dizisi (hepsi kaldığı yerden sürer):
 
@@ -254,8 +304,12 @@ python scrape.py verify score --in verify/altin-kume.csv
 ```
 
 Veritabanında: 100 alan adı, 421 sayfa, 276 yargı (3 model yapılandırması), 92 doğrulanmış kayıt.
-`verify/verified.jsonl` VPS'e gidecek biçimde hazır (92 kayıt; 11'i `evet`).
-`verify/verify-v1-yedek.sqlite3` ve `verify-v2-yedek.sqlite3` önceki istem sürümlerinin yedeği.
+`verify/verified.jsonl` VPS'e gidecek biçimde hazır (92 kayıt; **8'i `evet`**, 66 `hayır`, 18 `belirsiz`).
+Meslek kırılımı (evet): berufskraftfahrer 2, elektroingenieur 3, marketing_manager 3.
+17 kayıtta iş ilanı başlığı, 14 kayıtta çalışan sayısı ipucu çıkarıldı.
+Yedekler: `verify-v1-yedek.sqlite3` (istem v1), `verify-v2-yedek.sqlite3` (v2),
+`verify-v3-yedek.sqlite3` (v3), `verify-v4-elektro-yedek.sqlite3` (keskin tanım deneyi).
+Testler: `python verify/test_verify.py` — 23 test, ağ/model gerektirmez.
 
 **Senin sıradaki adımın:** `verify/altin-kume.csv`'deki `etiket` sütununu doldur (evet/hayir/belirsiz),
 `verify score` çalıştır. O sayı gelmeden "%95" yazılmamalı — §8'deki rakamlar benim incelemem,
