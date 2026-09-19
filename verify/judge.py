@@ -14,6 +14,7 @@ import requests
 from .config import (EVIDENCE_CHARS, EVIDENCE_PER_PAGE, MODEL_TIMEOUT_S, NUM_CTX,
                      OLLAMA_URL, PROMPT_VERSION)
 from .db import read_page_text
+from .istemler import SISTEM_A, SISTEM_B, kullanici_a, kullanici_b
 
 SEMA = {
     "type": "object",
@@ -29,29 +30,6 @@ SEMA = {
     },
     "required": ["decision", "evidence_type", "quotes", "reason", "legal_name", "activity_summary"],
 }
-
-SISTEM_A = (
-    "Du bist ein Recruiting-Analyst, der deutsche Firmen-Websites liest. "
-    "Stuetze dich AUSSCHLIESSLICH auf den gegebenen Text; rate nicht und nutze kein Weltwissen ueber die Firma. "
-    "Frage: Ist es plausibel, dass diese Firma Menschen in diesem Beruf IM EIGENEN HAUS beschaeftigt? "
-    "Eine Agentur oder ein Dienstleister, der diese Leistung selbst erbringt, beschaeftigt den Beruf "
-    "(Werbeagentur -> Marketing). Eine Firma, die das Produkt nur verkauft oder vermittelt, ist weder "
-    "Hersteller noch Anwender. Ein Branchenwort allein ist KEIN Beweis. "
-    "Zitate kopierst du WORTWOERTLICH aus dem Text. Wenn der Text nicht reicht: decision = unclear. "
-    "Antworte nur mit JSON nach dem Schema."
-)
-
-SISTEM_B = (
-    "Du pruefst Belege. Arbeitsweise, in dieser Reihenfolge: "
-    "(1) Fasse in einem Satz zusammen, was die Firma laut Text TUT. "
-    "(2) Pruefe, ob der Text zeigt, dass diese Taetigkeit eigenes Personal in dem genannten Beruf erfordert "
-    "oder eine Stellenanzeige dafuer existiert. "
-    "(3) Entscheide. Nur der Text zaehlt, kein Vorwissen, keine Vermutung. "
-    "Handel/Vermittlung/Verkauf eines Produkts beweist NICHT, dass die Firma den Beruf ausuebt; "
-    "ein Dienstleister, der die Leistung selbst erbringt, beschaeftigt den Beruf sehr wohl. "
-    "Im Zweifel: unclear. Belege sind woertliche Zitate aus dem Text. Ausgabe: nur JSON nach Schema."
-)
-
 
 def kanit_metni(conn, domain: str, sayfalar) -> tuple[str, dict[str, str]]:
     """Sayfa turlerine gore paylastirilmis, toplamda EVIDENCE_CHARS'i asmayan kanit."""
@@ -73,43 +51,6 @@ def kanit_metni(conn, domain: str, sayfalar) -> tuple[str, dict[str, str]]:
         toplam += len(kirpik)
         parcalar.append(f"### SEITE [{p['tur']}] {p['url']}\n{kirpik}")
     return "\n\n".join(parcalar), ham
-
-
-def kullanici_istemi_a(meslek: dict, ad_adaylari: list[str], kanit: str) -> str:
-    return (
-        f"BERUF: {meslek['name_de']}\n"
-        f"DEFINITION: {meslek['definition_de']}\n"
-        f"SYNONYME: {', '.join(meslek['synonyms_de'])}\n"
-        f"BESCHAEFTIGT DIESEN BERUF typischerweise: {meslek['employs_yes']}\n"
-        f"BESCHAEFTIGT IHN NICHT: {meslek['employs_no']}\n\n"
-        f"FIRMENNAME (Kandidaten, koennen falsch sein): {' | '.join(a for a in ad_adaylari if a) or 'unbekannt'}\n\n"
-        f"SEITEN DER FIRMA:\n{kanit}\n\n"
-        "Aufgabe: Entscheide (yes/no/unclear), ob diese Firma den genannten Beruf im eigenen Haus beschaeftigt. "
-        "evidence_type: job_ad = konkrete Stellenanzeige, own_function = Text zeigt eigene Funktion/Abteilung/"
-        "Ausstattung, activity = Taetigkeit erfordert den Beruf zwingend, none = kein Beleg. "
-        "legal_name: die vollstaendige Firmierung aus dem Impressum (mit GmbH/AG/e.K. usw.), sonst \"\". "
-        "activity_summary: 1-2 Saetze, was die Firma macht. size_hint: Mitarbeiterzahl-Bereich oder unbekannt. "
-        "quotes: bis zu 3 woertliche Belegstellen aus dem obigen Text."
-    )
-
-
-def kullanici_istemi_b(meslek: dict, ad_adaylari: list[str], kanit: str) -> str:
-    return (
-        f"MATERIAL (Auszuege der Firmenwebsite):\n{kanit}\n\n"
-        f"--- Ende Material ---\n"
-        f"Firmenname laut Verzeichnis (unsicher): {' | '.join(a for a in ad_adaylari if a) or 'unbekannt'}\n"
-        f"ZU PRUEFENDER BERUF: {meslek['name_de']} — {meslek['definition_de']}\n"
-        f"Andere Bezeichnungen: {', '.join(meslek['synonyms_de'])}\n"
-        f"Solche Betriebe haben dieses Personal: {meslek['employs_yes']}\n"
-        f"Solche Betriebe haben es nicht: {meslek['employs_no']}\n\n"
-        "Beantworte anhand des Materials: Beschaeftigt dieser Betrieb selbst Personal in diesem Beruf? "
-        "decision: yes nur bei klarem Beleg im Material, no wenn das Material dagegen spricht, sonst unclear. "
-        "evidence_type: job_ad / own_function / activity / none. "
-        "legal_name: Firmierung aus dem Impressum inkl. Rechtsform, sonst \"\". "
-        "activity_summary: was der Betrieb laut Material tut (1-2 Saetze). "
-        "size_hint: 1-9 / 10-49 / 50-249 / 250+ / unbekannt. "
-        "quotes: hoechstens 3 exakte Textstellen aus dem Material, die deine Entscheidung tragen."
-    )
 
 
 def _normalize(s: str) -> str:
@@ -168,7 +109,7 @@ def sor(model: str, sistem: str, kullanici: str) -> tuple[dict, int]:
 def yargila(model: str, rol: str, meslek: dict, ad_adaylari: list[str], kanit: str,
             ham_sayfalar: dict[str, str]) -> dict:
     sistem = SISTEM_A if rol == "A" else SISTEM_B
-    kullanici = (kullanici_istemi_a if rol == "A" else kullanici_istemi_b)(meslek, ad_adaylari, kanit)
+    kullanici = (kullanici_a if rol == "A" else kullanici_b)(meslek, ad_adaylari, kanit)
     j, ms = sor(model, sistem, kullanici)
     quotes = [q for q in (j.get("quotes") or []) if isinstance(q, str)][:3]
     dogru, tekil = alintilari_dogrula(quotes, ham_sayfalar)

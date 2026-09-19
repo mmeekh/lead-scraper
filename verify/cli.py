@@ -40,7 +40,8 @@ def cmd_judge(args) -> None:
     meslekler = _meslekler()
     conn = db()
     satirlar = [dict(r) for r in conn.execute(
-        "SELECT * FROM domains WHERE status IN ('cekildi','yargilandi') ORDER BY domain LIMIT ?",
+        # 'tamam' da dahil: yeni bir modelle yeniden yargilamak mumkun olsun
+        "SELECT * FROM domains WHERE status IN ('cekildi','yargilandi','tamam') ORDER BY domain LIMIT ?",
         (args.limit,)).fetchall()]
     conn.close()
     if not satirlar:

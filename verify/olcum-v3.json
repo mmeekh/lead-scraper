@@ -1,0 +1,116 @@
+{
+  "model_a": "gemma4:12b-it-qat",
+  "model_b": "qwen2.5:14b-instruct-q4_K_M",
+  "istem": "v3-2026-09-19",
+  "num_ctx": 8192,
+  "cekim": {
+    "alan_adi": 100,
+    "durum": {
+      "cekilemedi": 4,
+      "eksik": 4,
+      "tamam": 92
+    },
+    "sayfa": 421,
+    "sayfa_turu": {
+      "home": 96,
+      "impressum": 88,
+      "kontakt": 73,
+      "leistungen": 62,
+      "ueber": 61,
+      "karriere": 41
+    },
+    "ort_karakter": 3720.0,
+    "sayfa_basi_alan_adi": 4.4,
+    "impressum_orani": 91.7
+  },
+  "hakem": {
+    "gemma4:12b-it-qat": {
+      "yargi": 92,
+      "karar": {
+        "no": 55,
+        "unclear": 13,
+        "yes": 24
+      },
+      "kanit_turu": {
+        "none": 68,
+        "own_function": 17,
+        "activity": 7
+      },
+      "alinti_dogrulanan": 63,
+      "alinti_dogrulanan_yuzde": 68.5,
+      "ort_gecikme_ms": 5583.0,
+      "toplam_sure_dk": 8.6
+    },
+    "qwen2.5:14b-instruct-q4_K_M": {
+      "yargi": 92,
+      "karar": {
+        "no": 61,
+        "unclear": 6,
+        "yes": 25
+      },
+      "kanit_turu": {
+        "activity": 90,
+        "own_function": 2
+      },
+      "alinti_dogrulanan": 65,
+      "alinti_dogrulanan_yuzde": 70.7,
+      "ort_gecikme_ms": 18623.0,
+      "toplam_sure_dk": 28.6
+    }
+  },
+  "uyum": {
+    "cift": 92,
+    "ayni_karar": 68,
+    "ayni_karar_yuzde": 73.9,
+    "dagilim": {
+      "A=yes|B=yes": 15,
+      "A=yes|B=no": 6,
+      "A=yes|B=unclear": 3,
+      "A=no|B=yes": 3,
+      "A=no|B=no": 51,
+      "A=no|B=unclear": 1,
+      "A=unclear|B=yes": 7,
+      "A=unclear|B=no": 4,
+      "A=unclear|B=unclear": 2
+    }
+  },
+  "uzlasma": {
+    "kayit": 92,
+    "karar": {
+      "hayir": 65,
+      "evet": 11,
+      "belirsiz": 16
+    },
+    "agreement": {
+      "both": 64,
+      "one": 28
+    },
+    "ilan_bulunan": 17,
+    "boyut_ipucu": 15,
+    "meslek_kirilim": {
+      "berufskraftfahrer": {
+        "hayir": 28,
+        "evet": 2,
+        "belirsiz": 1
+      },
+      "elektroingenieur": {
+        "hayir": 23,
+        "evet": 6,
+        "belirsiz": 5
+      },
+      "marketing_manager": {
+        "hayir": 14,
+        "belirsiz": 10,
+        "evet": 3
+      }
+    }
+  },
+  "ad_dogrulama": {
+    "impressum_sayfasi": 88,
+    "legal_name_cikarildi": 69,
+    "legal_name_yuzde": 78.4,
+    "hukuki_bicim_iceren": 64,
+    "havuz_adiyla_celiskili": 28,
+    "havuz_adi_atildi_yuzde": 40.6
+  }
+}

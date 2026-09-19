@@ -25,10 +25,10 @@ REFETCH_DAYS = 90
 # --- modeller (yerel; ucretli/bulut API yok)
 OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://127.0.0.1:11434")
 MODEL_A = os.environ.get("VERIFY_MODEL_A", "gemma4:12b-it-qat")
-MODEL_B = os.environ.get("VERIFY_MODEL_B", "qwen2.5:7b-instruct-q4_K_M")
+MODEL_B = os.environ.get("VERIFY_MODEL_B", "qwen2.5:14b-instruct-q4_K_M")
 NUM_CTX = int(os.environ.get("VERIFY_NUM_CTX", "8192"))
 MODEL_TIMEOUT_S = int(os.environ.get("VERIFY_MODEL_TIMEOUT", "300"))
-PROMPT_VERSION = "v1-2026-09-19"
+PROMPT_VERSION = "v3-2026-09-19"
 
 # hakeme giden toplam kanit metni (karakter). Alman metni ~3,5 karakter/token.
 EVIDENCE_CHARS = int(os.environ.get("VERIFY_EVIDENCE_CHARS", "16000"))

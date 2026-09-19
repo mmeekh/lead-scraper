@@ -1,0 +1,82 @@
+{
+  "model_a": "gemma4:12b-it-qat",
+  "model_b": "qwen2.5:7b-instruct-q4_K_M",
+  "istem": "v1-2026-09-19",
+  "num_ctx": 8192,
+  "cekim": {
+    "alan_adi": 100,
+    "durum": {
+      "cekilemedi": 4,
+      "eksik": 4,
+      "yargilandi": 92
+    },
+    "sayfa": 421,
+    "sayfa_turu": {
+      "home": 96,
+      "impressum": 88,
+      "kontakt": 73,
+      "leistungen": 62,
+      "ueber": 61,
+      "karriere": 41
+    },
+    "ort_karakter": 3720.0,
+    "sayfa_basi_alan_adi": 4.4,
+    "impressum_orani": 91.7
+  },
+  "hakem": {
+    "gemma4:12b-it-qat": {
+      "yargi": 92,
+      "karar": {
+        "no": 45,
+        "unclear": 12,
+        "yes": 35
+      },
+      "kanit_turu": {
+        "none": 57,
+        "own_function": 25,
+        "activity": 10
+      },
+      "alinti_dogrulanan": 71,
+      "alinti_dogrulanan_yuzde": 77.2,
+      "ort_gecikme_ms": 6188.0,
+      "toplam_sure_dk": 9.5
+    },
+    "qwen2.5:7b-instruct-q4_K_M": {
+      "yargi": 92,
+      "karar": {
+        "no": 9,
+        "unclear": 83
+      },
+      "kanit_turu": {
+        "none": 77,
+        "job_ad": 14,
+        "activity": 1
+      },
+      "alinti_dogrulanan": 70,
+      "alinti_dogrulanan_yuzde": 76.1,
+      "ort_gecikme_ms": 4852.0,
+      "toplam_sure_dk": 7.4
+    }
+  },
+  "uyum": {
+    "cift": 92,
+    "ayni_karar": 18,
+    "ayni_karar_yuzde": 19.6,
+    "dagilim": {
+      "A=yes|B=no": 1,
+      "A=yes|B=unclear": 34,
+      "A=no|B=no": 7,
+      "A=no|B=unclear": 38,
+      "A=unclear|B=no": 1,
+      "A=unclear|B=unclear": 11
+    }
+  },
+  "ad_dogrulama": {
+    "impressum_sayfasi": 88,
+    "legal_name_cikarildi": 69,
+    "legal_name_yuzde": 78.4,
+    "hukuki_bicim_iceren": 64,
+    "havuz_adiyla_celiskili": 28,
+    "havuz_adi_atildi_yuzde": 40.6
+  }
+}
