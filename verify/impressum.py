@@ -24,6 +24,7 @@ ADRES = re.compile(r"\b\d{5}\b|\b(str(aße|asse|\.)|weg|platz|allee|gasse|ring|c
 
 
 def temizle(ad: str) -> str:
+    ad = ad.replace("­", "").replace("​", "")   # yumusak tire / sifir genislikli bosluk
     ad = re.sub(r"\s+", " ", ad).strip(" -–—|:;,.\t")
     ad = re.sub(r"^(Firma|Fa\.)\s+", "", ad, flags=re.I)
     return ad.strip()
