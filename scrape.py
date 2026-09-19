@@ -482,6 +482,13 @@ def main() -> None:
     p = sub.add_parser("stats", help="durum ozeti")
     p.set_defaults(func=cmd_stats)
 
+    # yerel dogrulama modu (ayri paket, ayri DB: verify/verify.sqlite3)
+    try:
+        from verify.cli import ekle as verify_ekle
+        verify_ekle(sub)
+    except ImportError as e:  # verify bagimliliklari yoksa diger komutlar calismaya devam eder
+        print(f"not: verify modu yuklenemedi ({e})", file=sys.stderr)
+
     args = parser.parse_args()
     args.func(args)
 

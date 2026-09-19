@@ -10,3 +10,8 @@ __pycache__/
 *.py[cod]
 .venv/
 venv/
+
+# verify modu: cekilen sayfa metinleri ve ciktilar repoya girmez
+verify/pages/
+verify/*.jsonl
+verify/verify.sqlite3*

@@ -1,0 +1,33 @@
+{
+  "surum": "v1-2026-09-19",
+  "not": "Her kayitta 1 cumlelik Almanca tanim + 'kim istihdam eder / kim etmez' notu var. Bu not, modelin sektor-sozcugu tuzagina dusmesini engeller (docs/yerel-dogrulama-modu-2026-09-19.md §4).",
+  "meslekler": [
+    {
+      "id": "berufskraftfahrer",
+      "name_de": "Berufskraftfahrer/in (LKW, Klasse C/CE)",
+      "definition_de": "Faehrt gewerblich LKW oder Transporter und befoerdert Gueter im Nah- oder Fernverkehr; benoetigt Fuehrerschein Klasse C/CE und in der Regel eine Berufskraftfahrerqualifikation (BKF, Code 95).",
+      "synonyms_de": ["LKW-Fahrer", "Kraftfahrer", "Berufskraftfahrer", "Fahrer C/CE", "Kraftfahrer im Nahverkehr", "Fernfahrer", "Sattelzugfahrer"],
+      "employs_yes": "Speditionen, Transport- und Logistikunternehmen mit eigenem Fuhrpark, Kurier-/Paketdienste mit eigenen Fahrzeugen, Entsorgungsbetriebe, Baustofflieferanten und Getraenke-/Lebensmittelgrosshaendler mit eigener Auslieferung, Umzugsunternehmen, Betonwerke mit eigenen Mischern.",
+      "employs_no": "Autohaeuser, Kfz-Werkstaetten, Reifenhaendler, Autovermietungen, Tankstellen, Fahrschulen, Waschstrassen, Autoteile-Onlineshops, Taxizentralen als reine Vermittler, Logistikberatungen ohne Fahrzeuge und Speditionen, die ausschliesslich Fracht vermitteln (Frachtenboerse) ohne eigenen Fuhrpark.",
+      "sektorler": ["Otomotiv & Lojistik"]
+    },
+    {
+      "id": "elektroingenieur",
+      "name_de": "Ingenieur/in Elektrotechnik",
+      "definition_de": "Entwickelt, plant, berechnet oder projektiert elektrotechnische Anlagen, Maschinen, Steuerungen oder Elektronik (z. B. Schaltanlagen, Automatisierung, Antriebstechnik, Leistungselektronik) im eigenen Haus.",
+      "synonyms_de": ["Elektroingenieur", "Ingenieur Elektrotechnik", "Entwicklungsingenieur Elektronik", "Projektingenieur Elektrotechnik", "Hardwareentwickler", "Automatisierungsingenieur", "Konstrukteur Elektrotechnik"],
+      "employs_yes": "Maschinen- und Anlagenbauer, Elektronikhersteller, Automatisierungs- und Steuerungstechnikfirmen, Ingenieurbueros fuer Elektrotechnik, Energieversorger mit eigener Netzplanung, Schaltanlagenbauer, Hersteller von Mess- und Regeltechnik, Industriebetriebe mit eigener Entwicklungs- oder Instandhaltungsabteilung.",
+      "employs_no": "Reine Haendler und Distributoren elektrotechnischer Produkte, Elektro-Einzelhandel, Elektroinstallationsbetriebe im Handwerk ohne Planung/Entwicklung (dort arbeiten Elektriker/Elektroniker, keine Ingenieure), Hausmeisterdienste, Personalvermittler und Zeitarbeitsfirmen, die Ingenieure nur weitervermitteln.",
+      "sektorler": ["Sanayi & Mühendislik"]
+    },
+    {
+      "id": "marketing_manager",
+      "name_de": "Marketing Manager/in",
+      "definition_de": "Plant und steuert Marketing- und Kommunikationsmassnahmen (Kampagnen, Online-Marketing, Social Media, Content, Markenfuehrung) fuer das eigene Unternehmen oder als Dienstleistung fuer Kunden.",
+      "synonyms_de": ["Marketing Manager", "Online-Marketing-Manager", "Marketingreferent", "Social Media Manager", "Kommunikationsmanager", "Brand Manager", "Performance Marketing Manager"],
+      "employs_yes": "Werbe-, Kommunikations-, Digital- und PR-Agenturen, Marketing- und Medienberatungen, Verlage und Medienhaeuser mit eigener Vermarktung, Eventagenturen, groessere Unternehmen mit eigener Marketingabteilung (ab ca. 50 Mitarbeitenden), E-Commerce-Betreiber mit eigenem Online-Marketing.",
+      "employs_no": "Kleine Ein-Personen-Betriebe und Freiberufler ohne Angestellte, Kuenstler, Fotografen und Musiker als Einzelpersonen, Vereine ohne bezahltes Personal, Museen und Theater in oeffentlicher Traegerschaft ohne eigene Marketingstelle, reine Druckereien und Copyshops, Ladengeschaefte fuer Medienprodukte.",
+      "sektorler": ["Medya, Kültür & Etkinlik"]
+    }
+  ]
+}
