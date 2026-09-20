@@ -32,7 +32,7 @@ TUR_KURAL = [
                               r"flotte|technik|anlagen", re.I)),
     ("kontakt", re.compile(r"kontakt|contact|anfahrt|standort|ansprechpartner", re.I)),
 ]
-TUR_ONCELIK = ("impressum", "karriere", "leistungen", "ueber", "kontakt")
+TUR_ONCELIK = ("impressum", "karriere", "karriere2", "karriere3", "leistungen", "ueber", "kontakt")
 ATLA_UZANTI = re.compile(r"\.(pdf|jpe?g|png|gif|svg|webp|zip|docx?|xlsx?|pptx?|mp4|mp3|avi)(\?|$)", re.I)
 
 
@@ -96,6 +96,7 @@ async def _baglantilar(page, taban: str) -> dict[str, str]:
         return {}
     taban_host = kok((urlsplit(taban).hostname or "").replace("www.", ""))
     bulunan: dict[str, str] = {}
+    kariyer: list[str] = []          # ilan cikarimi icin en cok 3 kariyer sayfasi
     for href, metin in ham:
         if not href or href.startswith(("mailto:", "tel:", "javascript:", "#")):
             continue
@@ -113,11 +114,15 @@ async def _baglantilar(page, taban: str) -> dict[str, str]:
         aday = f"{p.scheme}://{p.netloc}{p.path}"
         yol_metin = f"{p.path} {metin}"
         for tur, kural in TUR_KURAL:
-            if tur in bulunan:
-                continue
             if kural.search(yol_metin):
-                bulunan[tur] = aday
+                if tur == "karriere":
+                    if aday not in kariyer and len(kariyer) < 3:
+                        kariyer.append(aday)
+                elif tur not in bulunan:
+                    bulunan[tur] = aday
                 break
+    for i, url in enumerate(kariyer):
+        bulunan["karriere" if i == 0 else f"karriere{i + 1}"] = url
     return bulunan
 
 

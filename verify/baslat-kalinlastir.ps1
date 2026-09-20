@@ -7,9 +7,11 @@ $repo = Split-Path -Parent $PSScriptRoot
 $py = Join-Path $repo '.venv\Scripts\python.exe'
 $ollama = "$env:LOCALAPPDATA\Programs\Ollama\ollama.exe"
 $kalin = Join-Path $PSScriptRoot 'kalinlastir.py'
+$ilan = Join-Path $PSScriptRoot 'ilan.py'
 $gorevler = @(
   @{ ad = 'Verify-Ollama';  exe = $ollama; arg = 'serve';                      gecikme = 'PT30S' },
   @{ ad = 'Verify-Cekici';  exe = $py;     arg = "`"$kalin`" cek";              gecikme = 'PT2M' },
+  @{ ad = 'Verify-Ilan';    exe = $py;     arg = "`"$ilan`" tara";              gecikme = 'PT2M' },
   @{ ad = 'Verify-Hakem';   exe = $py;     arg = "`"$kalin`" yargila";          gecikme = 'PT3M' }
 )
 foreach ($g in $gorevler) { Unregister-ScheduledTask -TaskName $g.ad -Confirm:$false -ErrorAction SilentlyContinue }
@@ -25,6 +27,7 @@ foreach ($g in $gorevler) {
 # sırayla başlat: önce Ollama, sonra işçiler
 Start-ScheduledTask -TaskName 'Verify-Ollama'; Start-Sleep 8
 Start-ScheduledTask -TaskName 'Verify-Cekici'; Start-Sleep 3
+Start-ScheduledTask -TaskName 'Verify-Ilan'; Start-Sleep 3
 Start-ScheduledTask -TaskName 'Verify-Hakem'
 Start-Sleep 5
 Get-ScheduledTask -TaskName 'Verify-*' | Select-Object TaskName, State | Format-Table -AutoSize

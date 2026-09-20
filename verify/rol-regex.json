@@ -1,0 +1,722 @@
+[
+ {
+  "ad": "shk",
+  "rol": "anlagenmechaniker|sanitar|\\bshk\\b|installateur|klempner|heizungsbau|gas- und wasser|tesisat|heizungs|lufttechnik|luftungs|rohrleitungsbauer",
+  "flags": ""
+ },
+ {
+  "ad": "elektro",
+  "rol": "elektroniker|elektriker|elektroinstall|(?<!ingenieur(?:\\/in|in)? (?:fur |der )?)elektrotechnik(?![- ]?ingenieur)|elektrik(?! ?muhendis)|elektroanlagen|energieanlagen",
+  "flags": ""
+ },
+ {
+  "ad": "metall",
+  "rol": "schweiss|kaynak|metallbau|schlosser|konstruktionsmechaniker|industriemechaniker|metallbearbeit|blechner|stahlbau|anlagenmechaniker(?!.*(sanitar|shk|heizung|klima))|rohrschlosser",
+  "flags": ""
+ },
+ {
+  "ad": "cnc",
+  "rol": "\\bcnc\\b|zerspan|dreher|fraser|werkzeugmechaniker|feinwerk|maschinenbediener",
+  "flags": ""
+ },
+ {
+  "ad": "maler",
+  "rol": "\\bmaler|(?<!fahrzeug|auto|kfz-|kfz )lackierer|stuckateur|boyaci|anstreicher|trockenbau",
+  "flags": ""
+ },
+ {
+  "ad": "holz",
+  "rol": "tischler|schreiner|holzmechaniker|marangoz|mobelbau|holztechnik",
+  "flags": ""
+ },
+ {
+  "ad": "dach",
+  "rol": "dachdecker|spengler|catici|bedachung",
+  "flags": ""
+ },
+ {
+  "ad": "bau",
+  "rol": "maurer|betonbauer|bauhelfer|bauarbeiter|strassenbau|tiefbau|hochbau|gerustbau|insaat isci|bauwerksmechaniker|kanalbau|pflasterer",
+  "flags": ""
+ },
+ {
+  "ad": "kfz",
+  "rol": "\\bkfz|kraftfahrzeug|mechatroniker(?!.*(kalte|klima))|automechan|autoelektr|oto tamir|nutzfahrzeug|zweirad|automobilkauf",
+  "flags": ""
+ },
+ {
+  "ad": "fahrer",
+  "rol": "(?:lkw|sattelzug|fernverkehr|nahverkehr|guterverkehr|klasse ce|klasse c\\b|c\\/ce|\\bce\\b|berufskraft|tonner|\\d+ ?t\\b)[^.]{0,60}(?<!stapler|bus|taxi|omnibus|gabelstapler|bahn|liefer|auslieferungs|lieferungs|bagger|baumaschinen|kran|rad|lok|zug|boots|schiffs|forklift|mitfahrer)fahrer|(?<!stapler|bus|taxi|omnibus|gabelstapler|bahn|liefer|auslieferungs|lieferungs|bagger|baumaschinen|kran|rad|lok|zug|boots|schiffs|forklift|mitfahrer)fahrer[^.]{0,60}(?:lkw|sattelzug|fernverkehr|nahverkehr|guterverkehr|klasse ce|klasse c\\b|c\\/ce|\\bce\\b|tonner|\\d+ ?t\\b)|kraftfahrer|\\blkw|(?<!otobus |taksi )\\bsofor(?!t)|driver",
+  "flags": ""
+ },
+ {
+  "ad": "lager",
+  "rol": "\\blager|stapler|kommission|logistik(?!dienstleistung|kauf)|warehouse|\\bdepo|forklift",
+  "flags": ""
+ },
+ {
+  "ad": "koch",
+  "rol": "\\bkoch\\b|kochin|\\bkuche|chef de|beikoch|jungkoch|asci|kuchenhilfe|kuchenchef|spuler|spulkraft|spulhilfe|bulasik|dishwash",
+  "flags": ""
+ },
+ {
+  "ad": "pizza",
+  "rol": "pizzab|pizzaci|pizzaiolo|pizzeria|pizza",
+  "flags": ""
+ },
+ {
+  "ad": "service",
+  "rol": "servicekraft|kellner|restaurantfach|barkeeper|barista|garson|waiter|servicemitarbeiter gastro|imbiss|schnellrestaurant|systemgastro|bufe|fast food|restaurantleit|restaurantmanag|gastronomieleit|f&b|food (&|and) beverage|restoran mud|bankett|banquet|veranstaltungsservice|eventservice|tagungsservice",
+  "flags": ""
+ },
+ {
+  "ad": "rezeption",
+  "rol": "rezeption|empfangsmitarbeiter|front office|hotelfach|reservier|reception|guest|hotelkauf|gastebetreu|gasteservice|guest service|misafir iliskileri|nachtempfang|empfangsleit|empfangschef|nachtportier|night audit|beherbergung|hoteldirekt|hotelleit|hotelmanag|hotelbetrieb|betriebsleiter hotel|otel mud|concierge|\\bportier|hotelpage|konsiyerj|housekeep|hausdame|hausdiener|zimmermadchen|roomboy|etagenservice|kat hizmet|hauswirtschaftsleit",
+  "flags": ""
+ },
+ {
+  "ad": "backer",
+  "rol": "\\bbacker|konditor|firinci|pastaci|backwaren",
+  "flags": ""
+ },
+ {
+  "ad": "fleischer",
+  "rol": "fleischer|metzger|kasap|schlachter|fleischverarbeit",
+  "flags": ""
+ },
+ {
+  "ad": "schneider",
+  "rol": "schneider\\/in|schneiderin|massschneider|anderungsschneider|damenschneider|herrenschneider|terzi|textil(?!ingenieur|technik)|tailor|modeschneider|bekleidungs",
+  "flags": ""
+ },
+ {
+  "ad": "naher",
+  "rol": "\\bnaher(?![a-z])|naherin|nahmaschin|industrienah|polsternah|dikis|dikisci|textilnah|sewing|nahkraft|nahhelfer|nahtechnik|konfektionar|polsterer|polsterin|sattler",
+  "flags": ""
+ },
+ {
+  "ad": "gartner",
+  "rol": "gartner|landschaftsgartner|galabau|bahcivan|florist|gardener|gartenbau|baumpfleg|forstwirt",
+  "flags": ""
+ },
+ {
+  "ad": "landwirt",
+  "rol": "landwirt|agrar|farmer|ciftci|tierwirt|winzer|imker|landmaschin|gemusebau|obstbau",
+  "flags": ""
+ },
+ {
+  "ad": "pflege",
+  "rol": "(?<!kinder|textil|heilerziehungs|entbindungs|kinderkranken)pflege(?!.*kinder)|(?<!kinder)krankenschwester|(?<!kinder)krankenpfleg|altenpfleg|gesundheits- und (?!kinder)|(?<!cocuk )hemsire|(?<!pediatric )nurse|pflegehelfer|pflegeassist|pflegefach|(?<!cocuk )bakici(?!.*cocuk)|yasli bakim|hasta bakim|betreuungskraft",
+  "flags": ""
+ },
+ {
+  "ad": "kinderkrankenpflege",
+  "rol": "kinderkrankenpfleg|kinderkrankenschwester|gesundheits- und kinderkranken|cocuk hemsire|padiatrische pflege|pediatric nurse|neonatolog|kinderintensiv",
+  "flags": ""
+ },
+ {
+  "ad": "kinder",
+  "rol": "erzieher|kinderpfleg|kindheitspadagog|tagesmutter|\\bkita\\b|kindergarten|cocuk bakici|anaokulu|sozialassistent|jugendbetreuer|kinderbetreu|babysit|kindermadchen|au pair",
+  "flags": ""
+ },
+ {
+  "ad": "lehrer",
+  "rol": "(?<!fahr|musik|gitarren|klavier|tanz|reit|ski|schwimm|sport|yoga|hunde|surf|segel|golf|tennis|gesangs|englisch|kunst|informatik|berufsschul|forderschul|sonderschul|deutsch|turkisch|nachhilfe|grundschul|gymnasial|realschul|gesamtschul)lehrer(?!(?:\\/in|in)? fur (turkisch|deutsch|musik|sport|englisch|kunst))|(?<!hochschul)lehrkraft(?! (fur (sprachschul|deutsch als fremd|bildende kunst|musik|sport|turkisch)|im bereich berufsbildung|im primarbereich|primarstufe|sekundarstufe|sek\\b))|dozent|(?<!sinif |ilkokul |lise |ortaokul |beden egitimi |muzik |turkce |almanca |ingilizce )ogretmen|(?<!english |language |art )teacher|lehramt|(?<!sozial|heil|kindheits?|sonder|sonder-|musik|kunst|berufs|sport)padagog|bildungsreferent",
+  "flags": ""
+ },
+ {
+  "ad": "primar",
+  "rol": "primarbereich|primarstufe|grundschullehr|grundschulpadagog|sinif ogretmeni|ilkokul ogretmeni|primary (school )?teacher",
+  "flags": ""
+ },
+ {
+  "ad": "buero",
+  "rol": "burokauf|buromanagement|kauf(?:frau|mann) fur buro|(?<!chef|schul)sekretar(?!iat)|assistenz der geschafts(?:fuhrung|leitung)|geschaftsfuhrungsassisten|(?<!front[- ])office[- ]?manag|empfangssekret|team-?assisten|kaufmannische[rn]? (?:angestellte|mitarbeiter|sachbearbeit)|(?<!\\S)sachbearbeiter(?:\\/in|in)?(?=\\s*\\||\\s*$)|verwaltungsfachangestell|buroassisten|ofis yonetici|\\bsekreter|buro asistan|burofachkraft|burokraft",
+  "flags": ""
+ },
+ {
+  "ad": "sekundar",
+  "rol": "sekundarstufe|sekundarschul|\\bsek\\b|gymnasiallehr|realschullehr|gesamtschullehr|oberschullehr|mittelschullehr|hauptschullehr|deutschlehr|mathematiklehr|mathelehr|physiklehr|chemielehr|biologielehr|geschichtslehr|erdkundelehr|lise ogretmeni|ortaokul ogretmeni|secondary (school )?teacher",
+  "flags": ""
+ },
+ {
+  "ad": "nachhilfe",
+  "rol": "nachhilfe|lernhilfe|hausaufgabenbetreu|ozel ders|lerncoach|\\btutor\\b|lernbegleit",
+  "flags": ""
+ },
+ {
+  "ad": "schulsekretar",
+  "rol": "schulsekret|schulverwaltung|okul sekreter|sekretariat(?=.{0,30}schul)|schulburo",
+  "flags": ""
+ },
+ {
+  "ad": "sportlehrer",
+  "rol": "sportlehrer|sportlehrkraft|sportpadagog|beden egitimi|sportunterricht|physical education|lehrkraft fur sport",
+  "flags": ""
+ },
+ {
+  "ad": "turkisch",
+  "rol": "turkisch|turkce|\\bturk\\b|turkiye|turkologie",
+  "flags": ""
+ },
+ {
+  "ad": "musik",
+  "rol": "musiklehrer|musikpadagog|instrumentallehrer|muzik ogretmeni|gitarrenlehrer|klavierlehrer|musiker|gesangslehrer|chorleiter|lehrkraft fur musik|musiklehrkraft|lehrer(?:\\/in|in)? fur musik|fachlehr(?:er|kraft)(?:\\/in|in)? musik",
+  "flags": ""
+ },
+ {
+  "ad": "sprache",
+  "rol": "ubersetz|dolmetsch|translator|tercuman|mutercim|sprachmittler|lokalisier|linguist|fremdsprachenkorrespondent|ceviri",
+  "flags": ""
+ },
+ {
+  "ad": "apotheke",
+  "rol": "apotheker|\\bpta\\b|pharmazeut|eczaci|pharmacist|pharmareferent|pka\\b",
+  "flags": ""
+ },
+ {
+  "ad": "tierarzt",
+  "rol": "tierarzt|tierarztin|veterinar|tiermedizin|veteriner|\\btfa\\b|tierpfleg|tiermedizinische",
+  "flags": ""
+ },
+ {
+  "ad": "physio",
+  "rol": "physiotherap|krankengymnast|fizyoterap|(?<!ergo|sprach|kunst|musik|tanz|logo)therapeut(?!.*psycho)|osteopath",
+  "flags": ""
+ },
+ {
+  "ad": "zahn",
+  "rol": "zahnmedizin|\\bzfa\\b|zahnarzt|dental|dis hek|dis asistan|zahntechnik|kieferorthop",
+  "flags": ""
+ },
+ {
+  "ad": "arzt",
+  "rol": "(?<!zahn|tier)medizinische(?:\\/r)? fachangestellte|\\bmfa\\b|arzthelfer|\\barzt\\b|(?<!zahn|tier|\\/-)arztin|mediziner|doktor(?!and)|tibbi sekreter|facharzt|assistenzarzt|praxismanag|arztsekretar",
+  "flags": ""
+ },
+ {
+  "ad": "verkauf",
+  "rol": "kassier|verkaufer|einzelhandel|verkauf|kaufmann im einzelhandel|kauffrau im einzelhandel|kasiyer|satis danisman|magaza|filialleit|regal|shop assistant|cashier|kundenberater im",
+  "flags": ""
+ },
+ {
+  "ad": "friseur",
+  "rol": "friseur|frisor|barber|barbier|berber|kuafor|hairstyl|coiffeur",
+  "flags": ""
+ },
+ {
+  "ad": "kosmetik",
+  "rol": "kosmetik|makeup|make-up|beauty|kozmet|guzellik|wimpern|permanent make",
+  "flags": ""
+ },
+ {
+  "ad": "nagel",
+  "rol": "nageldesign|naildesign|nail ?design|nagelmodell|nagelstudio|nail ?(artist|stylist|technician)|manikur|pedikur|tirnak|manicure|nagelstylist|nagelkosmet",
+  "flags": ""
+ },
+ {
+  "ad": "reinigung",
+  "rol": "reinigung|gebaudereinig|\\bputz|temizlik|cleaner|housekeep|raumpfleg|hauswirtschaft",
+  "flags": ""
+ },
+ {
+  "ad": "sicherheit",
+  "rol": "(?<!it-|it |informations|daten|cyber|netzwerk)sicherheit|(?<!it[- ]|cyber|information |network |cloud )security|\\bwach(?!s|t\\b)|objektschutz|guvenlik|werkschutz|sicherheitsdienst",
+  "flags": ""
+ },
+ {
+  "ad": "it",
+  "rol": "fachinformatiker|\\binformatiker|systemadmin|it-support|it support|it-system|netzwerkadmin|netzwerktechnik|it-techniker|it-administrator|bilgisayar|sistem yonetici|datenbank(?!analy)|database|\\bdba\\b|\\bsql\\b(?!.{0,20}(analy|report))|it-sicherheit|it sicherheit|informationssicherheit|it-security|cyber|penetration|iso 27001|systemarchitekt|it-architekt|cloud architect|enterprise architect|cloud(?![- ]?(data|analytics))|kubernetes|\\bsre\\b|\\baws\\b|azure|devops|it-consultant|it-berater|it-projektleit|it-leiter|it-manager|it-koordinator|servicedesk|service desk|helpdesk|help desk|first level|second level|1st level|2nd level|it-service",
+  "flags": ""
+ },
+ {
+  "ad": "dev",
+  "rol": "softwareentwickl|software-?entwickl|programmier|webentwickl|web-?entwickl|(?<!game[- ]?|games[- ]?|spiele-?)developer|(?<!produkt|geschafts|business|personal|organisations|projekt|immobilien|stadt|quartier|power-?bi-?|bi-?)entwickler|backend|frontend|full-?stack|anwendungsentwickl|mobile[- ]?(app|entwickl|dev)|app-?entwickl|\\bios\\b|android|flutter|react native|yazilim gelistir|yazilim muhendis|softwarearchitekt|software engineer|softwareingenieur|losungsarchitekt|solution architect|\\bqa\\b|testautomat|softwaretest|embedded software|firmware",
+  "flags": ""
+ },
+ {
+  "ad": "data",
+  "rol": "data scien|data engineer|dateningenieur|datenanalyst|data analyst|datenanalys|datenwissenschaft|business[- ]intelligence|\\bbi\\b|power bi|tableau|qlik|data warehouse|\\betl\\b|big data|machine[- ]?learning|\\bml\\b|deep learning|kunstliche intelligenz|\\bki\\b|\\bai\\b|veri bilim|veri analist|veri muhendis|analytics|business analyst|is analist|data architect|datenarchitekt|\\bnlp\\b|\\bllm\\b|mlops",
+  "flags": ""
+ },
+ {
+  "ad": "sap",
+  "rol": "\\bsap\\b|sap-|abap|s\\/4|s4hana|\\bhana\\b|erp-berat|\\berp\\b|navision|dynamics 365|business central|odoo|\\babas\\b|proalpha|erp-consult|sap consultant|\\bfico\\b|successfactors|ariba",
+  "flags": ""
+ },
+ {
+  "ad": "game",
+  "rol": "\\bgame\\b|games\\b|spieleentwickl|spielentwickl|gamedev|game dev|\\bunity\\b|unreal|oyun gelistir|game design|level design|game art|game programm|spieleprogramm",
+  "flags": ""
+ },
+ {
+  "ad": "buchhaltung",
+  "rol": "buchhalt|steuerfach|bilanz|lohnbuch|finanzbuch|muhasebe|accountant|kreditoren|debitoren|rechnungswesen|steuerberat|steuerassist|wirtschaftspruf|prufungsassist",
+  "flags": ""
+ },
+ {
+  "ad": "recht",
+  "rol": "rechtsanwalt|anwalt|jurist|rechtsfach|avukat|hukuk|rechtsanwaltsfach|paralegal|syndikus",
+  "flags": ""
+ },
+ {
+  "ad": "compliance",
+  "rol": "compliance|geldwasche|\\baml\\b|regulatorik|governance|datenschutzbeauftragt|uyum (yonetici|uzman)|\\bgrc\\b|\\bkyc\\b|sanktions|regulatory",
+  "flags": ""
+ },
+ {
+  "ad": "immobilien",
+  "rol": "immobilien|makler|hausverwalt|emlak|gayrimenkul|real estate|property|hausmeister|facility|gebaudemanag|kapici|bina bakim|site yonet",
+  "flags": ""
+ },
+ {
+  "ad": "foto",
+  "rol": "fotograf|photograph|fotografci|kamera|videograf|filmemacher|mediengestalter bild",
+  "flags": ""
+ },
+ {
+  "ad": "grafik",
+  "rol": "grafik|(?<!nagel|nail|hair|haar|mode|schmuck|floral|interior|sound|game|level|fashion|textil)designer|mediengestalt|illustrat|layouter|art director|\\bux\\b|ux[- ]?design|ui design|webdesign|tasarim",
+  "flags": ""
+ },
+ {
+  "ad": "marketing",
+  "rol": "(?<!online[- ]?|performance[- ]?|e-?mail[- ]?|suchmaschinen|digital[- ]?|[a-z])marketing|content ?(?:manag|creat|marketing|strateg|writer|produc|redakt)|social[- ]?media(?! (?:icons?|links?|kanale|buttons?|profile))|sosyal medya|community manag|kampagn|pazarlama|brand manager|online-redakt|texter|copywriter|werbetext|metin yazar",
+  "flags": ""
+ },
+ {
+  "ad": "pr",
+  "rol": "offentlichkeitsarbeit|public relations|pressesprech|pressereferent|pressearbeit|pr-(berater|manager|referent|volontar|assistent)|halkla iliskiler|unternehmenskommunikation|kommunikationsmanag|kommunikationsreferent|\\bpr\\b|corporate communication|medienarbeit|basin sozcu|kurumsal iletisim",
+  "flags": ""
+ },
+ {
+  "ad": "seo",
+  "rol": "\\bseo\\b|\\bsea\\b|\\bsem\\b|suchmaschinen|online[- ]?marketing|performance[- ]?marketing|google ads|\\bppc\\b|e-?mail[- ]?marketing|conversion|growth|digital marketing|dijital pazarlama|affiliate|paid media|paid social",
+  "flags": ""
+ },
+ {
+  "ad": "personal",
+  "rol": "personalreferent|personalsachbearb|recruit|\\bhr\\b|ik uzman|insan kaynak|personaldispon|personalentwickl|human resources|personalvermittl|personalberat|arbeitsvermittl|headhunt|jobvermittl",
+  "flags": ""
+ },
+ {
+  "ad": "architekt",
+  "rol": "(?<!innen|landschafts|software|system|it-|it |losungs|solution |cloud |daten|data |enterprise )architekt|bauzeichner|(?<!ic )mimar",
+  "flags": ""
+ },
+ {
+  "ad": "ingenieur",
+  "rol": "(?<!cloud[- ]|devops[- ]|software[- ]|data[- ]|daten|ml[- ]|machine[- ]learning[- ]|security[- ]|it[- ]|qa[- ]|(?:^|[^a-z])bau|vermessungs|chemie|umwelt|textil|fahrzeugbau|elektro|elektronik|elektrotechnik|mechatronik|automatisierungs)ingenieur(?!(?:\\/in|in)? (?:fur |der )?(nachrichten|energie|elektro|mechatronik|automatisierung))|(?<!cloud[- ]|devops[- ]|software[- ]|data[- ]|ml[- ]|machine[- ]learning[- ]|security[- ]|it[- ]|qa[- ]|electrical |electronics |mechatronics |hardware |embedded )engineer|(?<!kimya |cevre |tekstil |otomotiv |insaat |harita |elektrik |elektronik |mekatronik |elektrik-elektronik )muhendis|bachelor of engineering|master of engineering|(?<!haus|(?:^|[^a-z])bau|gebaude|betriebs|mess|veranstaltungs|event|buhnen|elektro|automatisierungs|steuerungs|mechatronik|kfz[- ]?service|kfz[- ]?|auto|service|zahn|dental|it[- ]|edv[- ]|netzwerk|foto|ton|licht|kalte|klima|sanitar)techniker(?!.*(kfz|kalte|klima|sanitar))|konstrukteur|projektleiter technik|(?<!bau)zeichner|systemplaner|\\bcad\\b|teknik ressam",
+  "flags": ""
+ },
+ {
+  "ad": "elektro_ing",
+  "rol": "elektroingenieur|elektrotechnikingenieur|elektrotechniker|elektronikingenieur|elektrik muhendis|elektronik muhendis|elektrik-elektronik|electrical engineer|electronics engineer|elektronikentwickl|hardwareentwickl|hardware-?entwickl|automatisierungsingenieur|automatisierungstechniker|steuerungstechniker|mechatronikingenieur|mekatronik muhendis|mechatronics engineer|regelungstechnik|leistungselektronik|ingenieur(?:\\/in|in)? (fur )?(elektrotechnik|elektronik|mechatronik|automatisierung)|schaltungsentwickl|fpga|\\bplc\\b|sps-programm|sps-entwickl",
+  "flags": ""
+ },
+ {
+  "ad": "produktion",
+  "rol": "produktionshelfer|produktionsmitarbeiter|maschinenbediener|montagehelfer|\\bhelfer\\b|hilfsarbeiter|uretim|fabrik|schichtarbeit|verpacker|anlagenfuhrer|monteur(?!.*elektr)|montage(?!elektr|elektro)|montajci|servicemonteur|industriemonteur|schichtleiter|schichtfuhrer|vorarbeiter|vardiya|teamleiter produktion|produktionsleiter|fertigungsleiter|betriebsleiter|werksleiter|uretim mudur|produktionsplan",
+  "flags": ""
+ },
+ {
+  "ad": "sozial",
+  "rol": "sozialarbeit|sozialpadagog|sozialassist|streetwork|schulbegleit|familienhelf|sosyal|jugendhilfe",
+  "flags": ""
+ },
+ {
+  "ad": "psycho",
+  "rol": "psycholog|psychotherap|psikolog|psychiatr|verhaltenstherap",
+  "flags": ""
+ },
+ {
+  "ad": "fitness",
+  "rol": "fitness|sporttrainer|antrenor|personal trainer|athletik|yoga|sportwissenschaft|spor egitmeni|coach\\b",
+  "flags": ""
+ },
+ {
+  "ad": "beratung",
+  "rol": "unternehmensberat|managementberat|strategieberat|organisationsberat|prozessberat|prozessmanag|prozessoptimier|consultant|consulting|yonetim danisman|surec danisman|lean manag|six sigma|operational excellence|projektmanag|project manag|proje yonetici|projektsteuer|projektkoordinat|\\bpmo\\b",
+  "flags": ""
+ },
+ {
+  "ad": "karriere",
+  "rol": "karriereberat|karrierecoach|berufsberat|bewerbungscoach|bewerbungstrain|outplacement|laufbahnberat|jobcoach|job-coach|kariyer danisman|career coach|career advis",
+  "flags": ""
+ },
+ {
+  "ad": "kundenservice",
+  "rol": "kundenberat(?!.*einzelhandel)|kundenbetreu|kundenservice|kundendienst(?!techn|monteur)|customer (service|care|support|success)|callcenter|call center|call-center|cagri merkezi|musteri hizmet|musteri temsil|telefonist|dialogmarketing|inbound|outbound",
+  "flags": ""
+ },
+ {
+  "ad": "vertrieb",
+  "rol": "vertrieb|business development|key account|key-account|account manag|sales manag|sales representative|sales development|inside sales|aussendienst|handelsvertret|head of sales|is gelistirme|kilit musteri|satis temsil|satis yonetici|satis muhendis|satis muduru",
+  "flags": ""
+ },
+ {
+  "ad": "produkt",
+  "rol": "produktmanag|product manag|product owner|urun yonetici|produktmarketing|produktverantwort|technische.?r? produkt",
+  "flags": ""
+ },
+ {
+  "ad": "sprachlehrer",
+  "rol": "sprachschul|sprachlehr|\\bdaf\\b|\\bdaz\\b|deutsch als fremd|deutsch als zweit|deutschkurs|integrationskurs|englischlehr|dil ogretmeni|almanca ogretmeni|ingilizce ogretmeni|language teacher|english teacher|deutschlehr",
+  "flags": ""
+ },
+ {
+  "ad": "berufsbildung",
+  "rol": "berufsbildung|berufsschullehr|berufspadagog|ausbilder|mesleki egitim",
+  "flags": ""
+ },
+ {
+  "ad": "trainer",
+  "rol": "(?<!personal |fitness |sport|hunde|athletik|ikt-|ikt |it-|edv-|digital |achtsamkeits)\\btrainer|kurumsal egitmen|schulungsleiter|seminarleiter|verkaufstrainer|kommunikationstrainer|soft-?skill|fuhrungskraftetrain|train the trainer|lehrtrainer",
+  "flags": ""
+ },
+ {
+  "ad": "ikt",
+  "rol": "\\bikt\\b|it-trainer|edv-trainer|it-dozent|edv-dozent|informatiklehr|bilisim egitmeni|digital trainer|it-schulung|edv-schulung|it-ausbilder|bilgisayar egitmeni|ict trainer",
+  "flags": ""
+ },
+ {
+  "ad": "bildungsberatung",
+  "rol": "bildungsberat|studienberat|weiterbildungsberat|egitim danisman|bildungscoach|lernberat|bildungslots|ausbildungsberat|berufsorientier",
+  "flags": ""
+ },
+ {
+  "ad": "hochschule",
+  "rol": "hochschullehr|professor|professur|wissenschaftliche|lehrbeauftragt|akademische|postdoc|doktorand|ogretim gorevlisi|ogretim uyesi|arastirma gorevlisi|research assistant|lecturer",
+  "flags": ""
+ },
+ {
+  "ad": "fahrlehrer",
+  "rol": "fahrlehrer|fahrschul|surucu kursu|driving instructor",
+  "flags": ""
+ },
+ {
+  "ad": "reise",
+  "rol": "reisevermittl|reiseverkehrskauf|tourismuskauf|tourismusfach|tourismusmanag|destinationsmanag|reiseburo|reisebuero|reiseveranstalt|reiseleit|reiseberat|gastefuhr|stadtfuhr|fremdenfuhr|travel agent|tour guide|tour operator|seyahat|turizm|rehber|tur lideri",
+  "flags": ""
+ },
+ {
+  "ad": "animation",
+  "rol": "animateur|(?<!2d[- ]?|3d[- ]?|motion[- ]?|film[- ]?|character[- ]?|computer[- ]?)animator(?!.*(2d|3d|motion|film|character))|entertainer|showteam|kinderanimation|sportanimation",
+  "flags": ""
+ },
+ {
+  "ad": "controlling",
+  "rol": "controll(er|ing)|kontrolor|revisor|revision|internal audit|(?<!qualitats|qm-|qm )auditor|ic denet|denetci",
+  "flags": ""
+ },
+ {
+  "ad": "berichtswesen",
+  "rol": "berichtswesen|reporting|raporlama|finanzberichterstatt|konzernrechnungs|group accounting|konsolidier|bilanzbuchhalt|jahresabschluss|management-?report",
+  "flags": ""
+ },
+ {
+  "ad": "notar",
+  "rol": "notarfach|\\bnoter",
+  "flags": ""
+ },
+ {
+  "ad": "integration",
+  "rol": "integrationsberat|migrationsberat|migrationsdienst|integrationshelf|integrationslots|fluchtlingsberat|asylberat|entegrasyon|goc danisman",
+  "flags": ""
+ },
+ {
+  "ad": "sonder",
+  "rol": "sonderpadagog|sonderschul|forderschullehr|forderpadagog|ozel egitim|heilerziehung|heilpadagog|eingliederungshilfe|behindertenhilfe|engelli bakim",
+  "flags": ""
+ },
+ {
+  "ad": "schwimm",
+  "rol": "schwimmlehrer|schwimmtrainer|schwimmmeister|(?<!medizinische(?:\\/r|r)? )bademeister|rettungsschwimmer|baderbetrieb|yuzme",
+  "flags": ""
+ },
+ {
+  "ad": "haustechnik",
+  "rol": "haustechniker|haustechnik|gebaudetechniker|betriebstechniker|technischer hausmeister|tesis teknisyeni",
+  "flags": ""
+ },
+ {
+  "ad": "grosshandel",
+  "rol": "gross- und aussenhandel|grosshandel|aussenhandel|grosshandelskauf|dis ticaret|handelsfachwirt|import|export",
+  "flags": ""
+ },
+ {
+  "ad": "ecommerce",
+  "rol": "e-commerce|ecommerce|onlineshop|online-shop|online shop|onlinehandel|online-handel|e-ticaret|marktplatz|amazon|shopify|shopware",
+  "flags": ""
+ },
+ {
+  "ad": "redaktion",
+  "rol": "redakteur|redaktion|journalist|reporter|(?<!fremdsprachen)korrespondent|lektor|volontar|gazeteci|muhabir|yazi isleri|(?<![a-z]|video[- ]|film[- ])editor(?!.*(video|film))",
+  "flags": ""
+ },
+ {
+  "ad": "medienproduktion",
+  "rol": "produktionsassist|aufnahmeleit|regieassist|kameraassist|postproduktion|yapim asistan|produksiyon asistan|veranstaltungstechnik|eventtechnik|tontechnik|lichttechnik|buhnentechnik|(?:2d|3d|motion|character|computer)[- ]?animat|motion design|(?:video|film)[- ]?editor|\\bcutter\\b",
+  "flags": ""
+ },
+ {
+  "ad": "event",
+  "rol": "eventmanag|event manag|veranstaltungskauf|veranstaltungsfachwirt|veranstaltungsmanag|etkinlik|organizasyon|\\bmesse(?!r|bau)|kongress|tagung|hochzeitsplan|wedding planner",
+  "flags": ""
+ },
+ {
+  "ad": "kurier",
+  "rol": "zusteller|kurier|paketzustell|paketbote|lieferfahrer|auslieferungsfahrer|courier|kurye",
+  "flags": ""
+ },
+ {
+  "ad": "bus",
+  "rol": "busfahrer|omnibusfahrer|otobus|linienbus|reisebus|kraftomnibus|strassenbahnfahrer|\\bopnv\\b",
+  "flags": ""
+ },
+ {
+  "ad": "taxi",
+  "rol": "taxifahrer|\\btaxi|taksi|mietwagenfahrer|chauffeur|limousin|krankenfahrt|personenbeford",
+  "flags": ""
+ },
+ {
+  "ad": "dispo",
+  "rol": "(?<!personal)disponent|(?<!personal)disposition|dispo\\b|sevkiyat|fuhrparkleit|tourenplan",
+  "flags": ""
+ },
+ {
+  "ad": "industriekauf",
+  "rol": "industriekauf|sanayi ticaret|industrial clerk|einkauf|einkaufer|purchas|procurement|beschaffung|satin alma|supply chain|materialwirtschaft",
+  "flags": ""
+ },
+ {
+  "ad": "qualitat",
+  "rol": "qualitat|quality|\\bqm\\b|\\bqs\\b|kalite|qualitatsmanag|qualitatssicher|qualitatspruf|qualitatsingenieur|(?<!intern(?:e|er|al)? |it-|it )auditor|\\bqmb\\b|iso 9001|iatf|messtechniker",
+  "flags": ""
+ },
+ {
+  "ad": "chemie",
+  "rol": "chemieingenieur|chemie|kimya|verfahrenstechnik|prozesstechnik|chemikant|chemielaborant|laborant|chemical",
+  "flags": ""
+ },
+ {
+  "ad": "umwelt",
+  "rol": "umweltingenieur|umwelttechnik|umwelt|cevre|abfallwirtschaft|abwasser|wasserwirtschaft|kreislaufwirtschaft|entsorgung|nachhaltigkeit|immissionsschutz|environmental",
+  "flags": ""
+ },
+ {
+  "ad": "lebensmittel",
+  "rol": "lebensmittel|gida|(?<!fast[- ]?)\\bfood\\b(?! ?(&|and) ?beverage)|nahrungsmittel|lebensmitteltechnolog|lebensmittelchem|brauer|molkerei|milchtechnolog|fleischtechnolog|getranketechnolog|ernahrungswissen|okotropholog",
+  "flags": ""
+ },
+ {
+  "ad": "fahrzeug_ing",
+  "rol": "fahrzeugbau(?!mechaniker)|fahrzeugtechnik(?!er)|automotive|otomotiv muhendis|kraftfahrzeugtechnik(?!er)|automobil(?!kauf|verkauf|handel)|fahrzeugentwickl",
+  "flags": ""
+ },
+ {
+  "ad": "nachrichtentechnik",
+  "rol": "nachrichtentechnik|kommunikationstechnik|informationstechnik|hochfrequenz|haberlesme|telekommunikation|funktechnik|signalverarbeitung|elektronik ve haberlesme|\\brf\\b",
+  "flags": ""
+ },
+ {
+  "ad": "energie",
+  "rol": "energietechnik|energieingenieur|enerji muhendis|erneuerbare energien|regenerative energien|(?<!anlagenmechaniker[^|]*)versorgungstechnik|energiewirtschaft|energiesystem|energy engineer",
+  "flags": ""
+ },
+ {
+  "ad": "textil_ing",
+  "rol": "textilingenieur|textiltechnik|tekstil muhendis|bekleidungstechnik|textil- und|(?<!glas)faser|vliesstoff|textile engineer",
+  "flags": ""
+ },
+ {
+  "ad": "hebamme",
+  "rol": "hebamme|entbindungspfleg|\\bebe\\b",
+  "flags": ""
+ },
+ {
+  "ad": "rettung",
+  "rol": "notfallsanit|rettungssanit|rettungsassist|rettungshelfer|paramedik|acil tip",
+  "flags": ""
+ },
+ {
+  "ad": "logo",
+  "rol": "logopad|sprachtherap|sprachheil|dil ve konusma|speech therap",
+  "flags": ""
+ },
+ {
+  "ad": "ergo",
+  "rol": "ergotherap|ergoterap",
+  "flags": ""
+ },
+ {
+  "ad": "masseur",
+  "rol": "masseur|masor|medizinische(?:\\/r|r)? bademeister|massage",
+  "flags": ""
+ },
+ {
+  "ad": "spa",
+  "rol": "\\bspa\\b|spa-|wellness|therme|sauna|thermal|kurbad|spa mitarbeiter|spa therapist|wellnesstherap|saunameister",
+  "flags": ""
+ },
+ {
+  "ad": "versicherung",
+  "rol": "versicherungskauf|versicherungsfach|versicherungsmakler|sigorta|insurance|underwrit",
+  "flags": ""
+ },
+ {
+  "ad": "bank",
+  "rol": "bankkauf|bankfach|bankberat|kreditsachbearb|kredit(?!oren)|darlehen|zahlungsverkehr|payment|zahlungsabwickl|kontofuhr|anlageberat|vermogensberat|kapitalanlage|geldanlage|wertpapier|investmentberat|finanzplaner|honorarberat|finanzanalyst|financial analyst|corporate finance|(?<!daten)banka",
+  "flags": ""
+ },
+ {
+  "ad": "bauleitung",
+  "rol": "bauleiter|bauleitung|polier(?!er|masch|mittel|t\\b)|santiye sefi|projektleiter bau|oberbauleiter|(?<![a-z])bau(ingenieur|techniker)",
+  "flags": ""
+ },
+ {
+  "ad": "kalte",
+  "rol": "kaltetechnik|kalteanlagen|klimatechnik|mechatroniker fur kalte|sogutma|kalteanlagenbauer",
+  "flags": ""
+ },
+ {
+  "ad": "zimmerer",
+  "rol": "zimmerer|zimmerin|zimmermann|dulger|ahsap yapi|holzbau",
+  "flags": ""
+ },
+ {
+  "ad": "fliesen",
+  "rol": "fliesenleg|fayans|seramik|platten- und fliesen|estrichleger|estrich",
+  "flags": ""
+ },
+ {
+  "ad": "innenarchitekt",
+  "rol": "innenarchitekt|ic mimar|interior",
+  "flags": ""
+ },
+ {
+  "ad": "planung",
+  "rol": "landschaftsarchitekt|landschaftsplan|freiraumplan|peyzaj|landscape architect|umweltplan|stadtplan|stadtebau|raumplan|regionalplan|sehir planc|urban plan|verkehrsplan|bauleitplan",
+  "flags": ""
+ },
+ {
+  "ad": "vermessung",
+  "rol": "vermessung|geodas|geodat|geoinformat|harita muhendis|surveyor|geomatik|kataster|\\bobvi\\b",
+  "flags": ""
+ },
+ {
+  "ad": "karosserie",
+  "rol": "karosserie|kaporta|fahrzeuglack|autolack|oto boya|unfallinstandsetz|karosserieinstandsetz|fahrzeugbaumechaniker",
+  "flags": ""
+ },
+ {
+  "ad": "kunst",
+  "rol": "bildende kunst|kunstlehr|kunstpadagog|gorsel sanatlar|resim ogretmeni|art teacher",
+  "flags": ""
+ },
+ {
+  "ad": "optik",
+  "rol": "augenoptik|optiker(?!kauf)|optikerkauf|optometr|gozlukcu|optician",
+  "flags": ""
+ },
+ {
+  "ad": "horakustik",
+  "rol": "horakustik|horgerateakustik|hoergeraete|isitme cihaz|audiolog",
+  "flags": ""
+ },
+ {
+  "ad": "schornsteinfeger",
+  "rol": "schornsteinfeg|kaminkehr|bacaci",
+  "flags": ""
+ },
+ {
+  "ad": "glaser",
+  "rol": "\\bglaser(?!ei)\\b|glaserin|glasbau|camci",
+  "flags": ""
+ },
+ {
+  "ad": "bodenleger",
+  "rol": "bodenleger|parkettleger|estrichleger|teppichleger|zemin kaplama|parkeci",
+  "flags": ""
+ },
+ {
+  "ad": "uhrmacher",
+  "rol": "uhrmacher|goldschmied|juwelier|kuyumcu|saatci|schmuckdesign",
+  "flags": ""
+ },
+ {
+  "ad": "podologe",
+  "rol": "podolog|medizinische fusspflege|fusspfleg|ayak bakim",
+  "flags": ""
+ },
+ {
+  "ad": "tatowierer",
+  "rol": "tatowier|tattoo|dovmeci|piercer",
+  "flags": ""
+ },
+ {
+  "ad": "speditionskauf",
+  "rol": "speditionskauf|kaufmann fur spedition|kauffrau fur spedition|logistikkauf|disponent(?!in im personal)|nakliye elemani|lojistik uzman|freight forward",
+  "flags": ""
+ },
+ {
+  "ad": "tanzlehrer",
+  "rol": "tanzlehr|tanzpadagog|dans egitmen|choreograph",
+  "flags": ""
+ },
+ {
+  "ad": "reitlehrer",
+  "rol": "reitlehr|reittherap|binicilik|pferdewirt|bereiter",
+  "flags": ""
+ },
+ {
+  "ad": "werkzeugmacher",
+  "rol": "werkzeugmacher|werkzeugmechaniker|formenbauer|kalipci|tool ?maker",
+  "flags": ""
+ },
+ {
+  "ad": "galvaniseur",
+  "rol": "galvaniseur|oberflachenbeschicht|galvanotechnik|kaplamaci|beschichter",
+  "flags": ""
+ },
+ {
+  "ad": "giesserei",
+  "rol": "giessereimechaniker|giesser\\b|dokumcu|foundry|kernmacher",
+  "flags": ""
+ },
+ {
+  "ad": "kunststoff",
+  "rol": "kunststofftechnolog|verfahrensmechaniker(?!.*(beschicht|glas))|kunststoffformgeb|plastik teknik|spritzgiess",
+  "flags": ""
+ },
+ {
+  "ad": "wascher",
+  "rol": "textilreinig|wascher\\b|wascherei|camasirci|kuru temizlem|laundry",
+  "flags": ""
+ },
+ {
+  "ad": "bestatter",
+  "rol": "bestatter|bestattungsfach|cenaze|funeral",
+  "flags": ""
+ },
+ {
+  "ad": "hufschmied",
+  "rol": "hufschmied|hufbeschlag|nalbant|farrier",
+  "flags": ""
+ },
+ {
+  "ad": "muller",
+  "rol": "\\bmuller\\b(?!in)|mullerin|degirmenci",
+  "flags": ""
+ },
+ {
+  "ad": "fischwirt",
+  "rol": "fischwirt|fischzucht|aquakultur|balikci|fischereifach",
+  "flags": ""
+ },
+ {
+  "ad": "bibliothekar",
+  "rol": "bibliothekar|bibliotheks|kutuphaneci|librarian",
+  "flags": ""
+ }
+]

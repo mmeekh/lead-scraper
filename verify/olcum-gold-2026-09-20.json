@@ -1,0 +1,69 @@
+{
+  "tarih": "2026-09-20T23:41:32",
+  "model_a": "gemma4:12b-it-qat",
+  "gold": 96,
+  "b_modelleri": {
+    "qwen3:8b": {
+      "uretim": {
+        "yeni_yargi": 96,
+        "ort_sn": 6.5
+      },
+      "tek_basina": {
+        "yes": 11,
+        "dogru": 9,
+        "isabet": 81.8,
+        "ort_sn": 6.5
+      },
+      "cumle": {
+        "listelenen": 7,
+        "dogru": 7,
+        "isabet": 100.0,
+        "kapsama": 29.2,
+        "insan_evet": 24,
+        "alintida_dusen": 1,
+        "gecitte_dusen": 0,
+        "ek_cagri": 0,
+        "yanlis_listelenen": []
+      },
+      "cumle_tekrar": {
+        "listelenen": 8,
+        "dogru": 8,
+        "isabet": 100.0,
+        "kapsama": 33.3,
+        "insan_evet": 24,
+        "alintida_dusen": 0,
+        "gecitte_dusen": 0,
+        "ek_cagri": 1,
+        "yanlis_listelenen": []
+      },
+      "birebir": {
+        "listelenen": 7,
+        "dogru": 7,
+        "isabet": 100.0,
+        "kapsama": 29.2,
+        "insan_evet": 24,
+        "alintida_dusen": 1,
+        "gecitte_dusen": 0,
+        "ek_cagri": 0,
+        "yanlis_listelenen": []
+      },
+      "birebir_tekrar": {
+        "listelenen": 8,
+        "dogru": 8,
+        "isabet": 100.0,
+        "kapsama": 33.3,
+        "insan_evet": 24,
+        "alintida_dusen": 0,
+        "gecitte_dusen": 0,
+        "ek_cagri": 1,
+        "yanlis_listelenen": []
+      }
+    }
+  },
+  "a_tek_basina": {
+    "yes": 25,
+    "dogru": 18,
+    "isabet": 72.0,
+    "ort_sn": 5.8
+  }
+}

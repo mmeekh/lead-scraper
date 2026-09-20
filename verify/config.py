@@ -25,7 +25,7 @@ REFETCH_DAYS = 90
 # --- modeller (yerel; ucretli/bulut API yok)
 OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://127.0.0.1:11434")
 MODEL_A = os.environ.get("VERIFY_MODEL_A", "gemma4:12b-it-qat")
-MODEL_B = os.environ.get("VERIFY_MODEL_B", "qwen2.5:14b-instruct-q4_K_M")
+MODEL_B = os.environ.get("VERIFY_MODEL_B", "qwen3:8b")   # 20 Eyl olcumu: %81,8 tek basina, 6,5 sn, uzlasmada 7/7
 NUM_CTX = int(os.environ.get("VERIFY_NUM_CTX", "8192"))
 MODEL_TIMEOUT_S = int(os.environ.get("VERIFY_MODEL_TIMEOUT", "300"))
 PROMPT_VERSION = "v3-2026-09-19"

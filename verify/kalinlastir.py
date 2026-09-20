@@ -55,7 +55,7 @@ DURAKLAT_MIN = 300                 # oran degerlendirmesi icin en az model karar
 DURAKLAT_ALT, DURAKLAT_UST = 0.02, 0.40
 A_PARTI = 150                      # A icin parti; sonra B (model degisimi seyrek olsun)
 CEKIM_PARTI = 64
-MAX_SAYFA = 4                      # alan adi basina (VPS kurali)
+MAX_SAYFA = 6                      # home + impressum + <=3 kariyer + 1 (ilan cikarimi oncelikli)
 YENIDEN_DENEME_GUN = 7
 DISK_ASGARI_GB = 5
 TEK_PARTI = "--tek" in sys.argv          # duman testi: tek parti kos ve cik
@@ -360,8 +360,15 @@ def yargi_dongusu() -> None:
         aktif = {m for m in aktif if not tur1_kota_doldu(conn, m)}
         yer = ",".join("?" * len(aktif)) or "''"
         # A bekleyen ciftler: sirketi cekilmis, karar yok, meslek aktif — oncelik sirasiyla
+        conn.executescript("CREATE TABLE IF NOT EXISTS ilan_tarama (domain TEXT PRIMARY KEY, kariyer_sayfa INTEGER DEFAULT 0, "
+                           "ilan INTEGER DEFAULT 0, eslesen INTEGER DEFAULT 0, parca INTEGER, scanned_at TEXT)")
+        # ilan olan sirketler modele gitmez (ilan = kanit); yalniz ilan taramasi bitmis, ilansiz alan adlari
+        yaz(lambda c: c.execute(
+            "UPDATE ciftler SET karar='ilan', agreement='ilan', sebep='ilan-var', updated_at=? WHERE karar IS NULL "
+            "AND domain IN (SELECT domain FROM ilan_tarama WHERE ilan>0)", (now(),)))
         satirlar = conn.execute(
             f"""SELECT c.domain, c.meslek FROM ciftler c JOIN sirketler s ON s.domain=c.domain
+                JOIN ilan_tarama t ON t.domain=c.domain AND t.ilan=0
                 WHERE c.karar IS NULL AND c.a_decision IS NULL AND s.fetch_status='cekildi' AND c.meslek IN ({yer})
                 ORDER BY c.oncelik, c.domain LIMIT ?""", (*aktif, A_PARTI)).fetchall()
         conn.close()
@@ -467,11 +474,22 @@ def durum_yaz() -> None:
                           SUM(c.on_eleme=1) onel, SUM(c.karar IS NOT NULL AND c.on_eleme=0 AND c.sebep<>'cekilemedi') modelli
                           FROM ciftler c JOIN meslek_durum md ON md.meslek=c.meslek GROUP BY c.meslek ORDER BY c.oncelik""").fetchall()
     dur = [r for r in conn.execute("SELECT meslek, not_ FROM meslek_durum WHERE durum<>'aktif'")]
+    try:
+        from verify.ilan import ozet as ilan_ozet
+        conn.executescript("CREATE TABLE IF NOT EXISTS ilan_tarama (domain TEXT PRIMARY KEY, kariyer_sayfa INTEGER DEFAULT 0, "
+                           "ilan INTEGER DEFAULT 0, eslesen INTEGER DEFAULT 0, parca INTEGER, scanned_at TEXT)")
+        io = ilan_ozet(conn)
+    except Exception as e:
+        io = {"hata": str(e)[:80]}
     conn.close()
     satirlar = ["# DURUM — kalınlaştırma koşusu", f"Güncelleme: {now()} · istem {PROMPT_VERSION} · A `{MODEL_A}` · B `{MODEL_B}`", "",
-                "## Genel", "",
+                "## İlan çıkarımı (birincil ürün, modelsiz)", "",
+                f"- Taranan alan adı: {io.get('taranan', 0)} — kariyer sayfası bulunan **{io.get('kariyer_sayfali', 0)}**, "
+                f"ilanı olan **{io.get('ilanli', 0)}**, toplam ilan **{io.get('ilan', 0)}**, meslek eşleşen **{io.get('meslek_eslesen', 0)}**",
+                f"- Dosya: `verify/out/ilanlar-001.jsonl` … `ilanlar-{io.get('dosya', 0):03d}.jsonl` (5.000 alan adı/dosya)", "",
+                "## Model yargısı (ikincil; yalnız ilansız alan adları)", "",
                 f"- Şirket: {s_top} — çekildi {s_dur.get('cekildi', 0)}, bekliyor {s_dur.get('yeni', 0) + s_dur.get('tekrar', 0)}, çekilemedi {s_dur.get('cekilemedi', 0)}",
-                f"- Çift: {c_top} — evet **{c_kar.get('evet', 0)}**, hayır {c_kar.get('hayir', 0)}, belirsiz {c_kar.get('belirsiz', 0)} (ön eleme {on_el}), bekleyen {c_kar.get('bekliyor', 0)}",
+                f"- Çift: {c_top} — ilanlı (modele gitmedi) {c_kar.get('ilan', 0)}, evet **{c_kar.get('evet', 0)}**, hayır {c_kar.get('hayir', 0)}, belirsiz {c_kar.get('belirsiz', 0)} (ön eleme {on_el}), bekleyen {c_kar.get('bekliyor', 0)}",
                 f"- Son 1 saat: {son_saat} çift sonuçlandı, {son_saat_evet} evet",
                 f"- Model çağrısı: A {j.get(MODEL_A, 0)}, B {j.get(MODEL_B, 0)} · A=yes olup B bekleyen: {a_yes_bek}",
                 f"- Hız (son 24 s): A {hiz.get(MODEL_A, '-')} sn/kayıt, B {hiz.get(MODEL_B, '-')} sn/kayıt · disk boş {disk_bos_gb():.0f} GB",
