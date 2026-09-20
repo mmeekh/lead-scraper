@@ -8,6 +8,7 @@ $py = Join-Path $repo '.venv\Scripts\python.exe'
 $ollama = "$env:LOCALAPPDATA\Programs\Ollama\ollama.exe"
 $kalin = Join-Path $PSScriptRoot 'kalinlastir.py'
 $ilan = Join-Path $PSScriptRoot 'ilan.py'
+$yukle = Join-Path $PSScriptRoot 'ilan_yukle.py'
 $gorevler = @(
   @{ ad = 'Verify-Ollama';  exe = $ollama; arg = 'serve';                      gecikme = 'PT30S' },
   @{ ad = 'Verify-Cekici';  exe = $py;     arg = "`"$kalin`" cek";              gecikme = 'PT2M' },
@@ -15,6 +16,7 @@ $gorevler = @(
   @{ ad = 'Verify-Hakem';   exe = $py;     arg = "`"$kalin`" yargila";          gecikme = 'PT3M' }
 )
 foreach ($g in $gorevler) { Unregister-ScheduledTask -TaskName $g.ad -Confirm:$false -ErrorAction SilentlyContinue }
+Unregister-ScheduledTask -TaskName 'Verify-IlanYukle' -Confirm:$false -ErrorAction SilentlyContinue
 if ($Kaldir) { "görevler kaldırıldı"; return }
 Remove-Item (Join-Path $PSScriptRoot 'DUR') -ErrorAction SilentlyContinue
 foreach ($g in $gorevler) {
@@ -24,6 +26,11 @@ foreach ($g in $gorevler) {
   $settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit ([TimeSpan]::Zero) -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -RestartCount 5 -RestartInterval (New-TimeSpan -Minutes 5)
   Register-ScheduledTask -TaskName $g.ad -Action $action -Trigger $trigger -Settings $settings -RunLevel Limited | Out-Null
 }
+# kapanan ilanlar-NNN.jsonl dosyalarını havuza yükler: 30 dk'da bir (anahtar JOBFIND_HAVUZ_ANAHTAR kullanıcı ortamından)
+$ya = New-ScheduledTaskAction -Execute $py -Argument "`"$yukle`"" -WorkingDirectory $repo
+$yt = New-ScheduledTaskTrigger -Once -At (Get-Date).AddMinutes(1) -RepetitionInterval (New-TimeSpan -Minutes 30)
+$ys = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Hours 2) -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -MultipleInstances IgnoreNew
+Register-ScheduledTask -TaskName 'Verify-IlanYukle' -Action $ya -Trigger $yt -Settings $ys -RunLevel Limited | Out-Null
 # sırayla başlat: önce Ollama, sonra işçiler
 Start-ScheduledTask -TaskName 'Verify-Ollama'; Start-Sleep 8
 Start-ScheduledTask -TaskName 'Verify-Cekici'; Start-Sleep 3

@@ -22,3 +22,6 @@ verify/*.csv
 verify/out/
 verify/DUR
 verify/kalinlastir.log
+
+# zayif meslek taramasi: aday listesi (Common Crawl), sonuc DB, CSV, log
+zayif/

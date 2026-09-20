@@ -78,3 +78,17 @@ python scrape.py verify stats
 İnsan etiketli 96 satırlık kör ölçümde listelenen satırlarda **%88,9 isabet** (tek modelle %72 /
 %58; uzlaşma +17 puan). Ayrıntı: [verify/README.md](verify/README.md) ·
 ölçüm raporu: [verify/RAPOR.md](verify/RAPOR.md)
+
+## Zayıf mesleklerde yeni şirket tarama (`zayif.py`, 21 Eyl 2026)
+
+Havuzda az e-postalı şirketi olan 14 meslek grubu için Almanya genelinde yeni şirket bulur: Common Crawl alan adı listesi
+(`zayif/cc-domain-vertices.txt.gz`, ücretsiz) + OSM önbelleğinden alan adında meslek anahtar kelimesi geçen `.de` alan adları →
+`/api/havuz/bilinen` ile havuzda olanlar elenir → site (ana sayfa + Impressum/Kontakt, robots.txt, ≥1 sn, 20 sn, ≤5 sayfa) →
+yalnız sitede yazılı rol e-postası (kişisel adres yok) → `verify/havuz-gonder.py <csv> --etiket pc-<meslek>` → bulunan canlı
+şirketler verify ilan çıkarımına da girer. Durum: `zayif/DURUM-zayif.md`. Görev: `Zayif-Tara` (oturum açılışında).
+
+```
+python zayif.py calis                 # sürekli işçi (aday → ele → tara → yükle → verify-ekle → rapor)
+python zayif.py rapor                 # meslek başına aday / taranan / e-postalı / yüklenen
+python zayif.py dene --domain x.de    # tek site dökümü
+```
