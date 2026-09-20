@@ -36,13 +36,46 @@ def host_of(url: str) -> str:
     return h[4:] if h.startswith("www.") else h
 
 
-def meslekler() -> dict[str, dict]:
-    data = json.loads(MESLEKLER_PATH.read_text(encoding="utf-8"))
-    return {m["id"]: m for m in data["meslekler"]}
+def meslekler(yol: Path | None = None) -> dict[str, dict]:
+    """Dogrulanmis katalog; eski kimlikler ayni kanonik kayda baglanir.
+
+    Kuyruk ve olcum kimliklerini degistirmez. Eksik tanim/gecit kosu baslamadan
+    reddedilir; aksi halde hatali katalog kanit kontrolunu sessizce atlayabilir.
+    """
+    data = json.loads((yol or MESLEKLER_PATH).read_text(encoding="utf-8"))
+    kayitlar = {}
+    for m in data["meslekler"]:
+        for alan in ("id", "name_de", "definition_de", "employs_yes", "employs_no"):
+            if not isinstance(m.get(alan), str) or not m[alan].strip():
+                raise ValueError(f"meslek {m.get('id', '?')}: {alan} eksik")
+        for alan in ("synonyms_de", "beleg_anahtarlar"):
+            deger = m.get(alan)
+            if (not isinstance(deger, list) or not deger
+                    or any(not isinstance(v, str) or not v.strip() for v in deger)):
+                raise ValueError(f"meslek {m['id']}: {alan} eksik/gecersiz")
+        if m["id"] in kayitlar:
+            raise ValueError(f"tekrarlanan meslek kimligi: {m['id']}")
+        kayitlar[m["id"]] = m
+    oncelik = data["oncelik"]
+    if len(oncelik) != len(kayitlar) or set(oncelik) != set(kayitlar):
+        raise ValueError("meslek oncelik listesi katalogla eslesmiyor")
+    sonuc = {kimlik: kayitlar[kimlik] for kimlik in oncelik}
+    for eski, yeni in data.get("takma_adlar", {}).items():
+        if not eski.strip() or eski in kayitlar or yeni not in kayitlar:
+            raise ValueError(f"gecersiz meslek takma adi: {eski} -> {yeni}")
+        sonuc[eski] = kayitlar[yeni]
+    return sonuc
+
+
+def meslekleri_dogrula(katalog: dict, kimlikler) -> None:
+    eksik = sorted(set(kimlikler) - katalog.keys())
+    if eksik:
+        raise ValueError(f"tanimi olmayan meslek kosuya giremez: {', '.join(eksik)}")
 
 
 def sec(kaynak: Path, limit_toplam: int = 100, seed: int = 20260919) -> list[dict]:
     """Sektor+sehir kotasina gore aday secer (her grup icin ayri kota)."""
+    meslekleri_dogrula(meslekler(), (g[0] for g in GRUPLAR))
     havuz: dict[str, list[dict]] = {g[1]: [] for g in GRUPLAR}
     with kaynak.open(encoding="utf-8") as f:
         for satir in f:

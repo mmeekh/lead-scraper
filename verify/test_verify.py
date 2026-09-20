@@ -6,8 +6,14 @@ Ag ve model gerektirmez; saf mantik test edilir.
 from __future__ import annotations
 
 import sys
+import contextlib
+import io
+import json
+import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
@@ -15,6 +21,115 @@ from verify.altin_kume import KOR_BASLIKLAR, _oku_etiketler
 from verify.consensus import job_ads_cikar, kanit_gecidi, uzlas
 from verify.impressum import ad_celisiyor_mu, display_name, legal_name_bul
 from verify.judge import alintilari_dogrula
+from verify import candidates, cli, consensus, db as veri
+
+
+class MeslekKatalogu(unittest.TestCase):
+    def test_tum_kayitlar_iki_hakeme_de_verilebilir(self):
+        from verify.istemler import kullanici_a, kullanici_b
+        katalog = candidates.meslekler()
+        self.assertEqual(len({m['id'] for m in katalog.values()}), 54)
+        for m in katalog.values():
+            for istem in (kullanici_a, kullanici_b):
+                self.assertIn(m['definition_de'], istem(m, [], 'Beleg'))
+        for eski, yeni in [('berufskraftfahrer', 'fahrer'),
+                           ('elektroingenieur', 'elektro_ing'),
+                           ('marketing_manager', 'marketing')]:
+            self.assertIs(katalog[eski], katalog[yeni])
+
+    def test_gecersiz_katalog_kosuya_girmez(self):
+        kaynak = json.loads(candidates.MESLEKLER_PATH.read_text(encoding='utf-8'))
+        for hata in ('definition_de', 'beleg_anahtarlar', 'takma_ad', 'tekrar', 'oncelik'):
+            with self.subTest(hata=hata), tempfile.TemporaryDirectory() as d:
+                data = json.loads(json.dumps(kaynak))
+                if hata in ('definition_de', 'beleg_anahtarlar'):
+                    data['meslekler'][0][hata] = ''
+                elif hata == 'takma_ad':
+                    data['takma_adlar']['eski'] = 'tanim_yok'
+                elif hata == 'tekrar':
+                    data['meslekler'].append(data['meslekler'][0])
+                else:
+                    data['oncelik'].pop()
+                yol = Path(d) / 'meslekler.json'
+                yol.write_text(json.dumps(data), encoding='utf-8')
+                with self.assertRaises(ValueError):
+                    candidates.meslekler(yol)
+
+
+class KatalogEntegrasyonu(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.stack = contextlib.ExitStack()
+        self.addCleanup(self.stack.close)
+        self.stack.enter_context(patch.object(veri, 'DB_PATH', Path(self.tmp.name) / 'verify.sqlite3'))
+        self.stack.enter_context(patch.object(veri, '_SEMA_KURULDU', False))
+        self.stack.enter_context(patch.object(consensus, 'read_page_text', return_value=''))
+        conn = veri.db()
+        conn.close()
+
+    def aday(self, meslek, domain='test.de', alinti='Our research and development department'):
+        conn = veri.db()
+        veri.upsert_domain(conn, domain, meslek=meslek)
+        for model in (consensus.MODEL_A, consensus.MODEL_B):
+            veri.save_judgment(conn, domain, meslek, model,
+                              {'decision': 'yes', 'quotes': [alinti], 'quotes_verified': True})
+        veri.set_status(conn, domain, 'yargilandi')
+        conn.commit()
+        conn.close()
+
+    def test_eski_kimlik_kanit_gecidini_atlayamaz(self):
+        self.aday('elektroingenieur')
+        sonuc = consensus.isle()
+        self.assertEqual(sonuc['evet'], 0)
+        self.assertEqual(sonuc['belirsiz'], 1)
+
+    def test_eski_kimlik_olcum_icin_korunur(self):
+        self.aday('elektroingenieur', alinti='Unsere eigene Elektronikentwicklung')
+        self.assertEqual(consensus.isle()['evet'], 1)
+        conn = veri.db()
+        try:
+            rec = json.loads(conn.execute('SELECT professions_json FROM verified').fetchone()[0])
+            self.assertEqual(rec[0]['meslek_kaydi'], 'elektroingenieur')
+        finally:
+            conn.close()
+
+    def test_bilinmeyen_meslek_uzlasma_ve_yargilamaya_giremez(self):
+        self.aday('tanim_yok')
+        with self.assertRaisesRegex(ValueError, 'tanimi olmayan'):
+            consensus.isle()
+        with patch.object(cli.hakem, 'yargila') as yargila:
+            with self.assertRaisesRegex(ValueError, 'tanimi olmayan'):
+                cli.cmd_judge(SimpleNamespace(meslek='', limit=10, model='', yeniden=False))
+            yargila.assert_not_called()
+        conn = veri.db()
+        try:
+            self.assertEqual(conn.execute('SELECT COUNT(*) FROM verified').fetchone()[0], 0)
+        finally:
+            conn.close()
+
+    def test_yeni_ve_eski_filtre_ayni_kuyrugu_secer(self):
+        self.aday('elektroingenieur', domain='eski.de')
+        self.aday('elektro_ing', domain='yeni.de')
+        self.aday('fahrer', domain='baska.de')
+        for filtre in ('elektroingenieur', 'elektro_ing'):
+            with self.subTest(filtre=filtre), patch.object(cli.hakem, 'bosalt'), \
+                    patch.object(cli.hakem, 'yargila') as yargila:
+                cikti = io.StringIO()
+                with contextlib.redirect_stdout(cikti):
+                    cli.cmd_judge(SimpleNamespace(meslek=filtre, limit=10, model='', yeniden=False))
+                sonuc = json.loads(cikti.getvalue())
+                for model in sonuc['modeller'].values():
+                    self.assertEqual(model['atlanan'], 2)
+                yargila.assert_not_called()
+
+    def test_baska_meslegin_yargisi_kullanilmaz(self):
+        self.aday('elektroingenieur', alinti='Unsere eigene Elektronikentwicklung')
+        conn = veri.db()
+        veri.save_judgment(conn, 'test.de', 'fahrer', consensus.MODEL_A, {'decision': 'no'})
+        conn.commit()
+        conn.close()
+        self.assertEqual(consensus.isle()['evet'], 1)
 
 
 def y(decision: str, quotes_verified: bool = True) -> dict:

@@ -3,6 +3,7 @@
 *.sqlite3-wal
 *.sqlite3-shm
 *.csv
+*.csv.gz
 *.log
 
 # Python

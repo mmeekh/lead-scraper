@@ -38,16 +38,22 @@ def cmd_fetch(args) -> None:
 def cmd_judge(args) -> None:
     """Modelleri SIRAYLA kosar: once A tum kuyrugu, sonra B (tek model GPU'da)."""
     meslekler = _meslekler()
+    filtre = getattr(args, "meslek", "")
+    kimlikler = []
+    if filtre:
+        aday_modul.meslekleri_dogrula(meslekler, [filtre])
+        kimlikler = [k for k, m in meslekler.items() if m["id"] == meslekler[filtre]["id"]]
     conn = db()
     satirlar = [dict(r) for r in conn.execute(
         # 'tamam': yeni bir modelle yeniden yargilamak icin; 'eksik': tek sayfa cekilebilmis
         # siteler de yargilanir (kanit zayif oldugu icin sonuc genelde unclear olur, ama kayit
         # kapsam disinda kalmaz - yeni cekim yapilmaz, eldeki sayfa kullanilir)
         "SELECT * FROM domains WHERE status IN ('cekildi','yargilandi','tamam','eksik') "
-        + ("AND meslek = ? " if getattr(args, "meslek", "") else "")
+        + (f"AND meslek IN ({','.join('?' for _ in kimlikler)}) " if kimlikler else "")
         + "ORDER BY domain LIMIT ?",
-        ((args.meslek, args.limit) if getattr(args, "meslek", "") else (args.limit,))).fetchall()]
+        (*kimlikler, args.limit)).fetchall()]
     conn.close()
+    aday_modul.meslekleri_dogrula(meslekler, (s["meslek"] for s in satirlar))
     if not satirlar:
         print(json.dumps({"islenen": 0, "not": "cekilmis alan adi yok"}, ensure_ascii=False))
         return

@@ -1,117 +1,499 @@
 {
-  "surum": "v2-2026-09-19",
-  "not": "Her kayitta 1 cumlelik Almanca tanim + 'kim istihdam eder / kim etmez' notu var. Bu not, modelin sektor-sozcugu tuzagina dusmesini engeller (docs/yerel-dogrulama-modu-2026-09-19.md §4).",
+  "surum": "v3-2026-09-20",
+  "not": "54 jobfind meslek kaydi (crawler/src/pipelines/meslek-sinyalleri.js kimlikleri). Her kayit: 1 cumlelik Almanca tanim (definition_de), es anlamlilar, 'kim istihdam eder' (employs_yes) / 'kim etmez' (employs_no) notu ve kanit gecidi anahtarlari (beleg_anahtarlar). Tanimi olmayan meslek kosuya girmez. Eski kimlikler (berufskraftfahrer, elektroingenieur, marketing_manager) takma ad olarak yeni kayda baglidir; 19-20 Eyl olcumu bunlarla yapildi.",
+  "takma_adlar": {
+    "berufskraftfahrer": "fahrer",
+    "elektroingenieur": "elektro_ing",
+    "marketing_manager": "marketing"
+  },
+  "oncelik": ["fahrer", "pflege", "elektro_ing", "dev", "it", "marketing", "buchhaltung", "sozial", "kinder", "koch", "backer", "fleischer", "metall", "cnc", "shk", "elektro", "kfz", "lager", "dispo", "kurier", "bus", "arzt", "zahn", "physio", "ergo", "apotheke", "rettung", "kinderkrankenpflege", "service", "rezeption", "reinigung", "maler", "holz", "zimmerer", "dach", "bau", "bauleitung", "fliesen", "karosserie", "kalte", "haustechnik", "gartner", "friseur", "ingenieur", "fahrzeug_ing", "produktion", "qualitat", "controlling", "seo", "grafik", "vertrieb", "verkauf", "industriekauf", "werkzeugmacher"],
   "meslekler": [
     {
-      "id": "berufskraftfahrer",
+      "id": "fahrer",
       "name_de": "Berufskraftfahrer/in (LKW, Klasse C/CE)",
       "definition_de": "Faehrt gewerblich LKW oder Transporter und befoerdert Gueter im Nah- oder Fernverkehr; benoetigt Fuehrerschein Klasse C/CE und in der Regel eine Berufskraftfahrerqualifikation (BKF, Code 95).",
-      "synonyms_de": [
-        "LKW-Fahrer",
-        "Kraftfahrer",
-        "Berufskraftfahrer",
-        "Fahrer C/CE",
-        "Kraftfahrer im Nahverkehr",
-        "Fernfahrer",
-        "Sattelzugfahrer"
-      ],
+      "synonyms_de": ["LKW-Fahrer", "Kraftfahrer", "Berufskraftfahrer", "Fahrer C/CE", "Fernfahrer", "Sattelzugfahrer", "Auslieferungsfahrer"],
       "employs_yes": "Speditionen, Transport- und Logistikunternehmen mit eigenem Fuhrpark, Kurier-/Paketdienste mit eigenen Fahrzeugen, Entsorgungsbetriebe, Baustofflieferanten und Getraenke-/Lebensmittelgrosshaendler mit eigener Auslieferung, Umzugsunternehmen, Betonwerke mit eigenen Mischern.",
       "employs_no": "Autohaeuser, Kfz-Werkstaetten, Reifenhaendler, Autovermietungen, Tankstellen, Fahrschulen, Waschstrassen, Autoteile-Onlineshops, Taxizentralen als reine Vermittler, Logistikberatungen ohne Fahrzeuge und Speditionen, die ausschliesslich Fracht vermitteln (Frachtenboerse) ohne eigenen Fuhrpark.",
-      "sektorler": [
-        "Otomotiv & Lojistik"
-      ],
-      "beleg_anahtarlar": [
-        "lkw",
-        "fahrer",
-        "fuhrpark",
-        "transport",
-        "spedition",
-        "fahrzeug",
-        "auslieferung",
-        "umzug",
-        "logistik",
-        "flotte",
-        "sattelzug",
-        "kraftfahrer",
-        "auslieferer",
-        "tourenplanung"
-      ]
+      "beleg_anahtarlar": ["lkw", "fahrer", "fuhrpark", "transport", "spedition", "fahrzeug", "auslieferung", "umzug", "logistik", "flotte", "sattelzug", "kraftfahrer", "tourenplanung", "zustellung"]
     },
     {
-      "id": "elektroingenieur",
+      "id": "pflege",
+      "name_de": "Pflegefachkraft (Alten-/Krankenpflege)",
+      "definition_de": "Pflegt, betreut und versorgt kranke, alte oder pflegebeduerftige Menschen fachlich (Grund- und Behandlungspflege, Medikamentengabe, Dokumentation) in Heimen, ambulanten Diensten oder Kliniken.",
+      "synonyms_de": ["Pflegefachkraft", "Pflegefachfrau", "Pflegefachmann", "Altenpfleger", "Gesundheits- und Krankenpfleger", "examinierte Pflegekraft", "Pflegehelfer"],
+      "employs_yes": "Ambulante Pflegedienste, Alten- und Pflegeheime, Seniorenresidenzen mit Pflege, Krankenhaeuser und Kliniken, Reha-Einrichtungen, Tagespflegen, Hospize, Wohngruppen fuer Menschen mit Behinderung.",
+      "employs_no": "Fusspflege-, Kosmetik- und Nagelstudios, Zahnarzt- und Tierarztpraxen, Apotheken, Sanitaetshaeuser, Physiotherapiepraxen, Hausmeister-/Gebaeudepflege, Autopflege, Bestatter, reine Betreuungsvermittlungen ohne eigenes Pflegepersonal.",
+      "beleg_anahtarlar": ["pflege", "pflegedienst", "pflegeheim", "senioren", "krankenpflege", "altenpflege", "bewohner", "patient", "grundpflege", "behandlungspflege", "wohnbereich", "hospiz", "tagespflege", "klinik", "station"]
+    },
+    {
+      "id": "elektro_ing",
       "name_de": "Ingenieur/in Elektrotechnik",
       "definition_de": "Entwickelt, plant, berechnet oder projektiert im eigenen Haus elektrotechnische Anlagen, Maschinen, Steuerungen oder Elektronik (z. B. Schaltanlagen, Automatisierung, Antriebstechnik, Leistungselektronik, Sensorik, Messtechnik).",
-      "synonyms_de": [
-        "Elektroingenieur",
-        "Ingenieur Elektrotechnik",
-        "Entwicklungsingenieur Elektronik",
-        "Projektingenieur Elektrotechnik",
-        "Hardwareentwickler",
-        "Automatisierungsingenieur",
-        "Konstrukteur Elektrotechnik"
-      ],
-      "employs_yes": "Maschinen- und Anlagenbauer, Elektronikhersteller, Automatisierungs- und Steuerungstechnikfirmen, Ingenieurbueros fuer Elektrotechnik, Energieversorger mit eigener Netzplanung, Schaltanlagenbauer, Hersteller von Mess- und Regeltechnik, Industriebetriebe mit eigener Entwicklungs- oder Instandhaltungsabteilung.",
-      "employs_no": "Reine Haendler und Distributoren elektrotechnischer Produkte, Elektro-Einzelhandel, Elektroinstallationsbetriebe im Handwerk ohne Planung/Entwicklung (dort arbeiten Elektriker/Elektroniker, keine Ingenieure), Hausmeisterdienste, Personalvermittler und Zeitarbeitsfirmen, die Ingenieure nur weitervermitteln, Hersteller rein mechanischer oder chemischer Produkte (Dichtungen, Raeder, Kunststoffcompounds, Feinmechanik) ohne eigene Elektronik- oder Steuerungsentwicklung, sowie Haendler und Servicebetriebe fuer Maschinen, die die Steuerung des Herstellers nur verbauen oder warten.",
-      "sektorler": [
-        "Sanayi & Mühendislik"
-      ],
-      "beleg_pflicht_de": "PFLICHT: Der Beleg muss ein konkretes elektrisches/elektronisches Artefakt oder eine solche Taetigkeit nennen - Schaltung, Steuerung, Regelung, Automatisierung, Antrieb, Elektronik, Sensorik, Messtechnik, Leistungselektronik, Hardware-Entwicklung, elektrische Energiesysteme. Allgemeine Woerter wie Entwicklung, Konstruktion, Forschung, Ingenieurbuero, Technik oder Produktion reichen NICHT; sie koennen auch Maschinenbau, Chemie oder Feinmechanik bedeuten. Fehlt ein solcher Beleg: unclear.",
-      "beleg_anahtarlar": [
-        "elektr",
-        "elektronik",
-        "schaltung",
-        "schaltanlage",
-        "steuerung",
-        "regelung",
-        "regelgerät",
-        "automatisierung",
-        "antrieb",
-        "sensor",
-        "messtechnik",
-        "leistungselektronik",
-        "hardware",
-        "platine",
-        "sps",
-        "leiterplatte",
-        "energiesystem",
-        "stromversorgung",
-        "mechatronik"
-      ]
+      "synonyms_de": ["Elektroingenieur", "Ingenieur Elektrotechnik", "Entwicklungsingenieur Elektronik", "Projektingenieur Elektrotechnik", "Hardwareentwickler", "Automatisierungsingenieur", "Konstrukteur Elektrotechnik"],
+      "employs_yes": "Maschinen- und Anlagenbauer, Elektronikhersteller, Automatisierungs- und Steuerungstechnikfirmen, Ingenieurbueros fuer Elektrotechnik/Elektroplanung, Energieversorger mit eigener Netzplanung, Schaltanlagenbauer, Hersteller von Mess- und Regeltechnik, Industriebetriebe mit eigener Entwicklungs- oder Instandhaltungsabteilung.",
+      "employs_no": "Reine Haendler und Distributoren elektrotechnischer Produkte, Elektro-Einzelhandel, Elektroinstallationsbetriebe im Handwerk ohne Planung/Entwicklung (dort arbeiten Elektriker/Elektroniker, keine Ingenieure), Hausmeisterdienste, Personalvermittler und Zeitarbeitsfirmen, Hersteller rein mechanischer oder chemischer Produkte (Dichtungen, Raeder, Kunststoffcompounds, Feinmechanik) ohne eigene Elektronik- oder Steuerungsentwicklung, Haendler und Servicebetriebe fuer Maschinen, die die Steuerung des Herstellers nur verbauen oder warten.",
+      "beleg_pflicht_de": "PFLICHT: Der Beleg muss ein konkretes elektrisches/elektronisches Artefakt oder eine solche Taetigkeit nennen - Schaltung, Steuerung, Regelung, Automatisierung, Antrieb, Elektronik, Sensorik, Messtechnik, Leistungselektronik, Hardware-Entwicklung, elektrische Energiesysteme, Elektroplanung. Allgemeine Woerter wie Entwicklung, Konstruktion, Forschung, Ingenieurbuero, Technik oder Produktion reichen NICHT. Fehlt ein solcher Beleg: unclear.",
+      "beleg_anahtarlar": ["elektr", "elektronik", "schaltung", "schaltanlage", "steuerung", "regelung", "regelgerät", "automatisierung", "antrieb", "sensor", "messtechnik", "leistungselektronik", "hardware", "platine", "sps", "leiterplatte", "energiesystem", "stromversorgung", "mechatronik", "elektroplanung"]
     },
     {
-      "id": "marketing_manager",
+      "id": "dev",
+      "name_de": "Softwareentwickler/in",
+      "definition_de": "Entwirft, programmiert und testet Software (Web, App, Backend, Embedded) im eigenen Haus - als Produkt, als Dienstleistung fuer Kunden oder fuer interne Systeme.",
+      "synonyms_de": ["Softwareentwickler", "Programmierer", "Software Engineer", "Full-Stack-Entwickler", "Backend-Entwickler", "App-Entwickler", "Webentwickler"],
+      "employs_yes": "Softwarehaeuser und -hersteller, App- und Webagenturen mit eigener Entwicklung, SaaS-/Plattformanbieter, Digitalagenturen mit Entwicklungsteam, groessere Unternehmen mit eigener IT-Entwicklung, Embedded-/Automatisierungsfirmen mit Softwareanteil, Forschungsinstitute mit Softwareentwicklung.",
+      "employs_no": "Reine IT-Systemhaeuser und PC-Services (Installation, Support, Hardwareverkauf), EDV-Beratungen ohne Entwicklung, Softwarehaendler/Reseller, Webseiten-Baukasten-Nutzer, Druckereien, Telekommunikationsshops, Elektromaerkte.",
+      "beleg_anahtarlar": ["software", "entwickl", "programmier", "developer", "app", "backend", "frontend", "code", "api", "plattform", "saas", "engineering", "devops", "release", "agile", "scrum", "github", "framework"]
+    },
+    {
+      "id": "it",
+      "name_de": "IT-Systemadministrator/in / IT-Fachkraft",
+      "definition_de": "Betreibt, installiert und betreut IT-Infrastruktur (Server, Netzwerke, Clients, Cloud, IT-Sicherheit) und leistet technischen Support - im eigenen Haus oder als IT-Dienstleister fuer Kunden.",
+      "synonyms_de": ["Systemadministrator", "IT-Administrator", "Fachinformatiker Systemintegration", "IT-Supporter", "Netzwerkadministrator", "IT-Techniker", "Cloud-Administrator"],
+      "employs_yes": "IT-Systemhaeuser, Managed-Service-Provider, Rechenzentren, IT-Dienstleister und EDV-Services, Softwarehaeuser, Cloud-/Hosting-Anbieter, Unternehmen ab ca. 50 Mitarbeitenden mit eigener IT-Abteilung, Krankenhaeuser, Hochschulen, Stadtverwaltungen.",
+      "employs_no": "Elektromaerkte und Handyshops, Beteiligungs- und Finanzberatungen, Versicherungsagenturen, Steuerberater, Baufinanzierer, kleine Handwerksbetriebe, Reinigungsfirmen - auch wenn 'digital' im Namen steht.",
+      "beleg_anahtarlar": ["it-", "systemhaus", "server", "netzwerk", "cloud", "support", "edv", "administr", "infrastruktur", "rechenzentrum", "hosting", "security", "helpdesk", "microsoft", "linux", "backup", "firewall", "managed service"]
+    },
+    {
+      "id": "marketing",
       "name_de": "Marketing Manager/in",
       "definition_de": "Plant und steuert Marketing- und Kommunikationsmassnahmen (Kampagnen, Online-Marketing, Social Media, Content, Markenfuehrung) fuer das eigene Unternehmen oder als Dienstleistung fuer Kunden.",
-      "synonyms_de": [
-        "Marketing Manager",
-        "Online-Marketing-Manager",
-        "Marketingreferent",
-        "Social Media Manager",
-        "Kommunikationsmanager",
-        "Brand Manager",
-        "Performance Marketing Manager"
-      ],
+      "synonyms_de": ["Marketing Manager", "Online-Marketing-Manager", "Marketingreferent", "Social Media Manager", "Kommunikationsmanager", "Brand Manager", "Performance Marketing Manager"],
       "employs_yes": "Werbe-, Kommunikations-, Digital- und PR-Agenturen, Marketing- und Medienberatungen, Verlage und Medienhaeuser mit eigener Vermarktung, Eventagenturen, groessere Unternehmen mit eigener Marketingabteilung (ab ca. 50 Mitarbeitenden), E-Commerce-Betreiber mit eigenem Online-Marketing.",
-      "employs_no": "Kleine Ein-Personen-Betriebe und Freiberufler ohne Angestellte, Kuenstler, Fotografen und Musiker als Einzelpersonen, Vereine ohne bezahltes Personal, Museen und Theater in oeffentlicher Traegerschaft ohne eigene Marketingstelle, reine Druckereien und Copyshops, Ladengeschaefte fuer Medienprodukte.",
-      "sektorler": [
-        "Medya, Kültür & Etkinlik"
-      ],
-      "beleg_anahtarlar": [
-        "marketing",
-        "werbe",
-        "kampagne",
-        "kommunikation",
-        "social media",
-        "agentur",
-        "marke",
-        "branding",
-        "content",
-        "seo",
-        "pr ",
-        "öffentlichkeitsarbeit",
-        "vermarktung",
-        "sichtbarkeit"
-      ]
+      "employs_no": "Kleine Ein-Personen-Betriebe und Freiberufler ohne Angestellte, Kuenstler, Fotografen und Musiker als Einzelpersonen, Vereine ohne bezahltes Personal, Museen und Theater in oeffentlicher Traegerschaft ohne eigene Marketingstelle, reine Druckereien, Werbetechnik-/Beschriftungs-/Schilderbetriebe, Copyshops, Ladengeschaefte fuer Medienprodukte.",
+      "beleg_anahtarlar": ["marketing", "werbe", "kampagne", "kommunikation", "social media", "agentur", "marke", "branding", "content", "seo", "pr ", "öffentlichkeitsarbeit", "vermarktung", "sichtbarkeit", "strategie", "zielgruppe"]
+    },
+    {
+      "id": "buchhaltung",
+      "name_de": "Buchhalter/in / Steuerfachangestellte/r",
+      "definition_de": "Fuehrt Finanz- und Lohnbuchhaltung, erstellt Abschluesse, Steuererklaerungen oder Bilanzen - in einer Kanzlei fuer Mandanten oder im eigenen Unternehmen.",
+      "synonyms_de": ["Buchhalter", "Finanzbuchhalter", "Bilanzbuchhalter", "Steuerfachangestellte", "Lohnbuchhalter", "Steuerfachwirt", "Accountant"],
+      "employs_yes": "Steuerberatungskanzleien, Wirtschaftspruefungsgesellschaften, Buchhaltungsbueros, Treuhandgesellschaften, Lohnbueros, groessere Unternehmen mit eigener Finanzabteilung (ab ca. 50 Mitarbeitenden), Konzernverwaltungen, Wohnungsgesellschaften.",
+      "employs_no": "Rechtsanwaltskanzleien ohne Steuerabteilung, Notare, Banken und Sparkassen (eigenes Berufsbild), Inkassobueros, Jobportale, kleine Handwerks- oder Gastrobetriebe, die die Buchhaltung extern vergeben.",
+      "beleg_anahtarlar": ["buchhalt", "steuer", "bilanz", "lohn", "finanzbuch", "jahresabschluss", "datev", "mandant", "kanzlei", "wirtschaftsprüf", "accounting", "rechnungswesen", "controlling"]
+    },
+    {
+      "id": "sozial",
+      "name_de": "Sozialarbeiter/in / Sozialpaedagoge/in",
+      "definition_de": "Beraet, begleitet und betreut Menschen in sozialen Notlagen oder Lebensphasen (Jugendhilfe, Familienhilfe, Sucht, Migration, Behinderung, Wohnungslosigkeit) fachlich im Auftrag eines Traegers.",
+      "synonyms_de": ["Sozialarbeiter", "Sozialpaedagoge", "Sozialpaedagogin", "Fachkraft Jugendhilfe", "Familienhelfer", "Streetworker", "Erziehungsbeistand"],
+      "employs_yes": "Wohlfahrtsverbaende (Caritas, Diakonie, AWO, Paritaetischer, DRK), Jugendhilfetraeger, Jugendaemter und Sozialaemter, Beratungsstellen (Sucht, Schulden, Migration, Familie), Wohnheime und Werkstaetten fuer Menschen mit Behinderung, Schulen mit Schulsozialarbeit, Fluechtlingsunterkuenfte.",
+      "employs_no": "IT- und Unternehmensberatungen, Engineering-Firmen, Inkasso, Systemhaeuser, Versicherungen, Kosmetik-/Fusspflegestudios, Fitnessstudios, reine Pflegedienste ohne Sozialdienst (Pflege ist ein anderer Beruf).",
+      "beleg_anahtarlar": ["sozial", "jugendhilfe", "beratungsstelle", "betreuung", "träger", "familienhilfe", "wohngruppe", "integration", "migration", "sucht", "behinderung", "caritas", "diakonie", "awo", "pädagog", "hilfe zur erziehung"]
+    },
+    {
+      "id": "kinder",
+      "name_de": "Erzieher/in (Kita)",
+      "definition_de": "Betreut, foerdert und erzieht Kinder im Vorschul- oder Grundschulalter in einer Kindertagesstaette, Krippe, einem Hort oder einer Kinderbetreuungseinrichtung.",
+      "synonyms_de": ["Erzieher", "Erzieherin", "Kinderpfleger", "Paedagogische Fachkraft", "Kita-Fachkraft", "Sozialassistent", "Kindheitspaedagoge"],
+      "employs_yes": "Kindertagesstaetten, Kinderkrippen, Kindergaerten, Horte, Kinderhaeuser, Familienzentren, Kita-Traeger (Kommunen, Kirchen, Elterninitiativen, freie Traeger), Montessori-/Waldorf-Einrichtungen, Betriebskitas.",
+      "employs_no": "Seniorenheime, Pflegedienste, Physiotherapien, Fahrschulen, Reit- und Skischulen, Ballschulen, Spielwarenlaeden, Kinderaerzte (Medizin, nicht Erziehung), Nachhilfeinstitute, Kinderfotografen.",
+      "beleg_anahtarlar": ["kita", "kindergarten", "krippe", "hort", "erzieher", "kinderbetreuung", "kindertagesstätte", "pädagog", "gruppe", "eingewöhnung", "elternarbeit", "betreuungsplatz", "familienzentrum"]
+    },
+    {
+      "id": "koch",
+      "name_de": "Koch/Koechin",
+      "definition_de": "Bereitet in einer gewerblichen Kueche Speisen zu und verantwortet Kuechenprozesse - in Restaurants, Hotels, Kantinen, Catering oder Gemeinschaftsverpflegung.",
+      "synonyms_de": ["Koch", "Koechin", "Kuechenchef", "Chef de Partie", "Sous Chef", "Jungkoch", "Beikoch"],
+      "employs_yes": "Restaurants, Gasthaeuser, Hotels mit Kueche, Kantinen und Betriebsrestaurants, Caterer und Partyservices, Mensen, Kliniken und Pflegeheime mit eigener Kueche, Systemgastronomie, Eventlocations mit Kueche.",
+      "employs_no": "Reisebueros und Touristiker, Ferienparks ohne Restaurant, Hundepensionen, Baeckereien ohne Gastronomie, Tankstellen, Lebensmittel-Einzelhandel, Kuechenstudios (Moebel), Kuechenhersteller, Lieferplattformen ohne eigene Kueche.",
+      "beleg_anahtarlar": ["küche", "koch", "restaurant", "gastro", "speisekarte", "menü", "catering", "kantine", "hotel", "gericht", "kulinar", "gastronom", "bistro", "gasthaus", "brasserie"]
+    },
+    {
+      "id": "backer",
+      "name_de": "Baecker/in / Konditor/in",
+      "definition_de": "Stellt Brot, Backwaren, Feingebaeck oder Konditoreiwaren handwerklich oder industriell in einer eigenen Backstube her.",
+      "synonyms_de": ["Baecker", "Baeckerin", "Konditor", "Baeckermeister", "Backwarenhersteller", "Feinbaecker", "Patissier"],
+      "employs_yes": "Handwerksbaeckereien mit eigener Backstube, Konditoreien, Baeckerei-Cafes mit Produktion, Grossbaeckereien, Muehlen mit Backbetrieb, Hotels mit eigener Patisserie.",
+      "employs_no": "Reine Backshops und Filialen ohne Backstube (Aufbackstationen), Restaurants ohne Backwarenproduktion, Hotels ohne Patisserie, Reisebueros, Supermarkt-Backtheken mit Fertigware.",
+      "beleg_anahtarlar": ["bäcker", "backstube", "brot", "backwaren", "konditor", "gebäck", "torte", "backen", "teig", "meisterbetrieb", "handwerksbäckerei", "patisserie"]
+    },
+    {
+      "id": "fleischer",
+      "name_de": "Fleischer/in / Metzger/in",
+      "definition_de": "Zerlegt, verarbeitet und veredelt Fleisch zu Wurst- und Fleischwaren in einer eigenen Produktion oder Metzgerei.",
+      "synonyms_de": ["Fleischer", "Metzger", "Fleischermeister", "Fleischereifachverkaeufer", "Wurstmacher", "Zerleger", "Schlachter"],
+      "employs_yes": "Metzgereien und Fleischereien mit eigener Produktion, Wurstfabriken, Schlachthoefe, Fleischgrosshaendler mit Zerlegung, Hofmetzgereien, Feinkosthersteller mit Fleischverarbeitung.",
+      "employs_no": "Baeckereien, Restaurants ohne eigene Metzgerei, Elektro- und Dachdeckerbetriebe, Ingenieurbueros, Supermarkt-Fleischtheken mit reiner Bedienung, Tierhandlungen.",
+      "beleg_anahtarlar": ["fleisch", "metzger", "wurst", "schlacht", "zerleg", "fleischerei", "hausschlachtung", "räucher", "feinkost", "eigene herstellung", "meisterbetrieb"]
+    },
+    {
+      "id": "metall",
+      "name_de": "Metallbauer/in / Schweisser/in / Industriemechaniker/in",
+      "definition_de": "Fertigt, schweisst, montiert und bearbeitet Metallkonstruktionen, Stahlbauteile oder Maschinenkomponenten in einer eigenen Werkstatt oder Fertigung.",
+      "synonyms_de": ["Metallbauer", "Schweisser", "Schlosser", "Konstruktionsmechaniker", "Industriemechaniker", "Stahlbauer", "Anlagenmechaniker"],
+      "employs_yes": "Metallbau- und Stahlbaubetriebe, Schlossereien, Maschinen- und Anlagenbauer, Schweissfachbetriebe, Blech- und Apparatebauer, Werften, Fahrzeug- und Karosseriebauer, Behaelterbauer, Rohrleitungsbauer.",
+      "employs_no": "Ingenieurgesellschaften und Beratungen, Metallhaendler ohne Fertigung, Baeckereien, Tischlereien, Schuh- und Bekleidungshaendler, Schmuck- und Goldschmiede, reine Konstruktionsbueros.",
+      "beleg_anahtarlar": ["metall", "schweiß", "stahl", "schlosser", "fertigung", "werkstatt", "konstruktion", "blech", "montage", "maschinenbau", "anlagenbau", "wig", "mag", "schweissen", "edelstahl"]
+    },
+    {
+      "id": "cnc",
+      "name_de": "CNC-Fachkraft / Zerspanungsmechaniker/in",
+      "definition_de": "Programmiert, ruestet und bedient CNC-Maschinen (Drehen, Fraesen, Schleifen) und fertigt Praezisionsteile in einer eigenen Zerspanung.",
+      "synonyms_de": ["CNC-Fraeser", "CNC-Dreher", "Zerspanungsmechaniker", "CNC-Fachkraft", "Werkzeugmechaniker", "Maschinenbediener", "Feinwerkmechaniker"],
+      "employs_yes": "Zerspanungsbetriebe, Dreh- und Fraesereien, Werkzeug- und Formenbauer, Praezisionsmechanik, Maschinenbauer mit eigener Fertigung, Fertigungstechnik, Kunststoffverarbeiter mit Zerspanung, Lohnfertiger.",
+      "employs_no": "Ingenieurgesellschaften, Beratungen, Elektroanlagenbauer, Metallhaendler, reine Konstruktionsbueros, Werkzeughaendler, Baumaerkte.",
+      "beleg_anahtarlar": ["cnc", "zerspan", "dreh", "fräs", "fertigung", "präzision", "maschinenpark", "bearbeitungszentrum", "werkstück", "toleranz", "lohnfertigung", "schleif", "5-achs", "drehteile", "frästeile"]
+    },
+    {
+      "id": "shk",
+      "name_de": "Anlagenmechaniker/in SHK (Sanitaer, Heizung, Klima)",
+      "definition_de": "Installiert, wartet und repariert Sanitaer-, Heizungs- und Lueftungsanlagen (Waermepumpen, Baeder, Rohrleitungen, Gas- und Wasserinstallation) beim Kunden.",
+      "synonyms_de": ["Anlagenmechaniker SHK", "Installateur", "Heizungsbauer", "Klempner", "Gas-Wasser-Installateur", "Sanitaerinstallateur", "Heizungsmonteur"],
+      "employs_yes": "SHK-Handwerksbetriebe, Heizungs- und Sanitaerfirmen, Haus- und Gebaeudetechnikbetriebe, Badsanierer, Waermepumpen-/Solarthermie-Installateure, Rohrleitungsbauer, TGA-Unternehmen mit eigener Montage.",
+      "employs_no": "Reine Elektrobetriebe, Dachdecker, Tischler, Malerbetriebe, Garten- und Landschaftsbau, Fliesenleger, Sanitaer-Grosshaendler und Badausstellungen ohne Montage, Badmoebelhaendler.",
+      "beleg_anahtarlar": ["sanitär", "heizung", "installation", "wärmepumpe", "bad", "rohr", "gas", "wasser", "lüftung", "klima", "shk", "monteur", "kundendienst", "heizungsbau", "solarthermie"]
+    },
+    {
+      "id": "elektro",
+      "name_de": "Elektroniker/in / Elektriker/in (Handwerk)",
+      "definition_de": "Installiert, prueft und wartet elektrische Anlagen in Gebaeuden und Betrieben (Verteilungen, Beleuchtung, Photovoltaik, Smart Home, Netzwerke) als Handwerksbetrieb beim Kunden.",
+      "synonyms_de": ["Elektroniker", "Elektriker", "Elektroinstallateur", "Elektroniker Energie- und Gebaeudetechnik", "Elektromonteur", "Betriebselektriker", "Elektrofachkraft"],
+      "employs_yes": "Elektroinstallationsbetriebe, Elektrohandwerk, Photovoltaik-/Solarinstallateure, Gebaeudetechnikfirmen, Blitzschutzbetriebe, Schaltanlagenbauer, Stadtwerke und Netzbetreiber, Industriebetriebe mit eigener Elektro-Instandhaltung, Lichttechnik-Installateure.",
+      "employs_no": "Reine Sanitaer-/Heizungsbetriebe, Dachdecker, Tischler, Maler, Garten- und Landschaftsbau, Elektro-Einzelhandel und Elektromaerkte ohne Installation, Onlineshops fuer Elektroartikel.",
+      "beleg_anahtarlar": ["elektro", "installation", "photovoltaik", "pv-anlage", "schaltschrank", "verteilung", "beleuchtung", "smart home", "e-check", "elektroinstallation", "wallbox", "kabel", "gebäudetechnik", "netzwerk", "blitzschutz"]
+    },
+    {
+      "id": "kfz",
+      "name_de": "Kfz-Mechatroniker/in",
+      "definition_de": "Wartet, diagnostiziert und repariert Kraftfahrzeuge (Pkw, Nutzfahrzeuge, Motorraeder) in einer eigenen Werkstatt.",
+      "synonyms_de": ["Kfz-Mechatroniker", "Kfz-Mechaniker", "Automechaniker", "Kfz-Techniker", "Serviceberater", "Nutzfahrzeugmechatroniker", "Kfz-Meister"],
+      "employs_yes": "Kfz-Werkstaetten, Autohaeuser mit Werkstatt, Vertragswerkstaetten, freie Werkstaetten, Nutzfahrzeug-Servicebetriebe, Reifenservices mit Werkstatt, Autoglas- und Fahrzeugservicebetriebe, Fuhrparkbetreiber mit eigener Werkstatt.",
+      "employs_no": "Speditionen und Logistiker ohne eigene Werkstatt, Umzugsfirmen, Fahrschulen, Autovermietungen ohne Werkstatt, Taxibetriebe, Autohaendler ohne Werkstatt, Autoteile-Onlineshops, Waschanlagen.",
+      "beleg_anahtarlar": ["werkstatt", "kfz", "reparatur", "inspektion", "fahrzeug", "auto", "diagnose", "hauptuntersuchung", "hu", "service", "mechatronik", "reifen", "bremsen", "meisterbetrieb", "wartung"]
+    },
+    {
+      "id": "lager",
+      "name_de": "Fachkraft fuer Lagerlogistik / Lagerist/in",
+      "definition_de": "Nimmt Waren an, lagert, kommissioniert, verpackt und versendet sie in einem eigenen Lager - mit Flurfoerderzeugen und Lagerverwaltungssystemen.",
+      "synonyms_de": ["Lagerist", "Fachkraft fuer Lagerlogistik", "Kommissionierer", "Lagermitarbeiter", "Staplerfahrer", "Lagerlogistiker", "Versandmitarbeiter"],
+      "employs_yes": "Logistikdienstleister und Speditionen mit Lager, Kontraktlogistiker, Grosshaendler, Versandhaendler und E-Commerce mit eigenem Lager, Fulfillment-Anbieter, Industriebetriebe mit Materiallager, Lebensmittel- und Baustoffgrosshandel, Distributionszentren.",
+      "employs_no": "Autohaeuser, Karosseriebetriebe, Fahrschulen, Kfz-Sachverstaendige, Taxibetriebe, kleine Ladengeschaefte ohne Lager, Beratungen, Onlineshops mit Dropshipping ohne eigenes Lager.",
+      "beleg_anahtarlar": ["lager", "logistik", "kommission", "versand", "stapler", "wareneingang", "warenausgang", "lagerhalle", "fulfillment", "distribution", "palette", "hochregal", "lagerfläche", "umschlag"]
+    },
+    {
+      "id": "dispo",
+      "name_de": "Disponent/in (Transport/Logistik)",
+      "definition_de": "Plant und steuert Touren, Fahrzeuge und Fahrer eines Fuhrparks oder disponiert Transporte und Fracht fuer Kunden.",
+      "synonyms_de": ["Disponent", "Speditionskaufmann", "Transportdisponent", "Fuhrparkdisponent", "Tourenplaner", "Logistikdisponent", "Frachtdisponent"],
+      "employs_yes": "Speditionen, Transport- und Logistikunternehmen, Kurier- und Expressdienste, Umzugsfirmen, Entsorgungsbetriebe mit Fuhrpark, Taxizentralen und Fahrdienste, Busunternehmen, Verkehrsbetriebe, Baustoff- und Getraenkelogistik.",
+      "employs_no": "Autolackierer, Karosseriebetriebe, Reifenhaendler, Fahrschulen, Autoservices und Kfz-Werkstaetten, Autohaeuser ohne Logistik, Fahrzeughaendler.",
+      "beleg_anahtarlar": ["dispo", "tourenplan", "fuhrpark", "spedition", "logistik", "transport", "fracht", "fahrer", "route", "lieferung", "verkehr", "auftragssteuer", "cargo", "kurier"]
+    },
+    {
+      "id": "kurier",
+      "name_de": "Kurier-/Paketzusteller/in",
+      "definition_de": "Stellt Pakete, Briefe oder Sendungen mit einem eigenen Fahrzeug im Nahbereich zu (KEP-Dienst, Botendienst, Lieferdienst).",
+      "synonyms_de": ["Paketzusteller", "Kurierfahrer", "Zusteller", "Auslieferungsfahrer", "Bote", "Lieferfahrer", "KEP-Fahrer"],
+      "employs_yes": "Kurier-, Express- und Paketdienste (KEP), Zustellpartner von DHL/Hermes/DPD/GLS/UPS, Botendienste, Lieferdienste mit eigenen Fahrern, Apotheken-/Laborkuriere, Postdienstleister, Lebensmittel-Lieferdienste.",
+      "employs_no": "Tank- und Silotransporte, Schwertransporte, Busbetriebe, Autohaeuser, Karosseriebetriebe, Reifenhaendler, Fahrschulen, Speditionen im Fernverkehr (anderer Beruf), Plattformen, die Fahrer nur vermitteln.",
+      "beleg_anahtarlar": ["kurier", "zustell", "paket", "lieferung", "express", "bote", "sendung", "versand", "fahrer", "auslieferung", "same day", "kep", "post", "lieferdienst"]
+    },
+    {
+      "id": "bus",
+      "name_de": "Busfahrer/in (Klasse D)",
+      "definition_de": "Faehrt Linien-, Reise- oder Schulbusse im Personenverkehr; benoetigt Fuehrerschein Klasse D und Fahrerqualifikation.",
+      "synonyms_de": ["Busfahrer", "Omnibusfahrer", "Linienbusfahrer", "Reisebusfahrer", "Fahrer Klasse D", "Kraftomnibusfahrer", "Schulbusfahrer"],
+      "employs_yes": "Busunternehmen, Omnibusbetriebe, Verkehrsbetriebe und Stadtwerke mit Nahverkehr, Reisebusveranstalter mit eigenem Fuhrpark, Schulbus- und Behindertenfahrdienste, Busvermietungen mit Fahrer.",
+      "employs_no": "Speditionen und Gueterlogistik, Umzugsfirmen, Frachtfuehrer, Silo-/Baustofftransporte, Kurierdienste, Autohaeuser, Reisebueros ohne eigene Busse, Taxibetriebe.",
+      "beleg_anahtarlar": ["bus", "omnibus", "linienverkehr", "reisebus", "nahverkehr", "fahrgast", "fahrplan", "schulbus", "personenbeförderung", "klasse d", "busfahrer", "fuhrpark", "linie"]
+    },
+    {
+      "id": "arzt",
+      "name_de": "Arzt/Aerztin (Humanmedizin)",
+      "definition_de": "Untersucht, diagnostiziert und behandelt Patienten als approbierte/r Aerztin/Arzt in einer Praxis, einem MVZ oder einer Klinik.",
+      "synonyms_de": ["Arzt", "Aerztin", "Facharzt", "Assistenzarzt", "Oberarzt", "Hausarzt", "Weiterbildungsassistent"],
+      "employs_yes": "Krankenhaeuser und Kliniken, Medizinische Versorgungszentren (MVZ), Gemeinschafts- und Facharztpraxen, Reha-Kliniken, Universitaetskliniken, betriebsaerztliche Dienste, Gesundheitsaemter.",
+      "employs_no": "Tierarztpraxen, Apotheken, Optiker, Physiotherapiepraxen, Zahnarztpraxen (eigener Beruf), Heilpraktiker, Naturheilpraxen, Sanitaetshaeuser, Pflegedienste ohne Aerzte, Kosmetikstudios.",
+      "beleg_anahtarlar": ["arzt", "ärzt", "praxis", "patient", "facharzt", "sprechstunde", "klinik", "mvz", "medizin", "diagnos", "behandlung", "chefarzt", "oberarzt", "station", "kassenärzt"]
+    },
+    {
+      "id": "zahn",
+      "name_de": "Zahnarzt/-aerztin / Zahnmedizinische Fachangestellte",
+      "definition_de": "Behandelt Zaehne und Mundraum (Zahnmedizin, Kieferorthopaedie, Oralchirurgie) oder assistiert dabei (ZFA, Prophylaxe) in einer Zahnarztpraxis oder Zahnklinik.",
+      "synonyms_de": ["Zahnarzt", "Zahnaerztin", "Zahnmedizinische Fachangestellte", "ZFA", "Kieferorthopaede", "Prophylaxeassistentin", "Dentalhygienikerin"],
+      "employs_yes": "Zahnarztpraxen, Zahnkliniken, Kieferorthopaedische Praxen, Oralchirurgische Praxen, Zahn-MVZ, Implantologiezentren, Universitaetszahnkliniken.",
+      "employs_no": "Tierarztpraxen, Apotheken, Physiotherapien, Optiker, Hausarztpraxen, Seniorenheime, Dentallabore ohne Behandlung (Zahntechnik ist ein anderer Beruf), Dentalhaendler.",
+      "beleg_anahtarlar": ["zahn", "dental", "praxis", "patient", "prophylaxe", "kieferorthop", "implant", "behandlung", "zfa", "mundhygiene", "zahnmedizin", "sprechzeiten", "zahnersatz"]
+    },
+    {
+      "id": "physio",
+      "name_de": "Physiotherapeut/in",
+      "definition_de": "Behandelt Patienten mit Bewegungs- und Manualtherapie, Krankengymnastik und physikalischen Massnahmen in einer Praxis, Reha- oder Klinikeinrichtung.",
+      "synonyms_de": ["Physiotherapeut", "Physiotherapeutin", "Krankengymnast", "Manualtherapeut", "Sportphysiotherapeut", "Physio", "Therapeut"],
+      "employs_yes": "Physiotherapiepraxen, Reha-Zentren und -Kliniken, Therapiezentren, Krankenhaeuser mit Physiotherapie, Sportvereine mit medizinischer Abteilung, Gesundheitszentren, Kureinrichtungen, Pflegeheime mit eigener Therapieabteilung.",
+      "employs_no": "Zahnarztpraxen, Apotheken, Tierarztpraxen (Tierphysio ist etwas anderes), reine Pflegedienste, Seniorenheime ohne Therapieabteilung, Fitnessstudios ohne Therapie, Massagestudios ohne Heilmittelzulassung, Berufsverbaende.",
+      "beleg_anahtarlar": ["physio", "krankengymnastik", "therapie", "patient", "manuelle", "reha", "behandlung", "praxis", "lymphdrainage", "heilmittel", "rezept", "therapeut", "massage"]
+    },
+    {
+      "id": "ergo",
+      "name_de": "Ergotherapeut/in",
+      "definition_de": "Behandelt Menschen mit motorischen, kognitiven oder psychischen Einschraenkungen mit ergotherapeutischen Massnahmen in einer Praxis, Klinik oder Einrichtung.",
+      "synonyms_de": ["Ergotherapeut", "Ergotherapeutin", "Ergo", "Handtherapeut", "Beschaeftigungstherapeut", "Arbeitstherapeut", "Neuroergotherapeut"],
+      "employs_yes": "Ergotherapiepraxen, interdisziplinaere Therapiezentren, Reha-Kliniken, Kinderzentren und Fruehfoerderstellen, psychiatrische Kliniken, Werkstaetten fuer Menschen mit Behinderung, Pflegeheime mit Therapieabteilung, Schulen mit Ergotherapie.",
+      "employs_no": "Reine Physiotherapiepraxen ohne Ergo, Massagestudios, Zahnarztpraxen, Tierarztpraxen, Tier-/Hundephysiotherapie, psychologische Praxen, Paarberatungen, Fitnessstudios.",
+      "beleg_anahtarlar": ["ergotherap", "ergo", "therapie", "patient", "behandlung", "feinmotorik", "praxis", "handtherapie", "neurolog", "pädiatr", "heilmittel", "therapeut", "reha"]
+    },
+    {
+      "id": "apotheke",
+      "name_de": "Apotheker/in / PTA / PKA",
+      "definition_de": "Gibt Arzneimittel ab, beraet Patienten und stellt Rezepturen her - als Apotheker/in, pharmazeutisch-technische/r Assistent/in (PTA) oder pharmazeutisch-kaufmaennische/r Angestellte/r (PKA) in einer Apotheke.",
+      "synonyms_de": ["Apotheker", "Apothekerin", "PTA", "PKA", "Pharmazeut", "Filialleiter Apotheke", "Approbierter Apotheker"],
+      "employs_yes": "Oeffentliche Apotheken, Apothekenfilialen, Krankenhausapotheken, Versandapotheken, pharmazeutische Grosshaendler mit Apothekern, Arzneimittelhersteller mit Apothekerstellen.",
+      "employs_no": "Zahnarzt- und Tierarztpraxen, Physiotherapien, Naturheilpraxen, Heilpraktiker, Drogeriemaerkte ohne Apotheke, Sanitaetshaeuser ohne Apotheke, Apothekerkammern und Verbaende, Reformhaeuser.",
+      "beleg_anahtarlar": ["apotheke", "arzneimittel", "pharma", "rezept", "medikament", "pta", "pka", "beratung", "rezeptur", "notdienst", "offizin", "apotheker", "medikation", "kunden"]
+    },
+    {
+      "id": "rettung",
+      "name_de": "Rettungssanitaeter/in / Notfallsanitaeter/in",
+      "definition_de": "Versorgt Notfallpatienten und fuehrt Kranken- und Rettungstransporte im Rettungsdienst oder Krankentransport durch.",
+      "synonyms_de": ["Rettungssanitaeter", "Notfallsanitaeter", "Rettungsassistent", "Rettungshelfer", "Krankentransportfahrer", "Sanitaeter", "Rettungsdienstfachkraft"],
+      "employs_yes": "Rettungsdienste und Rettungswachen (DRK, ASB, Johanniter, Malteser, Feuerwehr, private Rettungsdienste), Krankentransportunternehmen, Rettungsleitstellen, Werksrettungsdienste, Sanitaetsdienste bei Veranstaltungen, Rettungsdienstschulen mit Einsatzbetrieb.",
+      "employs_no": "Pflegedienste, Tagespflegen, Seniorenheime, Pflegeheime, Tierarztpraxen, Zahnarztpraxen, Tattoo-Studios, Physiotherapien, Reha-Zentren ohne Rettungsdienst, Fahrdienste ohne medizinische Qualifikation.",
+      "beleg_anahtarlar": ["rettung", "notfall", "sanitäter", "krankentransport", "rettungswache", "einsatz", "rettungswagen", "rtw", "ktw", "leitstelle", "notarzt", "patient", "erste hilfe", "sanitätsdienst"]
+    },
+    {
+      "id": "kinderkrankenpflege",
+      "name_de": "Gesundheits- und Kinderkrankenpfleger/in",
+      "definition_de": "Pflegt und betreut kranke Kinder und Jugendliche fachlich in Kinderkliniken, Kinderarztpraxen, Kinderhospizen oder ambulanten Kinderkrankenpflegediensten.",
+      "synonyms_de": ["Kinderkrankenpfleger", "Kinderkrankenschwester", "Gesundheits- und Kinderkrankenpflegerin", "Paediatrische Pflegefachkraft", "Neonatologie-Pflegekraft", "Kinderintensivpflege", "Pflegefachkraft Paediatrie"],
+      "employs_yes": "Kinderkliniken und Kinderkrankenhaeuser, Paediatrische Stationen, Neonatologien, Kinderarztpraxen, Kinderhospize, ambulante Kinderkrankenpflegedienste, Kinderintensivpflege-Dienste, sozialpaediatrische Zentren.",
+      "employs_no": "Sanitaetshaeuser, Seniorenheime, Altenpflegeeinrichtungen, Erwachsenen-Pflegeheime, Tagespflegen, Hospize fuer Erwachsene, Reha-Zentren ohne Paediatrie, Kitas (Erzieher, nicht Pflege).",
+      "beleg_anahtarlar": ["kinderkranken", "pädiatr", "kinderklinik", "neonatolog", "kinderintensiv", "kinderhospiz", "kinderarzt", "kind", "pflege", "station", "frühgeboren", "jugendliche", "patient"]
+    },
+    {
+      "id": "service",
+      "name_de": "Servicekraft / Kellner/in (Gastronomie)",
+      "definition_de": "Bedient und betreut Gaeste im Restaurant-, Hotel-, Cafe- oder Barbetrieb - Service am Tisch, an der Bar oder im Bankett.",
+      "synonyms_de": ["Servicekraft", "Kellner", "Restaurantfachkraft", "Servicemitarbeiter", "Barkeeper", "Bankettmitarbeiter", "Gastgeber"],
+      "employs_yes": "Restaurants, Gasthaeuser, Cafes, Bars und Lounges, Hotels mit Gastronomie, Eventlocations, Caterer mit Servicepersonal, Kantinen mit Bedienung, Biergaerten, Systemgastronomie.",
+      "employs_no": "Reisebueros, Backshops ohne Sitzplaetze, Kfz-Kundendienste, IT-Services und Servicetechniker (anderes 'Service'), Hundepensionen, Lebensmittelhaendler, Lieferplattformen ohne eigenes Servicepersonal, Ferienwohnungsvermieter.",
+      "beleg_anahtarlar": ["service", "gäste", "restaurant", "kellner", "bar", "gastronom", "bedienung", "tisch", "reservierung", "menü", "gastfreund", "bistro", "café", "hotel", "bankett"]
+    },
+    {
+      "id": "rezeption",
+      "name_de": "Rezeptionist/in / Hotelfachkraft (Empfang)",
+      "definition_de": "Empfaengt, checkt ein und betreut Gaeste an der Rezeption eines Hotels, einer Pension oder eines Ferienbetriebs (Reservierung, Check-in, Gaesteservice).",
+      "synonyms_de": ["Rezeptionist", "Empfangsmitarbeiter", "Hotelfachkraft", "Front Office Agent", "Empfangskraft", "Rezeptionsfachkraft", "Night Auditor"],
+      "employs_yes": "Hotels, Pensionen, Ferienhotels und -anlagen, Wellness- und Kurhotels, Hostels, Boardinghaeuser, Tagungshotels, Kliniken und Reha-Einrichtungen mit Patientenaufnahme, Fitness- und Wellnessanlagen mit Empfang.",
+      "employs_no": "Reisebueros und Reiseveranstalter, Restaurants ohne Hotel, Baeckereien, Hundepensionen, Ferienwohnungsvermieter ohne Rezeption, Tourismusverbaende, Hotelsoftware-Anbieter.",
+      "beleg_anahtarlar": ["rezeption", "empfang", "check-in", "gäste", "hotel", "zimmer", "reservierung", "front office", "übernachtung", "pension", "gästehaus", "buchung", "wellness", "tagung"]
+    },
+    {
+      "id": "reinigung",
+      "name_de": "Reinigungskraft / Gebaeudereiniger/in",
+      "definition_de": "Reinigt und pflegt Gebaeude, Bueros, Glasflaechen oder Textilien gewerblich als Reinigungskraft eines Dienstleisters oder im eigenen Betrieb.",
+      "synonyms_de": ["Reinigungskraft", "Gebaeudereiniger", "Glasreiniger", "Raumpfleger", "Unterhaltsreiniger", "Reinigungsmitarbeiter", "Hauswirtschaftskraft"],
+      "employs_yes": "Gebaeudereinigungsfirmen, Facility-Management-Dienstleister, Hausmeisterservices mit Reinigung, Glasreinigungen, Waeschereien und Textilreinigungen, Hygienedienstleister, Hotels und Kliniken mit eigener Reinigung, Industriereinigung.",
+      "employs_no": "Rohr- und Kanalreinigungen (anderes Gewerbe), Elektroservices, Garten- und Landschaftsbau, Renovierungsservices, Autopflegebetriebe, Reinigungsmittelhaendler, Vermittlungsplattformen ohne eigenes Personal.",
+      "beleg_anahtarlar": ["reinigung", "gebäudereinig", "glasreinig", "unterhaltsreinig", "objekt", "hygiene", "facility", "hausmeister", "sauber", "grundreinig", "büroreinig", "wäscherei", "reinigungskraft", "team"]
+    },
+    {
+      "id": "maler",
+      "name_de": "Maler/in und Lackierer/in",
+      "definition_de": "Streicht, tapeziert, verputzt und beschichtet Innen- und Aussenflaechen von Gebaeuden (Fassaden, Waende, Trockenbau, Bodenbelag) als Handwerksbetrieb.",
+      "synonyms_de": ["Maler", "Lackierer", "Maler und Lackierer", "Stuckateur", "Raumausstatter", "Trockenbauer", "Malergeselle"],
+      "employs_yes": "Malerbetriebe, Maler- und Lackierermeister, Stuckateurbetriebe, Fassadenbauer, Trockenbauunternehmen, Raumausstatter, Innenausbaufirmen, Renovierungs- und Sanierungsbetriebe mit Malerarbeiten, Bodenleger mit Malerabteilung.",
+      "employs_no": "Elektrobetriebe, Sanitaerfirmen, Dachdecker, Autolackierereien (Fahrzeuglackierer ist ein anderer Beruf), Farbenhaendler und Baumaerkte ohne Ausfuehrung, Architekten.",
+      "beleg_anahtarlar": ["maler", "lackier", "anstrich", "tapez", "fassade", "putz", "trockenbau", "spachtel", "renovier", "innenausbau", "farbe", "bodenbelag", "stuck", "meisterbetrieb", "wand"]
+    },
+    {
+      "id": "holz",
+      "name_de": "Tischler/in / Schreiner/in",
+      "definition_de": "Fertigt und montiert Moebel, Fenster, Tueren, Innenausbau und Holzkonstruktionen in einer eigenen Werkstatt.",
+      "synonyms_de": ["Tischler", "Schreiner", "Moebeltischler", "Bautischler", "Holzmechaniker", "Innenausbauer", "Kuechenmonteur"],
+      "employs_yes": "Tischlereien und Schreinereien, Moebelwerkstaetten und -hersteller, Fenster- und Tuerenbauer, Innenausbaubetriebe, Kuechenstudios mit eigener Montage/Werkstatt, Ladenbauer, Parkettleger, Saegewerke mit Weiterverarbeitung, Holzbaubetriebe.",
+      "employs_no": "Elektro-, Sanitaer- und Dachdeckerbetriebe, Malerbetriebe, Moebelhaeuser und -haendler ohne Werkstatt, Holzhaendler und Baumaerkte, Kuechenstudios ohne eigene Montage, Zimmereien (Zimmerer ist ein eigener Beruf).",
+      "beleg_anahtarlar": ["tischler", "schreiner", "holz", "möbel", "werkstatt", "fenster", "türen", "innenausbau", "massivholz", "furnier", "maßanfertigung", "montage", "küche", "einbau", "handwerk"]
+    },
+    {
+      "id": "zimmerer",
+      "name_de": "Zimmerer/Zimmerin",
+      "definition_de": "Errichtet Dachstuehle, Holzrahmenbauten, Holzhaeuser, Carports und tragende Holzkonstruktionen auf der Baustelle und im Abbund.",
+      "synonyms_de": ["Zimmerer", "Zimmermann", "Holzbauer", "Zimmerermeister", "Dachstuhlbauer", "Holzrahmenbauer", "Abbundzimmerer"],
+      "employs_yes": "Zimmereien, Holzbauunternehmen, Fertighaus- und Holzhaushersteller, Blockhausbauer, Dachdeckereien mit Zimmererabteilung, Carport- und Terrassenbauer, Abbundzentren, Ingenieurholzbau.",
+      "employs_no": "Schreinereien und Tischlereien (anderer Beruf), Moebelhaendler, Kuechenstudios, Fensterbauer, Rollladenbauer, Holzhaendler ohne Fertigung, Architekten, Baustoffhaendler.",
+      "beleg_anahtarlar": ["zimmer", "holzbau", "dachstuhl", "holzrahmen", "abbund", "holzhaus", "carport", "fertighaus", "bauholz", "konstruktion", "gaube", "aufstockung", "balken", "dach"]
+    },
+    {
+      "id": "dach",
+      "name_de": "Dachdecker/in",
+      "definition_de": "Deckt, dichtet ab und saniert Daecher, Fassaden und Flachdaecher inklusive Spenglerarbeiten und Dachbegruenung als Handwerksbetrieb.",
+      "synonyms_de": ["Dachdecker", "Dachdeckermeister", "Spengler", "Klempner (Dach)", "Bauklempner", "Flachdachbauer", "Dachdeckergeselle"],
+      "employs_yes": "Dachdeckereien, Bedachungsbetriebe, Spenglereien und Bauklempnereien, Flachdach- und Abdichtungsbetriebe, Zimmereien mit Dachdeckerabteilung, Fassadenbauer, Photovoltaik-Dachmontage mit Dachdeckern.",
+      "employs_no": "Elektro- und Sanitaerbetriebe, Tischler, Maler, Dachbaustoffhaendler ohne Ausfuehrung, Architekten, Geruestbauer ohne Dachdeckung, Solarhaendler ohne Montage.",
+      "beleg_anahtarlar": ["dach", "bedachung", "abdichtung", "flachdach", "spengler", "ziegel", "dachsanierung", "eindeckung", "dachrinne", "dachfenster", "steildach", "klempner", "dämmung", "meisterbetrieb"]
+    },
+    {
+      "id": "bau",
+      "name_de": "Bauarbeiter/in / Maurer/in / Bauhelfer/in",
+      "definition_de": "Fuehrt Hoch-, Tief-, Rohbau- oder Strassenbauarbeiten (Mauern, Betonieren, Schalen, Erdarbeiten) auf der Baustelle eines Bauunternehmens aus.",
+      "synonyms_de": ["Bauarbeiter", "Maurer", "Bauhelfer", "Betonbauer", "Baufacharbeiter", "Tiefbauer", "Strassenbauer"],
+      "employs_yes": "Bauunternehmen (Hochbau, Tiefbau, Strassenbau, Rohbau), Baugeschaefte und Baufirmen, Betonbauer, Erd- und Pflasterbaubetriebe, Abbruchunternehmen, Geruestbauer, Bautraeger mit eigener Ausfuehrung, kommunale Bauhoefe.",
+      "employs_no": "Architekten und Ingenieurbueros, Planungsbueros, Elektro- und Sanitaerbetriebe, Autohaeuser, Metallbau, Maschinenbau, Werkzeugbau, Heizungsbau (Industrie-'-bau'), Messebau, Ladenbau, Baustoffhaendler, Immobilienmakler.",
+      "beleg_anahtarlar": ["bau", "baustelle", "maurer", "beton", "rohbau", "hochbau", "tiefbau", "erdarbeiten", "pflaster", "schalung", "bauunternehm", "sanierung", "neubau", "bauleistung", "mauerwerk"]
+    },
+    {
+      "id": "bauleitung",
+      "name_de": "Bauleiter/in / Polier/in",
+      "definition_de": "Leitet, koordiniert und ueberwacht die Ausfuehrung von Bauprojekten (Termine, Kosten, Qualitaet, Nachunternehmer) fuer ein Bau- oder Planungsunternehmen.",
+      "synonyms_de": ["Bauleiter", "Bauleiterin", "Polier", "Projektleiter Bau", "Oberbauleiter", "Bauueberwacher", "Baustellenleiter"],
+      "employs_yes": "Bauunternehmen und Generalunternehmer, Bautraeger, Ingenieur- und Planungsbueros mit Bauueberwachung, Architekturbueros mit Objektueberwachung, Fertighaushersteller, Tiefbau- und Strassenbaufirmen, Wohnungsbaugesellschaften mit eigener Bauabteilung, TGA-Unternehmen.",
+      "employs_no": "Hausgeraete-Kundendienste, Elektroservices und Notdienste, Badsanierer, Malerbetriebe, Innenarchitekten ohne Bauleitung, Immobilienmakler, Baustoffhaendler, Baumaerkte.",
+      "beleg_anahtarlar": ["bauleit", "polier", "baustelle", "projektleit", "bauüberwach", "termin", "koordin", "nachunternehmer", "bauvorhaben", "ausführung", "gewerke", "bauprojekt", "objektüberwach", "abnahme"]
+    },
+    {
+      "id": "fliesen",
+      "name_de": "Fliesenleger/in",
+      "definition_de": "Verlegt Fliesen, Platten, Mosaike und Natursteinbelaege in Baedern, Kuechen, Boeden und Fassaden als Handwerksbetrieb.",
+      "synonyms_de": ["Fliesenleger", "Fliesen-, Platten- und Mosaikleger", "Fliesenlegermeister", "Natursteinverleger", "Plattenleger", "Bodenleger (Fliesen)", "Estrichleger"],
+      "employs_yes": "Fliesenlegerbetriebe, Fliesen- und Natursteinfachbetriebe, Badsanierer mit eigenen Fliesenlegern, Estrichbetriebe, Bodenlegerbetriebe mit Fliesenabteilung, Badstudios mit Ausfuehrung, Innenausbaufirmen.",
+      "employs_no": "Geruest- und Abbruchunternehmen, Erdbau, Dachdecker, Elektrobetriebe, Tief- und Strassenbau, Fliesenhaendler und Baumaerkte ohne Verlegung, Badmoebelhaendler, Architekten.",
+      "beleg_anahtarlar": ["fliesen", "platten", "mosaik", "naturstein", "verleg", "bad", "estrich", "feinsteinzeug", "fugen", "bodenbelag", "badsanierung", "wandfliesen", "meisterbetrieb", "verlegung"]
+    },
+    {
+      "id": "karosserie",
+      "name_de": "Karosserie- und Fahrzeugbauer/in / Fahrzeuglackierer/in",
+      "definition_de": "Instandsetzt Karosserien nach Unfaellen, richtet, spachtelt und lackiert Fahrzeuge in einer eigenen Karosserie- und Lackierwerkstatt.",
+      "synonyms_de": ["Karosseriebauer", "Karosserie- und Fahrzeugbaumechaniker", "Fahrzeuglackierer", "Autolackierer", "Karosseriespengler", "Unfallinstandsetzer", "Smart-Repair-Techniker"],
+      "employs_yes": "Karosseriebetriebe, Autolackierereien, Unfallinstandsetzungsbetriebe, Autohaeuser mit Karosserie- und Lackabteilung, Fahrzeugbauer, Smart-Repair-Betriebe, Nutzfahrzeug-Aufbauhersteller, Oldtimer-Restauratoren.",
+      "employs_no": "Pruefstellen und Kfz-Sachverstaendige, TUEV/DEKRA-Pruefstellen, Gutachterbueros, Autoglas ohne Karosserie, Reifenhaendler, Fahrschulen, Autovermietungen, Lackhaendler, Unfallkliniken (Medizin).",
+      "beleg_anahtarlar": ["karosserie", "lackier", "unfall", "instandsetz", "spachtel", "lack", "dellen", "smart repair", "richtbank", "fahrzeugbau", "beul", "werkstatt", "lackierkabine", "aufbereitung"]
+    },
+    {
+      "id": "kalte",
+      "name_de": "Mechatroniker/in fuer Kaeltetechnik",
+      "definition_de": "Installiert, wartet und repariert Kaelte-, Klima- und Waermepumpenanlagen (gewerbliche Kuehlung, Klimatechnik, Kaeltemittelkreislaeufe) beim Kunden.",
+      "synonyms_de": ["Mechatroniker Kaeltetechnik", "Kaelteanlagenbauer", "Kaeltetechniker", "Klimatechniker", "Kaeltemonteur", "Kuehlanlagenmechaniker", "Waermepumpentechniker"],
+      "employs_yes": "Kaelte- und Klimatechnikbetriebe, Kaelteanlagenbauer, Kuehlanlagen-Servicefirmen, Lueftungs- und Klimafirmen, Waermepumpen-Installateure mit Kaelteschein, Gewerbekaelte-Dienstleister (Supermarkt-, Gastro-Kuehlung), Rechenzentrums-Klimatisierung, Kaeltetechnik-Hersteller mit Service.",
+      "employs_no": "Reine Sanitaer- und Heizungsbetriebe ohne Kaelte/Klima, Badsanierer und Badstudios, Elektrobetriebe ohne Kaeltetechnik, Klimageraete-Haendler ohne Montage, Baumaerkte, Kuehlschrank-Einzelhandel.",
+      "beleg_anahtarlar": ["kälte", "klima", "kühl", "kälteanlage", "wärmepumpe", "kältemittel", "klimaanlage", "lüftung", "kühlung", "kältetechnik", "split", "verdampfer", "kaltwassersatz", "service", "wartung"]
+    },
+    {
+      "id": "haustechnik",
+      "name_de": "Haustechniker/in / Hausmeister/in (technisch)",
+      "definition_de": "Betreibt, wartet und repariert die technischen Anlagen eines Gebaeudes oder Objektbestands (Heizung, Lueftung, Elektro, Aufzuege, Brandschutz) als angestellte/r Haustechniker/in.",
+      "synonyms_de": ["Haustechniker", "Hausmeister", "Gebaeudetechniker", "Facility-Techniker", "Objektbetreuer", "Betriebstechniker", "Servicetechniker Gebaeude"],
+      "employs_yes": "Facility-Management-Unternehmen, Wohnungsbaugesellschaften und Hausverwaltungen mit eigenem Technikteam, Krankenhaeuser, Hotels, Einkaufszentren, Industriebetriebe mit Werkstechnik, Hochschulen, Pflegeheime, Rechenzentren, Buerokomplexe mit Objektservice.",
+      "employs_no": "Immobilienmakler, Bautraeger ohne Bestand, Projektentwickler, Immobilienvermittlungen, reine Reinigungsfirmen ohne Technik, Handwerksbetriebe, die Wartung nur als Auftrag ausfuehren (SHK/Elektro sind eigene Berufe).",
+      "beleg_anahtarlar": ["haustechnik", "hausmeister", "gebäudetechnik", "facility", "objekt", "instandhaltung", "wartung", "technischer dienst", "liegenschaft", "betriebstechnik", "anlagen", "gebäudemanagement", "störung", "bestand"]
+    },
+    {
+      "id": "gartner",
+      "name_de": "Gaertner/in / Landschaftsgaertner/in",
+      "definition_de": "Legt Gaerten und Gruenflaechen an, pflegt sie und produziert Pflanzen - im Garten- und Landschaftsbau, in Gaertnereien, Baumschulen oder Friedhofsgaertnereien.",
+      "synonyms_de": ["Gaertner", "Landschaftsgaertner", "Gaertner Garten- und Landschaftsbau", "Friedhofsgaertner", "Baumschulgaertner", "Zierpflanzengaertner", "Gruenpfleger"],
+      "employs_yes": "Garten- und Landschaftsbaubetriebe (GaLaBau), Gaertnereien, Baumschulen, Friedhofsgaertnereien, Gruenflaechenaemter und Stadtgaertnereien, Gartencenter mit eigener Produktion, Floristikbetriebe mit Gaertnerei, Baumpflegefirmen, Golf- und Sportplatzpflege.",
+      "employs_no": "Kleingaertnervereine, Kaelte- und Klimatechnik, Gartenmoebelhaendler, Baumaerkte ohne Gaertnerei, Gartenplaner ohne Ausfuehrung, Landwirte (anderer Beruf), Blumenlaeden ohne eigene Produktion oder Pflege.",
+      "beleg_anahtarlar": ["garten", "gärtner", "landschaftsbau", "galabau", "pflanzen", "grünanlage", "baumschule", "rasen", "bepflanz", "gartenpflege", "baumpflege", "pflasterung", "gartenbau", "friedhof", "hecke"]
+    },
+    {
+      "id": "friseur",
+      "name_de": "Friseur/in",
+      "definition_de": "Schneidet, faerbt, frisiert und pflegt Haare von Kundinnen und Kunden in einem Friseursalon oder Barbershop.",
+      "synonyms_de": ["Friseur", "Friseurin", "Friseurmeister", "Hairstylist", "Barbier", "Coiffeur", "Stylist"],
+      "employs_yes": "Friseursalons, Barbershops, Friseurketten und -filialen, Hairstudios, Hotels und Kreuzfahrtschiffe mit Salon, Theater und Film mit Maskenbildnerei/Friseuren, Pflegeheime mit hauseigenem Salon.",
+      "employs_no": "Hunde- und Tiersalons, Kosmetikschulen, Nagelstudios, Tattoo-Studios, Friseurbedarfshaendler, Innungen und Verbaende, Kosmetikstudios ohne Friseur, Peruecken-Onlineshops.",
+      "beleg_anahtarlar": ["friseur", "salon", "haar", "schnitt", "färb", "styling", "barber", "coiffeur", "termin", "kunden", "frisur", "strähn", "haarpflege", "team"]
+    },
+    {
+      "id": "ingenieur",
+      "name_de": "Ingenieur/in (Maschinenbau/Technik allgemein)",
+      "definition_de": "Entwickelt, konstruiert, berechnet oder plant technische Produkte, Maschinen, Anlagen oder Prozesse als Ingenieur/in (Maschinenbau, Verfahrenstechnik, Mechatronik, Wirtschaftsingenieurwesen) im eigenen Haus.",
+      "synonyms_de": ["Ingenieur", "Maschinenbauingenieur", "Entwicklungsingenieur", "Konstruktionsingenieur", "Projektingenieur", "Verfahrensingenieur", "Wirtschaftsingenieur"],
+      "employs_yes": "Maschinen- und Anlagenbauer, Ingenieurbueros und Ingenieurgesellschaften, Automobilzulieferer, Industriebetriebe mit Entwicklung/Konstruktion, Verfahrenstechnik- und Chemieanlagenbauer, Forschungsinstitute, Technische Pruef- und Sachverstaendigenorganisationen, Energie- und Versorgungstechnik.",
+      "employs_no": "Baeckereien, Friseure, Kosmetik, Gasthaeuser und Restaurants, Autohaeuser ohne Entwicklung, technischer Handel und Industriebedarf ohne Konstruktion, Bauingenieurbueros (Statik/Vermessung sind eigene Berufe), Handwerksbetriebe ohne Ingenieurstellen.",
+      "beleg_anahtarlar": ["ingenieur", "konstruktion", "entwicklung", "berechnung", "maschinen", "anlagen", "cad", "engineering", "projektierung", "verfahrenstechnik", "prototyp", "auslegung", "f&e", "technik", "simulation"]
+    },
+    {
+      "id": "fahrzeug_ing",
+      "name_de": "Ingenieur/in Fahrzeugtechnik",
+      "definition_de": "Entwickelt, konstruiert, erprobt oder prueft Fahrzeuge, Fahrzeugkomponenten oder Fahrzeugsysteme (Automotive, Nutzfahrzeuge, Schienenfahrzeuge, E-Mobilitaet) im eigenen Haus.",
+      "synonyms_de": ["Fahrzeugingenieur", "Ingenieur Fahrzeugtechnik", "Automotive-Ingenieur", "Entwicklungsingenieur Automotive", "Versuchsingenieur", "Karosserie-Entwicklungsingenieur", "E-Mobility-Ingenieur"],
+      "employs_yes": "Automobilhersteller und Automobilzulieferer, Fahrzeugbauer und Nutzfahrzeughersteller, Automotive-Entwicklungsdienstleister, Pruef- und Versuchseinrichtungen (Crash, Emission), Schienenfahrzeughersteller, E-Mobility-Entwickler, Fahrzeugaufbauhersteller mit Konstruktion, Motorsportteams mit Entwicklung.",
+      "employs_no": "Bauingenieurbueros, Statik- und Vermessungsbueros, Architekten, Autohaeuser und Kfz-Werkstaetten, Fahrzeugpflege, -aufbereitung, -handel, -vermietung und -lackierung, Fahrschulen, Autoteilehaendler, Baukostenplaner.",
+      "beleg_anahtarlar": ["fahrzeug", "automotive", "fahrzeugtechnik", "entwicklung", "konstruktion", "erprobung", "versuch", "antrieb", "e-mobilität", "karosserie", "fahrwerk", "prototyp", "homologation", "oem", "zulieferer"]
+    },
+    {
+      "id": "produktion",
+      "name_de": "Produktionsmitarbeiter/in / Maschinen- und Anlagenfuehrer/in",
+      "definition_de": "Bedient, ruestet und ueberwacht Maschinen und Anlagen in einer industriellen Fertigung und fuehrt Produktions-, Montage- oder Verpackungsarbeiten aus.",
+      "synonyms_de": ["Produktionsmitarbeiter", "Maschinen- und Anlagenfuehrer", "Produktionshelfer", "Fertigungsmitarbeiter", "Maschinenbediener", "Montagemitarbeiter", "Anlagenfahrer"],
+      "employs_yes": "Industriebetriebe mit eigener Fertigung (Metall, Kunststoff, Chemie, Lebensmittel, Pharma, Papier, Verpackung, Elektronik), Produktionswerke, Zulieferer, Lohnfertiger, Betonwerke, Recyclingbetriebe mit Anlagen, Grossbaeckereien und Lebensmittelproduzenten.",
+      "employs_no": "Beratungen, Kanzleien, Arzt-, Zahnarzt- und Tierarztpraxen, Film-/Video-/Ton-/Medienproduktionen (kein Industriebegriff), Fraunhofer-Institute und Forschungsinstitute, Handelsunternehmen ohne Fertigung, Werbeagenturen mit 'Produktion'.",
+      "beleg_anahtarlar": ["produktion", "fertigung", "maschine", "anlage", "schicht", "montage", "werk", "herstell", "verpack", "produktionslinie", "industrie", "bedien", "rüst", "fließband", "qualitätskontrolle"]
+    },
+    {
+      "id": "qualitat",
+      "name_de": "Qualitaetsmanager/in / Qualitaetspruefer/in",
+      "definition_de": "Prueft, sichert und dokumentiert Produkt- und Prozessqualitaet (Wareneingangspruefung, Messtechnik, QM-System nach ISO 9001/IATF, Reklamationen) in einem produzierenden Unternehmen oder Labor.",
+      "synonyms_de": ["Qualitaetsmanager", "Qualitaetspruefer", "QM-Beauftragter", "Qualitaetsingenieur", "Qualitaetssicherung", "QS-Mitarbeiter", "Messtechniker QS"],
+      "employs_yes": "Industriebetriebe mit Fertigung (Automotive, Metall, Kunststoff, Elektronik, Medizintechnik, Pharma, Lebensmittel), Pruef- und Kalibrierlabore, Zertifizierungsstellen, Zulieferer mit QM-System, Logistiker mit Qualitaetsabteilung, groessere Dienstleister mit QM-Stelle.",
+      "employs_no": "Solidarische Landwirtschaft, Biohoefe, Hoflaeden, Architekten, Restaurants, Arzt-/Zahnarzt-/Tierarztpraxen, kleine Handwerksbetriebe, Kanzleien, Einzelhandel ohne Produktion.",
+      "beleg_anahtarlar": ["qualität", "qm", "qs", "iso 9001", "iatf", "prüf", "messtechnik", "zertifiz", "audit", "reklamation", "wareneingang", "qualitätsmanagement", "prüfmittel", "dokumentation", "norm"]
+    },
+    {
+      "id": "controlling",
+      "name_de": "Controller/in",
+      "definition_de": "Plant, analysiert und berichtet Kosten, Budgets, Kennzahlen und Wirtschaftlichkeit (Reporting, Forecast, Kalkulation) als Controller/in eines Unternehmens oder in der Wirtschaftspruefung.",
+      "synonyms_de": ["Controller", "Controllerin", "Financial Controller", "Business Controller", "Kostencontroller", "Beteiligungscontroller", "Wirtschaftspruefer-Assistent"],
+      "employs_yes": "Mittlere und grosse Unternehmen mit eigener Controlling-Abteilung (ab ca. 100 Mitarbeitenden), Konzerne, Wirtschaftspruefungs- und Revisionsgesellschaften, Pruefungsverbaende, Krankenhaeuser und Kliniken, Wohnungsgesellschaften, Energieversorger, Hochschulverwaltungen.",
+      "employs_no": "Rechtsanwaltskanzleien, Notare, Patentanwaelte, Steuerungstechnik-Firmen ('Steuerung' ist Technik), kleine Handwerks- und Gastrobetriebe, Einzelhandel, Freiberufler.",
+      "beleg_anahtarlar": ["controlling", "controller", "reporting", "budget", "kennzahl", "forecast", "kalkulation", "wirtschaftlichkeit", "finanz", "planung", "kosten", "abweichung", "bilanz", "revision", "audit"]
+    },
+    {
+      "id": "seo",
+      "name_de": "SEO-/SEA-Manager/in (Online-Marketing)",
+      "definition_de": "Optimiert Websites fuer Suchmaschinen (SEO), steuert Suchmaschinenwerbung und Performance-Kampagnen (SEA, Google Ads) fuer das eigene Unternehmen oder als Agenturleistung.",
+      "synonyms_de": ["SEO-Manager", "SEA-Manager", "Online-Marketing-Manager", "Performance-Marketing-Manager", "Suchmaschinenoptimierer", "Google-Ads-Manager", "Digital Marketing Manager"],
+      "employs_yes": "SEO-/SEA-Agenturen, Online-Marketing- und Digitalagenturen, Performance-Marketing-Agenturen, E-Commerce-Unternehmen mit eigenem Online-Marketing, Verlage und Portale mit SEO-Team, groessere Unternehmen mit Online-Marketing-Abteilung, Webagenturen mit SEO-Leistung.",
+      "employs_no": "Druckereien, Printmedien ohne Digital, Versicherungsagenturen und Generalvertretungen, Eventagenturen, Kreativcampus/Coworking, Werbetechnik und Beschriftung, kleine Laeden mit Baukasten-Website.",
+      "beleg_anahtarlar": ["seo", "sea", "suchmaschinen", "google ads", "online-marketing", "onlinemarketing", "performance", "keyword", "ranking", "sichtbarkeit", "kampagne", "conversion", "adwords", "content", "traffic"]
+    },
+    {
+      "id": "grafik",
+      "name_de": "Grafikdesigner/in / Mediengestalter/in",
+      "definition_de": "Gestaltet visuelle Medien (Logos, Print, Web, Corporate Design, Layout, Illustration) als Designer/in in einer Agentur, einem Verlag oder einer Marketingabteilung.",
+      "synonyms_de": ["Grafikdesigner", "Mediengestalter", "Grafiker", "Kommunikationsdesigner", "Art Director", "Visual Designer", "Layouter"],
+      "employs_yes": "Werbe-, Design- und Kreativagenturen, Grafikbueros, Verlage und Medienhaeuser, Druckereien mit eigener Gestaltung/Vorstufe, Digitalagenturen, Verpackungsdesigner, groessere Unternehmen mit Inhouse-Design, Werbetechnikbetriebe mit Grafikabteilung.",
+      "employs_no": "Telekommunikationsshops, Theater (Buehnenbild ist ein anderer Beruf), reine Copyshops ohne Gestaltung, Fotografen als Einzelpersonen, Druckereien ohne Vorstufe, Schilderhaendler.",
+      "beleg_anahtarlar": ["grafik", "design", "gestaltung", "layout", "logo", "corporate design", "mediengestalt", "illustration", "typograf", "print", "kreativ", "adobe", "indesign", "visuell", "branding"]
+    },
+    {
+      "id": "vertrieb",
+      "name_de": "Vertriebsmitarbeiter/in (B2B, Aussendienst)",
+      "definition_de": "Verkauft Produkte oder Dienstleistungen an Geschaeftskunden, betreut Bestandskunden und akquiriert Neukunden als Vertriebsmitarbeiter/in im Innen- oder Aussendienst.",
+      "synonyms_de": ["Vertriebsmitarbeiter", "Sales Manager", "Account Manager", "Aussendienstmitarbeiter", "Key Account Manager", "Vertriebsingenieur", "Vertriebsinnendienst"],
+      "employs_yes": "Grosshaendler und Handelsgesellschaften, Industriebetriebe und Hersteller mit eigenem Vertrieb, Vertriebsgesellschaften, Handelsvertretungen, Softwarehaeuser und IT-Dienstleister mit Sales-Team, B2B-Dienstleister, Verlage mit Anzeigenverkauf, Technischer Handel, Industrievertretungen.",
+      "employs_no": "Fotografen, Coaches und Coaching-Anbieter, Masterclass-/Kursanbieter, Business Center und Bueroservices, Zusteller, Einzelhandelslaeden (Verkauf ist ein anderer Beruf), Freiberufler ohne Angestellte, Vereine.",
+      "beleg_anahtarlar": ["vertrieb", "sales", "kunden", "außendienst", "key account", "akquise", "b2b", "angebot", "vertriebsgebiet", "händler", "geschäftskunden", "innendienst", "kundenbetreuung", "umsatz", "partner"]
+    },
+    {
+      "id": "verkauf",
+      "name_de": "Verkaeufer/in / Einzelhandelskaufmann/-frau",
+      "definition_de": "Beraet und bedient Kunden, kassiert und praesentiert Ware in einem Ladengeschaeft, einer Filiale oder einem Markt des Einzelhandels.",
+      "synonyms_de": ["Verkaeufer", "Verkaeuferin", "Einzelhandelskaufmann", "Kassierer", "Fachverkaeufer", "Filialmitarbeiter", "Kundenberater Einzelhandel"],
+      "employs_yes": "Einzelhandelsgeschaefte und Filialisten, Supermaerkte und Discounter, Kaufhaeuser, Fachmaerkte (Bau-, Elektro-, Moebel-, Drogeriemarkt), Modegeschaefte, Baeckerei- und Metzgereifilialen (Fachverkauf), Tankstellenshops, Apotheken (PKA-Verkauf), Optiker und Juweliere, Buchhandlungen.",
+      "employs_no": "Kanzleien, Anwaelte, Steuerberater, Sparkassen und Banken, Vermoegensverwalter, Elektromaschinenbau und Steuerungsbau (kein Laden), Anwaltsinstitute, Grosshaendler ohne Ladengeschaeft (Vertrieb ist ein anderer Beruf), reine Onlineshops ohne Filiale, Begleitservices.",
+      "beleg_anahtarlar": ["verkauf", "filiale", "laden", "kunden", "kasse", "markt", "geschäft", "sortiment", "beratung", "einzelhandel", "öffnungszeiten", "shop", "store", "warenpräsentation", "verkäufer"]
+    },
+    {
+      "id": "industriekauf",
+      "name_de": "Industriekaufmann/-frau",
+      "definition_de": "Bearbeitet kaufmaennische Prozesse eines Industriebetriebs (Einkauf, Auftragsabwicklung, Materialwirtschaft, Kalkulation, Vertrieb, Rechnungswesen) in der Verwaltung eines produzierenden Unternehmens.",
+      "synonyms_de": ["Industriekaufmann", "Industriekauffrau", "Kaufmaennischer Sachbearbeiter Industrie", "Einkaufssachbearbeiter", "Auftragssachbearbeiter", "Kaufmann fuer Buero­management (Industrie)", "Materialwirtschaft"],
+      "employs_yes": "Industriebetriebe und Hersteller (Maschinenbau, Metall, Kunststoff, Chemie, Elektronik, Lebensmittel, Automotive), Zulieferer, Produktionswerke, Energieversorger, groessere Handwerksbetriebe mit Industriecharakter, Verpackungshersteller.",
+      "employs_no": "Architekten, Vermessungs- und Ingenieurbueros, Planungsbueros, Sachverstaendige, Statikbueros, Kanzleien, Arztpraxen, Einzelhandel, Gastronomie, reine Dienstleister ohne Produktion (dort: Kaufmann fuer Buero­management).",
+      "beleg_anahtarlar": ["industriekauf", "kaufmännisch", "einkauf", "auftragsabwicklung", "materialwirtschaft", "produktion", "industrie", "fertigung", "sachbearbeit", "ausbildung", "verwaltung", "kalkulation", "werk", "hersteller", "erp"]
+    },
+    {
+      "id": "werkzeugmacher",
+      "name_de": "Werkzeugmechaniker/in / Werkzeugmacher/in",
+      "definition_de": "Fertigt, montiert und repariert Werkzeuge, Formen, Stanz- und Spritzgusswerkzeuge sowie Vorrichtungen mit hoher Praezision in einem Werkzeug- oder Formenbau.",
+      "synonyms_de": ["Werkzeugmechaniker", "Werkzeugmacher", "Formenbauer", "Werkzeugbauer", "Stanzwerkzeugmacher", "Spritzgussformenbauer", "Vorrichtungsbauer"],
+      "employs_yes": "Werkzeug- und Formenbaubetriebe, Stanz- und Umformtechnik mit eigenem Werkzeugbau, Spritzgiessereien und Kunststoffverarbeiter mit Formenbau, Vorrichtungsbauer, Automobilzulieferer mit Werkzeugbau, Praezisionsmechanik, Druckgiessereien mit Formenbau.",
+      "employs_no": "Werkzeughaendler und Baumaerkte, Ingenieurbueros ohne Fertigung, Metallhaendler, reine Zerspaner ohne Werkzeugbau (CNC ist ein anderer Beruf), Elektrobetriebe, Handwerker mit 'Werkzeug' im Sortiment.",
+      "beleg_anahtarlar": ["werkzeugbau", "formenbau", "werkzeug", "spritzguss", "stanz", "vorrichtung", "form", "präzision", "erodier", "werkzeugmacher", "umform", "matrize", "instandsetzung", "fertigung", "werkstatt"]
     }
   ]
 }

@@ -441,3 +441,23 @@ tek başına isabeti, yanlış listelenenler ve kaçırılanlar (domain listesiy
 Etiketli dosya: `verify/altin-kume-etiketli.csv` (git dışında; sürümlemek istersen
 `git add -f verify/altin-kume-etiketli.csv`). Sonuç: **%88,9 isabet, %37,5 kapsama** (§17).
 Hedef %95 tutturulamadı; neden ve ne gerektiği §17'de.
+
+## 18. Meslek kataloğu entegrasyonu (20 Eyl 2026)
+
+Yarım kalan katalog genişletmesi tamamlandı: JSON içinde 54 farklı meslek ve
+54 öncelik girdisi var; dosyanın açıklamasındaki 53 sayısı düzeltildi.
+Üç eski kimlik ortak katalog yükleyicisinde yeni kayıtlara bağlandı.
+Bu bağlantı olmadan eski kuyruk `judge` aşamasında kimlik hatası veriyor,
+uzlaşma aşamasında ise eski kimliğin kanıt anahtarları bulunamadığı için geçit atlanıyordu.
+
+Yükleyici eksik tanımları, kanıt anahtarlarını, yinelenen kimlikleri, hatalı takma
+adları ve tutarsız öncelik listesini reddeder. Yargılama ve uzlaşma, bilinmeyen
+meslekleri işlemden önce kontrol eder. Meslek filtresi eski/yeni kimliği birlikte
+seçer; kaydedilen kimlikler değişmez. Uzlaşmada başka mesleğe ait yargılar kullanılmaz.
+
+Doğrulama: 32 test geçti. Asıl veritabanı salt okunur açılıp geçici kopyası alındı;
+kopyada 96 kaydın uzlaşması yeniden hesaplandı: **9 evet · 69 hayır · 18 belirsiz**,
+değişen karar yok. Asıl SQLite dosyasının SHA-256 özeti kontrol öncesi/sonrası aynı.
+Yeni model çağrısı yapılmadı; bu sonuç 54 meslek için doğruluk ölçümü değildir.
+Aday seçimi üç meslek/üç şehirlik pilot olarak kalır; 54 mesleklik aday kapsamı ve
+yeni insan etiketli model ölçümü ayrı devam işleridir.

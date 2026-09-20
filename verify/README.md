@@ -45,7 +45,7 @@ python scrape.py verify gold             # verify/altin-kume.csv — hattın kar
 # insan `insan_karari` sütununu doldurur: evet / hayir / belirsiz
 python scrape.py verify score --etiket verify/altin-kume-kor.csv
 
-python verify/test_verify.py             # 25 test, ağ/model gerektirmez
+python verify/test_verify.py             # 32 test, ağ/model gerektirmez
 ```
 
 **Kör kopya neden:** etiketleyen kişi hattın kararını görürse ölçüm bozulur. `--kor` dosyasında
@@ -55,6 +55,25 @@ bulunur; hakem kararları, uzlaşma ve alıntılar yoktur. `score` eşleştirmey
 
 Her aşama kaldığı yerden sürer (`domains.status`: `yeni → cekildi → yargilandi → tamam`).
 Kesilirse aynı komut tekrar çalıştırılır; biten iş tekrarlanmaz.
+
+## Meslek kataloğu (20 Eyl 2026)
+
+`meslekler.json` **54 meslek tanımı** içerir (önceki notta 53 yazıyordu).
+Yükleyici tanımı, eş anlamlıları, işveren örneklerini, kanıt anahtarlarını ve öncelik
+listesini doğrular; eksik tanım veya bilinmeyen kimlik koşu başlamadan hata verir.
+Yargılama ve uzlaşma aynı kataloğu kullanır.
+
+Eski kimlikler takma ad olarak çözülür: `berufskraftfahrer → fahrer`,
+`elektroingenieur → elektro_ing`, `marketing_manager → marketing`. Kuyruktaki,
+yargılardaki ve ölçüm dosyalarındaki kimlikler korunur. `judge --meslek elektro_ing`
+ve `judge --meslek elektroingenieur` aynı mesleğin eski ve yeni kayıtlarını seçer;
+iki kimlik de aynı kanıt geçidinden geçer.
+
+**Aday seçimi halen üç meslek ve üç şehirlik pilot dağılımını kullanır.** Kataloğun
+genişlemesi 54 meslek için otomatik aday toplandığı veya model ölçümü yapıldığı anlamına gelmez.
+Mevcut 96 kaydın uzlaşması geçici veritabanı kopyasında tekrar hesaplandı:
+9 evet, 69 hayır, 18 belirsiz; önceki kararlarla fark yok. Bu kontrol yeni bir model
+koşusu değildir; asıl veritabanı, insan etiketleri ve dışa aktarım dosyası korunmuştur.
 
 ## Veri yeri
 

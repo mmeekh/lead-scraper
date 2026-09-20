@@ -9,12 +9,9 @@ import json
 import re
 
 from .config import MODEL_A, MODEL_B, PROMPT_VERSION
+from .candidates import meslekler, meslekleri_dogrula
 from .db import db, judgments_of, pages_of, read_page_text, save_verified, set_status
 from .impressum import ad_celisiyor_mu, display_name, legal_name_bul
-
-MESLEK_ANAHTAR = {m["id"]: m.get("beleg_anahtarlar", []) for m in
-                  json.loads((__import__("pathlib").Path(__file__).parent / "meslekler.json")
-                             .read_text(encoding="utf-8"))["meslekler"]}
 
 ILAN_RE = re.compile(r"^.{6,120}$")
 ILAN_ISARET = re.compile(r"\(\s*[mwdx]\s*[/|]\s*[mwdx]\s*([/|]\s*[mwdx]\s*)?\)|\bm/w/d\b|"
@@ -67,16 +64,23 @@ def uzlas(a: dict | None, b: dict | None) -> tuple[str, str]:
 
 
 def isle(sadece_yeni: bool = True) -> dict:
+    katalog = meslekler()
     conn = db()
     durumlar = ("yargilandi",) if sadece_yeni else ("yargilandi", "tamam")
     yer = ",".join("?" * len(durumlar))
     satirlar = conn.execute(
         f"SELECT * FROM domains WHERE status IN ({yer}) ORDER BY domain", durumlar).fetchall()
+    try:
+        meslekleri_dogrula(katalog, (s["meslek"] for s in satirlar))
+    except ValueError:
+        conn.close()
+        raise
     ozet = {"islenen": 0, "evet": 0, "hayir": 0, "belirsiz": 0,
             "agreement": {"both": 0, "one": 0, "none": 0}, "ad_celiskisi": 0, "legal_name_var": 0}
     for s in satirlar:
         domain, meslek = s["domain"], s["meslek"]
-        yargilar = {j["model"]: dict(j) for j in judgments_of(conn, domain)}
+        yargilar = {j["model"]: dict(j) for j in judgments_of(conn, domain)
+                    if j["meslek"] == meslek}
         a = yargilar.get(MODEL_A)
         b = yargilar.get(MODEL_B)
         if a:
@@ -85,7 +89,7 @@ def isle(sadece_yeni: bool = True) -> dict:
             b["quotes"] = json.loads(b["quotes_json"] or "[]")
         karar, agreement = uzlas(a, b)
         # deterministik kanit gecidi: 'evet' icin alintilar meslegin anahtar kelimesini tasimali
-        anahtarlar = MESLEK_ANAHTAR.get(meslek, [])
+        anahtarlar = katalog[meslek]["beleg_anahtarlar"]
         if karar == "evet" and anahtarlar:
             alintilar = [q for j in (a, b) if j for q in json.loads(j["quotes_json"] or "[]")]
             if not kanit_gecidi(alintilar, anahtarlar):
