@@ -19,3 +19,6 @@ verify/verify.sqlite3*
 verify/*.out
 verify/*.err
 verify/*.csv
+verify/out/
+verify/DUR
+verify/kalinlastir.log

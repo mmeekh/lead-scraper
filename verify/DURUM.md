@@ -1,65 +1,73 @@
-# Kalınlaştırma ön kontrolü — 20 Eylül 2026
+# DURUM — kalınlaştırma koşusu
+Güncelleme: 2026-09-20T22:19:21 · istem v3-2026-09-19 · A `gemma4:12b-it-qat` · B `qwen2.5:14b-instruct-q4_K_M`
 
-Durum: **Toplu koşu başlatılmadı.** Bu dosya ön kontrol raporudur; saatlik otomatik
-güncelleme henüz kurulmadı. Mevcut 96 kayıtlık ölçüm veritabanına yazılmadı.
+## Genel
 
-## Aday dosyası
+- Şirket: 538061 — çekildi 55, bekliyor 538006, çekilemedi 0
+- Çift: 1127293 — evet **0**, hayır 0, belirsiz 38 (ön eleme 38), bekleyen 1127255
+- Son 1 saat: 38 çift sonuçlandı, 0 evet
+- Model çağrısı: A 96, B 96 · A=yes olup B bekleyen: 0
+- Hız (son 24 s): A 5.8 sn/kayıt, B 19.3 sn/kayıt · disk boş 314 GB
+- Duraklatılan meslek: yok
 
-- VPS kaynağı: `/root/.claude/jobs/0992b980/tmp/jobfind-adaylar-53meslek-2026-09-20.csv.gz`
-- Yerel kopya: `verify/jobfind-adaylar-53meslek-2026-09-20.csv.gz`
-- SHA-256 (VPS ve PC aynı): `0e1fb641c8da72737403b07fb039a671d669399f877e12a405e2502bd92c58a6`
-- 539.659 satır ve 539.659 farklı alan adı.
-- Dosya adına rağmen **54 farklı meslek**, **1.130.163 şirket–meslek çifti**.
-- Mesleklerin tamamının yerel katalogda tanımı var; bilinmeyen kimlik yok.
-- `data` ve `sap` yok. `dev` ve `it` ayrı kimlikler.
-- Bir şirkette en fazla **8 meslek** var. Önceki prompt'un “en çok 3” ifadesi
-  yeni dosyayla uyuşmuyor; 3'e sessizce kırpmak meslekleri kaybettirir.
-- Eski aday dosyası yerel `verify/` içinde bulunmadı; VPS dosyaları değiştirilmedi.
+## Meslek başına (öncelik sırasıyla)
 
-## Kaynaktan bulunan önceki koşu kuralları
+| meslek | durum | çift | biten | ön eleme | model kararı | evet | listeleme % (modelli) |
+|---|---|---|---|---|---|---|---|
+| fahrer | aktif | 21150 | 22 | 22 | 0 | 0 | - |
+| pflege | aktif | 12141 | 0 | 0 | 0 | 0 | - |
+| elektro_ing | aktif | 5241 | 0 | 0 | 0 | 0 | - |
+| dev | aktif | 9206 | 0 | 0 | 0 | 0 | - |
+| it | aktif | 15788 | 0 | 0 | 0 | 0 | - |
+| marketing | aktif | 36764 | 0 | 0 | 0 | 0 | - |
+| buchhaltung | aktif | 9133 | 0 | 0 | 0 | 0 | - |
+| sozial | aktif | 17336 | 0 | 0 | 0 | 0 | - |
+| kinder | aktif | 5577 | 0 | 0 | 0 | 0 | - |
+| koch | aktif | 74275 | 0 | 0 | 0 | 0 | - |
+| backer | aktif | 3839 | 0 | 0 | 0 | 0 | - |
+| fleischer | aktif | 4429 | 0 | 0 | 0 | 0 | - |
+| metall | aktif | 19106 | 0 | 0 | 0 | 0 | - |
+| cnc | aktif | 16979 | 0 | 0 | 0 | 0 | - |
+| shk | aktif | 13176 | 0 | 0 | 0 | 0 | - |
+| elektro | aktif | 15537 | 0 | 0 | 0 | 0 | - |
+| kfz | aktif | 30238 | 0 | 0 | 0 | 0 | - |
+| lager | aktif | 11152 | 2 | 2 | 0 | 0 | - |
+| dispo | aktif | 10394 | 7 | 7 | 0 | 0 | - |
+| kurier | aktif | 5724 | 4 | 4 | 0 | 0 | - |
+| bus | aktif | 318 | 0 | 0 | 0 | 0 | - |
+| arzt | aktif | 26915 | 0 | 0 | 0 | 0 | - |
+| zahn | aktif | 15289 | 0 | 0 | 0 | 0 | - |
+| physio | aktif | 17440 | 0 | 0 | 0 | 0 | - |
+| ergo | aktif | 3361 | 0 | 0 | 0 | 0 | - |
+| apotheke | aktif | 11639 | 0 | 0 | 0 | 0 | - |
+| rettung | aktif | 3631 | 0 | 0 | 0 | 0 | - |
+| kinderkrankenpflege | aktif | 2071 | 0 | 0 | 0 | 0 | - |
+| service | aktif | 78459 | 0 | 0 | 0 | 0 | - |
+| rezeption | aktif | 24531 | 0 | 0 | 0 | 0 | - |
+| reinigung | aktif | 11066 | 0 | 0 | 0 | 0 | - |
+| maler | aktif | 10146 | 0 | 0 | 0 | 0 | - |
+| holz | aktif | 16873 | 0 | 0 | 0 | 0 | - |
+| zimmerer | aktif | 10210 | 0 | 0 | 0 | 0 | - |
+| dach | aktif | 10333 | 0 | 0 | 0 | 0 | - |
+| bau | aktif | 23435 | 0 | 0 | 0 | 0 | - |
+| bauleitung | aktif | 41967 | 0 | 0 | 0 | 0 | - |
+| fliesen | aktif | 4489 | 0 | 0 | 0 | 0 | - |
+| karosserie | aktif | 7155 | 0 | 0 | 0 | 0 | - |
+| kalte | aktif | 5137 | 0 | 0 | 0 | 0 | - |
+| haustechnik | aktif | 25419 | 0 | 0 | 0 | 0 | - |
+| gartner | aktif | 14541 | 0 | 0 | 0 | 0 | - |
+| friseur | aktif | 12284 | 0 | 0 | 0 | 0 | - |
+| ingenieur | aktif | 21387 | 0 | 0 | 0 | 0 | - |
+| fahrzeug_ing | aktif | 1549 | 0 | 0 | 0 | 0 | - |
+| produktion | aktif | 46634 | 3 | 3 | 0 | 0 | - |
+| qualitat | aktif | 45837 | 0 | 0 | 0 | 0 | - |
+| controlling | aktif | 25406 | 0 | 0 | 0 | 0 | - |
+| seo | aktif | 23672 | 0 | 0 | 0 | 0 | - |
+| grafik | aktif | 43566 | 0 | 0 | 0 | 0 | - |
+| vertrieb | aktif | 48494 | 0 | 0 | 0 | 0 | - |
+| verkauf | aktif | 80403 | 0 | 0 | 0 | 0 | - |
+| industriekauf | aktif | 76315 | 0 | 0 | 0 | 0 | - |
+| werkzeugmacher | aktif | 136 | 0 | 0 | 0 | 0 | - |
 
-Önceki prompt VPS'teki `/root/.claude/jobs/0992b980/timeline.jsonl` kaydından okundu.
-Son mesajdaki 54 meslek sırası ve dört büyük meslek için ilk turda 20.000 sınırı
-önceki meslek listesinin yerine geçer. Diğer koşullar:
-
-- Büyük koşudan önce v5: cümle düzeyi alıntı kontrolü, bayi/servis ayrımı,
-  elektro kanıt geçidi, uygun model/bellek ayarı; 96 insan etiketli kayıtta yeniden
-  ölçüm. İsabet %85 altındaysa koşu durur.
-- bge-m3 ön eleme eşiği, 96 kayıt içindeki insan “evet”lerinin en az %95'ini
-  geçirecek şekilde ölçülerek seçilir.
-- Alan adı başına en fazla 4 sayfa, robots kuralları, en az 1 saniye aralık;
-  alan adı başına en fazla 2, toplam en fazla 12 eşzamanlı istek.
-- Çekilemeyen alan adına 7 gün sonra bir kez daha deneme.
-- A tüm uygun çiftlerde; B yalnız A=yes çiftlerinde. A=no → hayır,
-  A=unclear → belirsiz. Evet için iki hakem, alıntı kontrolü ve kanıt geçidi.
-- Çekici ve model ayrı süreçler, SQLite üzerinden sürdürülebilir kuyruk;
-  donanım payı en fazla %80.
-- 5.000 şirketlik JSONL parçaları; hayır/belirsiz ayrı dosyada.
-- Meslek başına evetlerin rastgele %3'ü ve listelenmeyen 20 satır kör denetime.
-- Saatlik DURUM.md ve günlük RAPOR.md güncellemesi.
-- Bir mesleğin listeleme oranı %2 altı veya %40 üstüyse o meslek duraklatılır,
-  BLOKAJ.md'ye yazılır, sonraki mesleğe geçilir. Bu oranın kaç kayıt sonrasında
-  değerlendirileceği kaynak prompt'ta belirtilmemiş.
-- Sayfa verisi 50 GB'ı aşınca gzip sıkıştırma.
-
-## Başlatmadan önce tamamlanacaklar
-
-1. Mevcut aday seçici hâlâ eski JSONL girdili, üç meslek/üç şehir pilotu.
-   Yeni CSV.gz için şirket–meslek çiftlerini ayrı tutan içe aktarma ve kuyruk gerekli.
-   `domains.meslek` tek meslek tutuyor; dosyayı doğrudan buraya yüklemek yeterli değil.
-2. Mevcut judge iki modeli de tüm seçilen kayıtlarda çalıştırıyor.
-   A=yes filtresi ve buna uygun uzlaşma akışı gerekli.
-3. v5 ön koşulları ve yeni 96 kayıtlık ölçüm tamamlanmamış; kayıtlı yargılar v2/v3.
-   Önceki %88,9 ölçümü v5 sonucu olarak kullanılamaz.
-4. bge-m3 yerel model manifestlerinde yok; eşik kalibrasyonu yapılmamış.
-5. Dört sayfa sınırı, zamanlı yeniden deneme, kaynak gözetimi, parçalı çıktı,
-   kör örnekleme, dur koşulları ve otomatik durum raporu toplu koşuya bağlanmalı.
-
-Öneri: önce bu eksikleri tamamlayıp 96 kayıtla ölçüm ve küçük bir uçtan uca deneme;
-başarılıysa öncelik sırasıyla uzun koşu. Şu an 1,13 milyon çifti mevcut pilot
-komutuyla başlatmak, VPS talimatlarını yerine getirmez.
-
-Donanım kontrolü: RTX 4070 (12.282 MiB VRAM), yaklaşık 32 GB RAM,
-12 mantıksal işlemci, yaklaşık 129 GB boş disk. Gemma 12B ve Qwen 14B/7B
-model dosyaları mevcut. Bu gözlem, %80 sınırının koşu sırasında sağlandığı
-veya toplam sürenin ölçüldüğü anlamına gelmez.
+Çıktı: `verify/out/verified-<meslek>-<n>.jsonl` (evet) · `redd-<meslek>-<n>.jsonl` (hayır/belirsiz) · 5.000 çift/parça.
+Durdurmak: `verify/DUR` dosyası oluştur. Günlük: `verify/kalinlastir.log`. Blokajlar: `verify/BLOKAJ.md`.
