@@ -338,10 +338,16 @@ async def tara(grup: str, sekme: int) -> dict:
                     log("DUR-eposta: tarama kesildi"); break
                 # tarayiciyi ara sira tazele (bellek)
                 if n % 5000 < 500 and n:
-                    await browser.close()
+                    try:
+                        await asyncio.wait_for(browser.close(), 30)
+                    except Exception as e:
+                        log(f"tarayici kapatma: {e}")
                     browser = await pw.chromium.launch(headless=True, args=["--disable-dev-shm-usage", "--no-sandbox", "--disable-gpu"])
         finally:
-            await browser.close()
+            try:
+                await asyncio.wait_for(browser.close(), 30)       # kapatma hatasi taramayi/yuklemeyi dusurmesin
+            except Exception as e:
+                log(f"tarayici kapatma: {e}")
     return {"taranan": n, "bulunan": ok}
 
 
