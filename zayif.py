@@ -454,7 +454,7 @@ def baslik_adi(html_: str, domain: str) -> str:
 def site_tara(domain: str, meslekler: list[str]) -> dict:
     """Ana sayfa + Impressum/Kontakt; kurumsal e-posta, tuzel ad, sehir, uyum."""
     sonuc = {"domain": domain, "durum": "hata", "company": "", "city": "", "website": "", "email": "", "source_url": "",
-             "uyum": 0, "sayfa": 0, "note": ""}
+             "uyum": 0, "sayfa": 0, "note": "", "baslik": "", "impressum": ""}
     rp = robots(domain)
     s = requests.Session(); s.headers.update({"User-Agent": UA, "Accept-Language": "de-DE,de;q=0.9,en;q=0.5"})
     son_istek = 0.0
@@ -541,6 +541,8 @@ def site_tara(domain: str, meslekler: list[str]) -> dict:
         sonuc["email"] = eposta_sec(set(kaynak), hostlar)
         sonuc["source_url"] = kaynak.get(sonuc["email"], "") if sonuc["email"] else ""
         sonuc["company"] = legal_name_bul(impressum_metin) or baslik_adi(ana, domain)
+        sonuc["baslik"] = baslik_adi(ana, domain)
+        sonuc["impressum"] = impressum_metin[:1500]
         sonuc["city"] = sehir_bul(impressum_metin) if impressum_metin else ""
         # uyum: Impressum bulundu (gercek isletme) VE meslek metin deseni en az 2 kez geciyor
         butun = (ana_metin + "\n" + impressum_metin)

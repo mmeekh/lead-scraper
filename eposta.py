@@ -56,7 +56,14 @@ SEKME = 32
 TIMEOUT_MS = 20_000
 DELAY_S = 1.0
 MAX_SAYFA = 3
+# grup -> havuz etiketi (varsayilan pc-eposta-<grup>); 21 Eyl 20:00 "5 yaygin meslek" A hatti ayni meslek etiketiyle gider
+ETIKETLER: dict[str, str] = {"y-pflege": "pc-pflege", "y-lager": "pc-lager", "y-steuer": "pc-steuer", "y-dev": "pc-software", "y-kita": "pc-kita"}
 GRUPLAR: dict[str, list[str]] = {
+    "y-pflege": ["retirement_home", "skilled_nursing", "assisted_living_facility", "hospital", "medical_center", "home_health_care"],
+    "y-lager": ["wholesaler", "wholesale_store", "importer_and_exporter", "freight_and_cargo_service", "shipping_center", "building_supply_store"],
+    "y-steuer": ["tax_services", "accountant", "financial_service", "financial_advising", "business_consulting", "business_management_services"],
+    "y-dev": ["software_development", "information_technology_company", "web_designer", "it_service_and_computer_repair"],
+    "y-kita": ["preschool", "day_care_preschool", "child_care_and_day_care", "elementary_school"],
     # 21 Eyl 18:00 odak: 12 ince meslek (once bu; diger gruplar bekletilir)
     "ince": ["bus_tours", "auto_customization", "truck_repair", "truck_dealer", "commercial_vehicle_dealer", "pediatrician", "hospital",
              "ambulance_and_ems_services", "fire_department", "bakery", "butcher_shop", "delicatessen", "meat_wholesaler",
@@ -378,7 +385,7 @@ def yukle(grup: str) -> dict:
             w.writerow({"company": r["company"], "city": r["city"], "sector": "", "website": site_kisalt(r["website"]),
                         "email": r["email"], "source_url": site_kisalt(r["source_url"])[:500]})
     env = {**os.environ, "PYTHONIOENCODING": "utf-8"}
-    p = subprocess.run([sys.executable, str(GONDER), str(dosya), "--etiket", f"pc-eposta-{grup}"], capture_output=True, text=True, encoding="utf-8", env=env, cwd=BASE)
+    p = subprocess.run([sys.executable, str(GONDER), str(dosya), "--etiket", ETIKETLER.get(grup, f"pc-eposta-{grup}")], capture_output=True, text=True, encoding="utf-8", env=env, cwd=BASE)
     mt = re.search(r"TOPLAM (\{.*\})", p.stdout)
     if p.returncode != 0 or not mt:
         raise RuntimeError(f"yukleme basarisiz (kod {p.returncode}): {(p.stderr or p.stdout)[-300:]}")
@@ -428,7 +435,7 @@ def grup_isle(grup: str, sekme: int) -> None:
     y = yukle(grup)
     conn = db(); o = conn.execute("SELECT * FROM grup_ozet WHERE grup=?", (grup,)).fetchone(); conn.close()
     ozet_guncelle(grup, durum="bitti", bitti=now())
-    log(f"RAPOR {grup} (pc-eposta-{grup}): indirilen {n} / taranan {t['taranan']} / e-posta bulunan {t['bulunan']} / "
+    log(f"RAPOR {grup} ({ETIKETLER.get(grup, 'pc-eposta-' + grup)}): indirilen {n} / taranan {t['taranan']} / e-posta bulunan {t['bulunan']} / "
         f"yüklenen {o['yuklenen'] or 0} (+{o['eklenen'] or 0} / ~{o['guncellenen'] or 0} / red {o['reddedilen'] or 0})")
 
 

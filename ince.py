@@ -189,8 +189,9 @@ def onceden_taranmis() -> set[str]:
     s: set[str] = set()
     for yol, sorgu in ((ZAYIF / "zayif.sqlite3", "SELECT domain FROM adaylar WHERE durum<>'yeni'"),
                        (ZAYIF / "kategori.sqlite3", "SELECT domain FROM siteler WHERE durum<>'yeni'"),
+                       (ZAYIF / "ince.sqlite3", "SELECT domain FROM adaylar WHERE durum<>'yeni'"),
                        (EPOSTA_DB, "SELECT domain FROM kayitlar WHERE durum<>'yeni'")):
-        if yol.exists():
+        if yol.exists() and yol != DB_PATH:
             try:
                 c = sqlite3.connect(yol, timeout=60); s.update(r[0] for r in c.execute(sorgu)); c.close()
             except Exception as e:
@@ -316,7 +317,7 @@ def yukle(meslek: str) -> dict:
             w.writerow({"company": (r["company"] or "").strip()[:200], "city": (r["city"] or "").strip()[:100], "sector": MESLEKLER[meslek]["sektor"],
                         "website": site_kisalt(r["website"]), "email": r["email"], "source_url": site_kisalt(r["source_url"])[:500]})
     env = {**os.environ, "PYTHONIOENCODING": "utf-8"}
-    p = subprocess.run([sys.executable, str(GONDER), str(dosya), "--etiket", f"pc-{meslek}"], capture_output=True, text=True, encoding="utf-8", env=env, cwd=BASE)
+    p = subprocess.run([sys.executable, str(GONDER), str(dosya), "--etiket", MESLEKLER[meslek].get("etiket", f"pc-{meslek}")], capture_output=True, text=True, encoding="utf-8", env=env, cwd=BASE)
     mt = re.search(r"TOPLAM (\{.*\})", p.stdout)
     if p.returncode != 0 or not mt:
         raise RuntimeError(f"yukleme basarisiz (kod {p.returncode}): {(p.stderr or p.stdout)[-300:]}")
@@ -340,7 +341,7 @@ def rapor(yazdir: bool = True) -> str:
         d = r["durum"] or "bekliyor"
         if r["hata"]:
             d += f" — hata: {r['hata'][:80]}"
-        satirlar.append(f"| {i} | {m} | pc-{m} | {r['aday'] or 0} | {r['onceden'] or 0} | {r['havuzda'] or ''} | {r['taranacak'] or ''} | {c[0] or 0} | {c[1] or 0} | "
+        satirlar.append(f"| {i} | {m} | {MESLEKLER[m].get('etiket', 'pc-' + m)} | {r['aday'] or 0} | {r['onceden'] or 0} | {r['havuzda'] or ''} | {r['taranacak'] or ''} | {c[0] or 0} | {c[1] or 0} | "
                         f"{r['yuklenen'] or 0} | {r['eklenen'] or 0} | {r['guncellenen'] or 0} | {r['reddedilen'] or 0} | {d} |")
     s = conn.execute("SELECT durum, COUNT(1) FROM adaylar WHERE havuz='bilinmeyen' GROUP BY durum").fetchall()
     conn.close()
@@ -372,7 +373,7 @@ def meslek_isle(meslek: str, isci: int) -> None:
     c = tara(meslek, isci); ozet_guncelle(meslek, **c)
     d = yukle(meslek); ozet_guncelle(meslek, **d, durum="bitti", bitti=now())
     conn = db(); r = conn.execute("SELECT aday, onceden FROM meslek_ozet WHERE meslek=?", (meslek,)).fetchone(); conn.close()
-    log(f"RAPOR {meslek} (pc-{meslek}): aday {r['aday']} (+{r['onceden']} önceden taranmış) / havuzda vardı {b['havuzda']} / taranan {c['taranan']} / "
+    log(f"RAPOR {meslek} ({MESLEKLER[meslek].get('etiket', 'pc-' + meslek)}): aday {r['aday']} (+{r['onceden']} önceden taranmış) / havuzda vardı {b['havuzda']} / taranan {c['taranan']} / "
         f"e-postalı {c['epostali']} / yüklenen {d['yuklenen']} (+{d['eklenen']} / ~{d['guncellenen']} / red {d['reddedilen']})")
 
 
