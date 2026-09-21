@@ -255,10 +255,12 @@ def tara(meslek: str, isci: int) -> dict:
     t0 = time.time(); n = ok = 0
     from concurrent.futures import ProcessPoolExecutor
     iplik = max(8, isci // SURECLER)               # surec basina is parcacigi; toplam ~isci
-    for i in range(0, len(satirlar), 2000):
-        parti = satirlar[i:i + 2000]
+    for i in range(0, len(satirlar), 4000):
+        parti = satirlar[i:i + 4000]
         sonuclar = []
-        gruplar = [parti[j:j + 40] for j in range(0, len(parti), 40)]
+        # her surece esit buyuk dilim: kucuk gruplarda en yavas sitenin kuyrugu sureci bosta birakiyordu (5 site/sn)
+        boy = max(1, -(-len(parti) // SURECLER))
+        gruplar = [parti[j:j + boy] for j in range(0, len(parti), boy)]
         with ProcessPoolExecutor(max_workers=SURECLER) as havuz:
             for grup in havuz.map(parca_tara, gruplar, [iplik] * len(gruplar)):
                 for r in grup:
