@@ -123,6 +123,8 @@ EMAIL_RE = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
 CFEMAIL_RE = re.compile(r'data-cfemail="([0-9a-fA-F]+)"')
 OBF_AT = re.compile(r"\s*[\(\[\{]\s*(?:at|ät|aet)\s*[\)\]\}]\s*|\s+at\s+(?=[a-z0-9.-]+\s*(?:[\(\[\{]\s*(?:dot|punkt)\s*[\)\]\}]|\.))", re.I)
 OBF_DOT = re.compile(r"\s*[\(\[\{]\s*(?:dot|punkt)\s*[\)\]\}]\s*", re.I)
+OBF_WP = re.compile(r"\s*dontospamme\s*@\s*gowaway\.\s*", re.I)
+OBF_BOSLUK = re.compile(r"([A-Za-z0-9._%+-]{2,})\s+@\s+([A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,})")
 ROL = ("info", "kontakt", "contact", "mail", "email", "e-mail", "post", "office", "buero", "büro", "zentrale", "service",
        "anfrage", "anfragen", "hallo", "hello", "willkommen", "team", "sekretariat", "empfang", "rezeption", "vertrieb",
        "sales", "hr", "personal", "bewerbung", "bewerbungen", "jobs", "karriere", "career", "kanzlei", "praxis",
@@ -383,6 +385,8 @@ def epostalari_cikar(html_: str) -> set[str]:
     # gorunur metindeki (at)/[at]/(punkt) gizlemeleri
     duz = metin(html_)
     cozuk = OBF_DOT.sub(".", OBF_AT.sub("@", duz))
+    cozuk = OBF_WP.sub("@", cozuk)                      # WordPress "dontospamme @ gowaway." gizlemesi
+    cozuk = OBF_BOSLUK.sub(r"@", cozuk)            # "info @ firma.de"
     if cozuk != duz:
         bul.update(EMAIL_RE.findall(cozuk))
     return {b.strip().strip(".,;:'\"()<>").lower() for b in bul}
