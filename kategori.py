@@ -391,6 +391,18 @@ def calis(isci: int) -> None:
             except Exception as e:
                 log(f"rapor hatasi: {e}")
     threading.Thread(target=saatlik, daemon=True).start()
+
+    def onyukle():
+        # Overpass darbogaz: sonraki mesleklerin karolarini tarama surerken sirayla onceden cek (disk onbellegi)
+        for m in MESLEKLER:
+            for karo in KAROLAR:
+                if dur.is_set() or (ZAYIF / "DUR-kategori").exists():
+                    return
+                try:
+                    overpass(m, karo)
+                except Exception as e:
+                    log(f"onyukle {m} {karo}: {e}")
+    threading.Thread(target=onyukle, daemon=True).start()
     for m in MESLEKLER:
         if (ZAYIF / "DUR-kategori").exists():
             log("DUR-kategori: durduruldu"); break
