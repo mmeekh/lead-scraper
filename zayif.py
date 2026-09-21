@@ -119,7 +119,9 @@ PLATFORM = ("facebook.", "instagram.", "linkedin.", "google.", "wixsite.", "jimd
 ALAN_ATLA = re.compile(r"^(www|mail|ftp|test|shop|blog|forum|news|jobs|job|stellen|karriere|wiki|app|api|cdn|static|"
                        r"de|com|net|org|info|online|web|home|xn--[a-z0-9]{1,3})$")
 
-EMAIL_RE = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
+# Basta lookbehind: uzun harf/rakam dizilerinde (base64, data: URI) her konumdan yeniden tarama = O(n^2) donmasini onler
+EMAIL_RE = re.compile(r"(?<![A-Za-z0-9._%+-])[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
+UZUN_DIZI = re.compile(r"data:[^\s\"')]{100,}|[A-Za-z0-9+/=_-]{200,}")
 CFEMAIL_RE = re.compile(r'data-cfemail="([0-9a-fA-F]+)"')
 OBF_AT = re.compile(r"\s*[\(\[\{]\s*(?:at|ät|aet)\s*[\)\]\}]\s*|\s+at\s+(?=[a-z0-9.-]+\s*(?:[\(\[\{]\s*(?:dot|punkt)\s*[\)\]\}]|\.))", re.I)
 OBF_DOT = re.compile(r"\s*[\(\[\{]\s*(?:dot|punkt)\s*[\)\]\}]\s*", re.I)
@@ -374,6 +376,7 @@ def cf_decode(hexstr: str) -> str:
 
 
 def epostalari_cikar(html_: str) -> set[str]:
+    html_ = UZUN_DIZI.sub(" ", html_)          # gomulu base64/data URI: e-posta icermez, regexleri bogar
     ham = html.unescape(html_)
     bul = set(EMAIL_RE.findall(ham))
     for m in re.finditer(r'href=["\']mailto:([^"\'?]+)', ham, re.I):
