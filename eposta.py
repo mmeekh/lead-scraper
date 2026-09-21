@@ -191,14 +191,15 @@ ALAN_ADI_SURE_S = 150      # alan adi basina toplam ust sinir (3 sayfa x 20 sn +
 
 async def alan_adi_tara(browser, kayit: dict, sem: asyncio.Semaphore) -> dict:
     sonuc = {"domain": kayit["domain"], "durum": "hata", "email": "", "source_url": "", "note": "", "sayfa": 0}
-    try:
-        return await asyncio.wait_for(_alan_adi_tara(browser, kayit, sem, sonuc), ALAN_ADI_SURE_S)
-    except asyncio.TimeoutError:
-        sonuc["durum"] = "hata"; sonuc["note"] = "alan adi sure asimi"
-        return sonuc
+    async with sem:                       # sure siniri sekme alindiktan SONRA baslar (kuyrukta bekleme sayilmaz)
+        try:
+            return await asyncio.wait_for(_alan_adi_tara(browser, kayit, sonuc), ALAN_ADI_SURE_S)
+        except asyncio.TimeoutError:
+            sonuc["durum"] = "hata"; sonuc["note"] = "alan adi sure asimi"
+            return sonuc
 
 
-async def _alan_adi_tara(browser, kayit: dict, sem: asyncio.Semaphore, sonuc: dict) -> dict:
+async def _alan_adi_tara(browser, kayit: dict, sonuc: dict) -> dict:
     domain = kayit["domain"]
     try:
         await asyncio.to_thread(socket.getaddrinfo, domain, 443)
@@ -208,7 +209,7 @@ async def _alan_adi_tara(browser, kayit: dict, sem: asyncio.Semaphore, sonuc: di
         except Exception:
             sonuc["durum"] = "dns-yok"; return sonuc
     rp = await asyncio.to_thread(robots_icin, domain)
-    async with sem:
+    if True:
         ctx = await browser.new_context(user_agent=UA, locale="de-DE", viewport={"width": 1280, "height": 900}, ignore_https_errors=True)
         ctx.set_default_timeout(TIMEOUT_MS)
 
