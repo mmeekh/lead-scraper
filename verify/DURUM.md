@@ -1,3 +1,26 @@
+<!-- kategori-basi -->
+# DURUM — kategori taraması (OSM etiketi → site → havuz)
+Güncelleme: 2026-09-21T14:24:11
+
+| # | meslek | etiket | OSM kayıt | siteli | havuzda e-postalı | taranacak | taranan | e-postalı | önceki etikette | yüklenen | +eklenen | ~güncel | red | durum |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 0 | kinder | pc-kita | 40421 | 11098 | 4743 | 6355 | 6355 | 1543 | 0 | 1543 | 1061 | 482 | 2 | bitti |
+| 1 | it | pc-it | 5625 | 5165 | 3724 | 1441 | 1441 | 403 | 0 | 403 | 244 | 159 | 1 | bitti |
+| 2 | steuer | pc-steuer | 2674 | 2189 | 1495 | 694 | 694 | 184 | 0 | 184 | 72 | 112 | 0 | bitti |
+| 3 | logistik | pc-logistik | 2222 | 1936 | 1315 | 621 | 621 | 192 | 0 | 192 | 104 | 88 | 0 | bitti |
+| 4 | sozial | pc-sozial | 13201 | 8565 | 5509 | 3056 | 3056 | 801 | 0 | 801 | 350 | 451 | 2 | bitti |
+| 5 | industrie | pc-industrie | 9129 | 8498 | 5726 | 2772 | 2772 | 707 | 2 | 705 | 464 | 241 | 0 | bitti |
+| 6 | pflege | pc-pflege | 4825 | 3083 | 2126 | 957 | 957 | 164 | 125 | 39 | 13 | 26 | 0 | bitti |
+| 7 | kfz | pc-kfz | 16863 | 13369 | 7753 | 5616 | 5616 | 925 | 1 | 924 | 462 | 462 | 1 | bitti |
+| 8 | handwerk | pc-handwerk | 9627 | 9306 | 6210 | 3096 | 3096 | 704 | 2 | 702 | 444 | 258 | 0 | bitti |
+| 9 | zahn | pc-zahn | 7824 | 7631 | 4989 | 2642 | 2642 | 588 | 0 | 588 | 361 | 227 | 0 | bitti |
+| 10 | physio | pc-physio | 7453 | 7050 | 4185 | 2865 | 2865 | 539 | 0 | 539 | 318 | 221 | 0 | bitti |
+| 11 | friseur | pc-friseur | 12353 | 10731 | 6037 | 7409 | 7409 | 1376 | 2 | 1374 | 1078 | 296 | 6 | bitti |
+
+Site durumları: park 2665, robots 581, tarandi 20815, ulasilamadi 12413
+
+Kaynak: Geofabrik germany-latest.osm.pbf (pyosmium tek geçiş). Kurallar: robots.txt, alan adı başına ardışık istek ≥1 sn, 20 sn zaman aşımı, ≤5 sayfa/site; yalnız sitede yazılı rol e-postası (kişisel/freemail yok); site yoksa kayıt atlanır; ücretli API yok. Verify/ilan görevleri kapalı.
+<!-- kategori-sonu -->
 # DURUM — kalınlaştırma koşusu
 Güncelleme: 2026-09-21T09:36:14 · istem v3-2026-09-19 · A `gemma4:12b-it-qat` · B `qwen3:8b`
 
