@@ -91,9 +91,28 @@ def main() -> None:
     p.add_argument("--epostasiz", metavar="CIKTI.jsonl", help="havuzda sitesi olup e-postası bulunamayan kayıtları JSONL olarak indir (PC yeniden tarar)")
     p.add_argument("--kategori", action="append", default=[], help="--epostasiz için Overture kategori süzgeci (tekrarlanabilir); boşsa tümü")
     p.add_argument("--sinif", action="append", default=[], help="--epostasiz için sınıf süzgeci (varsayılan: error,noemail,no_email,tier2_disabled,blocked)")
+    p.add_argument("--ayikla", metavar="SUPHELI.csv", help="şüpheli PC kayıtlarını aday olmaktan çıkar (domain sütunu ya da satır başına alan adı)")
     p.add_argument("--ilanlar", metavar="ILANLAR.jsonl", help="verify/out/ilanlar-*.jsonl: {domain, legal_name, ad_title, ad_url, meslek_kayitlari[], fetched_at}")
     a = p.parse_args()
 
+    if a.ayikla:
+        domainler = []
+        if a.ayikla.lower().endswith(".csv"):
+            with open(a.ayikla, encoding="utf-8-sig", newline="") as f:
+                for row in csv.DictReader(f):
+                    d = (row.get("domain") or row.get("website") or "").strip()
+                    if d:
+                        domainler.append(d)
+        else:
+            with open(a.ayikla, encoding="utf-8") as f:
+                domainler = [s.strip() for s in f if s.strip()]
+        toplam = {"ayiklanan": 0, "atlanan": 0}
+        for i in range(0, len(domainler), 2000):
+            r = istek("/api/havuz/ayikla", {"domainler": domainler[i:i + 2000]})
+            for k in toplam:
+                toplam[k] += int(r.get(k, 0))
+        print("TOPLAM", json.dumps(toplam, ensure_ascii=False), "/", len(domainler), "alan adı")
+        return
     if a.epostasiz:
         sonra, toplam = "", 0
         with open(a.epostasiz, "w", encoding="utf-8") as f:
