@@ -8,6 +8,7 @@ Kullanım (PC'de, Python 3.10+, ek paket gerekmez):
     python havuz-gonder.py --bilinen domainler.txt        # hangileri zaten havuzda?
     python havuz-gonder.py --durum
     python havuz-gonder.py --ilanlar verify/out/ilanlar-001.jsonl   # PC ilan çıkarımı (20 Eyl 2026)
+    python havuz-gonder.py --epostasiz cikti.jsonl --kategori lawyer --kategori dentist   # e-postasız siteli kayıtları indir (21 Eyl)
 
 CSV başlıkları (sıra önemsiz, fazlası yok sayılır):
     company, city, sector, website, email, source_url
@@ -87,9 +88,29 @@ def main() -> None:
     p.add_argument("--parti", type=int, default=500, help="istek başına kayıt (en fazla 500)")
     p.add_argument("--bilinen", metavar="DOMAINLER.txt", help="satır başına alan adı; havuzda olanları listeler")
     p.add_argument("--durum", action="store_true", help="havuz özeti")
+    p.add_argument("--epostasiz", metavar="CIKTI.jsonl", help="havuzda sitesi olup e-postası bulunamayan kayıtları JSONL olarak indir (PC yeniden tarar)")
+    p.add_argument("--kategori", action="append", default=[], help="--epostasiz için Overture kategori süzgeci (tekrarlanabilir); boşsa tümü")
+    p.add_argument("--sinif", action="append", default=[], help="--epostasiz için sınıf süzgeci (varsayılan: error,noemail,no_email,tier2_disabled,blocked)")
     p.add_argument("--ilanlar", metavar="ILANLAR.jsonl", help="verify/out/ilanlar-*.jsonl: {domain, legal_name, ad_title, ad_url, meslek_kayitlari[], fetched_at}")
     a = p.parse_args()
 
+    if a.epostasiz:
+        sonra, toplam = "", 0
+        with open(a.epostasiz, "w", encoding="utf-8") as f:
+            while True:
+                govde = {"kategoriler": a.kategori, "sonra": sonra, "limit": 5000}
+                if a.sinif:
+                    govde["siniflar"] = a.sinif
+                r = istek("/api/havuz/epostasiz", govde)
+                for k in r.get("kayitlar", []):
+                    f.write(json.dumps(k, ensure_ascii=False) + "\n")
+                toplam += len(r.get("kayitlar", []))
+                print(f"  {toplam} kayıt", flush=True)
+                if r.get("bitti") or not r.get("sonra"):
+                    break
+                sonra = r["sonra"]
+        print("TOPLAM", toplam, "->", a.epostasiz)
+        return
     if a.ilanlar:
         # Şirketin KENDİ sitesindeki ilanlar; sunucu başka alan adındaki ad_url'yi reddeder.
         toplam = {"eklenen": 0, "guncellenen": 0, "reddedilen": 0}
