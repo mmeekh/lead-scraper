@@ -179,16 +179,27 @@ async def sayfa_ac(page, url: str) -> tuple[bool, str, str, str]:
         return False, page.url, "", ""
     try:
         await page.wait_for_timeout(1500)                    # JS ile cizilen/cozulen adresler icin pay
-        html_ = await page.content()
-        metin = await page.evaluate("() => document.body ? document.body.innerText : ''")
+        html_ = await asyncio.wait_for(page.content(), 15)   # content()/evaluate() zaman asimi tanimaz; askida kalan sayfa partiyi kilitliyordu
+        metin = await asyncio.wait_for(page.evaluate("() => document.body ? document.body.innerText : ''"), 15)
     except Exception:
         return False, page.url, "", ""
     return True, page.url, html_ or "", metin or ""
 
 
+ALAN_ADI_SURE_S = 150      # alan adi basina toplam ust sinir (3 sayfa x 20 sn + beklemeler)
+
+
 async def alan_adi_tara(browser, kayit: dict, sem: asyncio.Semaphore) -> dict:
+    sonuc = {"domain": kayit["domain"], "durum": "hata", "email": "", "source_url": "", "note": "", "sayfa": 0}
+    try:
+        return await asyncio.wait_for(_alan_adi_tara(browser, kayit, sem, sonuc), ALAN_ADI_SURE_S)
+    except asyncio.TimeoutError:
+        sonuc["durum"] = "hata"; sonuc["note"] = "alan adi sure asimi"
+        return sonuc
+
+
+async def _alan_adi_tara(browser, kayit: dict, sem: asyncio.Semaphore, sonuc: dict) -> dict:
     domain = kayit["domain"]
-    sonuc = {"domain": domain, "durum": "hata", "email": "", "source_url": "", "note": "", "sayfa": 0}
     try:
         await asyncio.to_thread(socket.getaddrinfo, domain, 443)
     except Exception:
@@ -282,10 +293,15 @@ async def alan_adi_tara(browser, kayit: dict, sem: asyncio.Semaphore) -> dict:
             e = eposta_sec(set(kaynak), hostlar)
             sonuc.update(durum="tarandi", email=e, source_url=kaynak.get(e, "") if e else "")
             return sonuc
+        except asyncio.CancelledError:
+            raise
         except Exception as ex:
             sonuc["note"] = f"{type(ex).__name__}: {ex}"[:150]; return sonuc
         finally:
-            await ctx.close()
+            try:
+                await asyncio.wait_for(asyncio.shield(ctx.close()), 15)
+            except Exception:
+                pass
 
 
 async def tara(grup: str, sekme: int) -> dict:
