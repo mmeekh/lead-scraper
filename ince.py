@@ -84,8 +84,11 @@ MESLEKLER: dict[str, dict] = {
     "sap": dict(sektor=YAZILIM, sozcuk=["sap", "erp", "abap", "s4hana", "navision", "dynamics365", "proalpha", "abas", "odoo", "business-central",
                                         "it-consulting", "it-beratung", ("consulting", "software|digital|solutions|systems")],
                 metin=r"\bsap\b|\berp\b|abap|s/?4 ?hana|navision|dynamics ?365|proalpha|\babas\b|odoo|business central|it-beratung|it-consulting|erp-system|softwareberatung|implementierung"),
-    "data": dict(sektor=YAZILIM, sozcuk=["data", "daten", "analytics", "datascience", "machine-learning", "ki-", "ai-", "bi-", "business-intelligence"],
-                 metin=r"\bdata\b|daten|analytics|data science|machine learning|\bki\b|künstliche intelligenz|\bai\b|business intelligence|\bbi\b|datenanalyse|dashboard"),
+    # "bi-" (Bürgerinitiative) ve genel "daten"/"ki" metin eslesmeleri dernek/blog gurultusu uretti (21 Eyl): bi- cikti,
+    # metin kurali yalniz veri/analitik is baglamini sayar
+    "data": dict(sektor=YAZILIM, sozcuk=["data", "daten", "analytics", "datascience", "machine-learning", "ki-", "ai-", "business-intelligence"],
+                 metin=r"analytics|data science|datascience|machine learning|künstliche intelligenz|business intelligence|datenanalyse|big data|"
+                       r"data engineering|data warehouse|datenplattform|predictive|deep learning|ki-lösung|ki-anwendung|datengetrieben|data-driven|dashboards?"),
     "kinderkrankenpflege": dict(sektor=SAGLIK, sozcuk=["kinderklinik", "kinderarzt", "kinderaerzte", "kinderzentrum", "spz", "kinderhospiz",
                                                          "kinderintensivpflege", "kinderkrankenpflege", "kinderpflegedienst"],
                                 metin=r"kinderklinik|kinderarzt|kinderärzt|kinderzentrum|sozialpädiatri|\bspz\b|kinderhospiz|kinderintensiv|kinderkrankenpfl|kinderpflege|pädiatr|kinder- ?und ?jugendmedizin"),
@@ -97,7 +100,7 @@ MESLEKLER: dict[str, dict] = {
     "backer": dict(sektor=GASTRO, sozcuk=["baeckerei", "backhaus", "backstube", "brot", "konditorei", "cafe-baeckerei", "landbaeckerei"],
                    metin=r"bäckerei|baeckerei|backhaus|backstube|brot|konditorei|bäcker|backwaren|brötchen|kuchen"),
     "fahrzeug_ing": dict(sektor=OTOMOTIV, sozcuk=["fahrzeugbau", "nutzfahrzeuge", "anhaenger", "aufbauten", "sonderfahrzeug", "fahrzeugtechnik", "automotive", "zulieferer", "kfz-technik"],
-                         metin=r"fahrzeugbau|nutzfahrzeug|anhänger|aufbauten|sonderfahrzeug|fahrzeugtechnik|automotive|zulieferer|kfz-technik|fahrzeug"),
+                         metin=r"fahrzeugbau|nutzfahrzeug|anhänger|aufbauten|sonderfahrzeug|fahrzeugtechnik|automotive|zulieferer|kfz-technik|fahrzeugentwicklung"),
     "kalte": dict(sektor=INSAAT, sozcuk=["kaeltetechnik", "klimatechnik", "kaelte-klima", "kuehltechnik", "kaelteanlagen", "waermepumpe"],
                   metin=r"kälte|kaelte|klimatechnik|klimaanlage|kühltechnik|kälteanlage|wärmepumpe|klima"),
     "karosserie": dict(sektor=OTOMOTIV, sozcuk=["karosserie", "autolackiererei", "lackiererei", "unfallinstandsetzung", "karosseriebau"],
