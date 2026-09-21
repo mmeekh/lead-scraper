@@ -227,27 +227,42 @@ def havuz_ele(meslek: str) -> dict:
 
 
 # ------------------------------------------------------------------ c) site
+SURECLER = max(2, (os.cpu_count() or 4) - 1)     # GIL: HTML/regex isi tek cekirdekte kaliyordu; surec basina ayri is parcaciklari
+
+
+def parca_tara(domainler: list[str], iplik: int) -> list[dict]:
+    """Alt surecte calisir: kendi is parcacigi havuzuyla bir grup alan adini tarar."""
+    sonuclar = []
+    with ThreadPoolExecutor(max_workers=max(1, min(iplik, len(domainler)))) as pool:
+        isler = {pool.submit(site_tara, d, []): d for d in domainler}
+        for f in as_completed(isler):
+            d = isler[f]
+            try:
+                sonuclar.append(f.result())
+            except Exception as e:
+                sonuclar.append({"domain": d, "durum": "hata", "note": f"{type(e).__name__}: {e}"[:200], "company": "", "city": "",
+                                 "website": "", "email": "", "source_url": "", "sayfa": 0})
+    return sonuclar
+
+
 def tara(meslek: str, isci: int) -> dict:
     conn = db()
     satirlar = [r[0] for r in conn.execute(
         """SELECT k.domain FROM kayitlar k LEFT JOIN siteler s ON s.domain=k.domain
            WHERE k.meslek=? AND k.havuz IN ('epostasiz','bilinmeyen') AND (s.domain IS NULL OR (s.durum IN ('yeni','hata') AND s.tries<2))""", (meslek,))]
     conn.close()
-    log(f"{meslek}: {len(satirlar)} site taranacak ({isci} isci)")
+    log(f"{meslek}: {len(satirlar)} site taranacak ({SURECLER} surec x {max(8, isci // SURECLER)} is parcacigi)")
     t0 = time.time(); n = ok = 0
+    from concurrent.futures import ProcessPoolExecutor
+    iplik = max(8, isci // SURECLER)               # surec basina is parcacigi; toplam ~isci
     for i in range(0, len(satirlar), 2000):
         parti = satirlar[i:i + 2000]
         sonuclar = []
-        with ThreadPoolExecutor(max_workers=isci) as pool:
-            isler = {pool.submit(site_tara, d, []): d for d in parti}
-            for f in as_completed(isler):
-                d = isler[f]
-                try:
-                    r = f.result()
-                except Exception as e:
-                    r = {"domain": d, "durum": "hata", "note": f"{type(e).__name__}: {e}"[:200], "company": "", "city": "",
-                         "website": "", "email": "", "source_url": "", "sayfa": 0}
-                sonuclar.append(r); n += 1; ok += bool(r["email"])
+        gruplar = [parti[j:j + 40] for j in range(0, len(parti), 40)]
+        with ProcessPoolExecutor(max_workers=SURECLER) as havuz:
+            for grup in havuz.map(parca_tara, gruplar, [iplik] * len(gruplar)):
+                for r in grup:
+                    sonuclar.append(r); n += 1; ok += bool(r["email"])
         yaz(lambda c, ss=sonuclar: c.executemany(
             """INSERT INTO siteler(domain, durum, tries, company, city, website, email, source_url, note, sayfa, scanned_at)
                VALUES (?,?,1,?,?,?,?,?,?,?,?) ON CONFLICT(domain) DO UPDATE SET durum=excluded.durum, tries=tries+1, company=excluded.company,
