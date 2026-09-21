@@ -57,6 +57,11 @@ TIMEOUT_MS = 20_000
 DELAY_S = 1.0
 MAX_SAYFA = 3
 GRUPLAR: dict[str, list[str]] = {
+    # 21 Eyl 18:00 odak: 12 ince meslek (once bu; diger gruplar bekletilir)
+    "ince": ["bus_tours", "auto_customization", "truck_repair", "truck_dealer", "commercial_vehicle_dealer", "pediatrician", "hospital",
+             "ambulance_and_ems_services", "fire_department", "bakery", "butcher_shop", "delicatessen", "meat_wholesaler",
+             "flooring_contractors", "tiling", "tile_store", "hvac_services", "hvac_supplier", "auto_body_shop", "shipping_center",
+             "food_delivery_service", "information_technology_company", "software_development", "business_consulting"],
     "it": ["information_technology_company", "software_development", "it_service_and_computer_repair", "web_designer"],
     "steuer": ["tax_services", "accountant", "financial_service", "financial_advising", "business_consulting", "business_management_services"],
     "logistik": ["freight_and_cargo_service", "transportation", "wholesale_store", "building_supply_store", "garbage_collection_service"],
@@ -151,8 +156,15 @@ def indir(grup: str) -> int:
                 continue
             toplu.append((d, grup, k.get("company") or "", k.get("city") or "", k.get("category") or "", k.get("website") or f"https://{d}/",
                           k.get("classification") or ""))
-    yaz(lambda c: c.executemany("INSERT OR IGNORE INTO kayitlar(domain, grup, company, city, category, website, classification) VALUES (?,?,?,?,?,?,?)", toplu))
-    log(f"{grup}: {n} kayit indirildi/okundu")
+    def f(c):
+        c.executemany("INSERT OR IGNORE INTO kayitlar(domain, grup, company, city, category, website, classification) VALUES (?,?,?,?,?,?,?)", toplu)
+        # baska grupta bekleyen (henuz taranmamis) ayni alan adlari bu gruba gecer; taranmis olanlar eski grubunda kalir
+        c.executemany("UPDATE kayitlar SET grup=? WHERE domain=? AND durum='yeni' AND grup<>?", [(grup, t[0], grup) for t in toplu])
+    yaz(f)
+    conn = db()
+    r = conn.execute("SELECT COUNT(1), SUM(durum<>'yeni') FROM kayitlar WHERE domain IN (SELECT domain FROM kayitlar WHERE grup=?)", (grup,)).fetchone()
+    conn.close()
+    log(f"{grup}: {n} kayit indirildi/okundu; bu grupta {r[0]} alan adi, {r[1] or 0} zaten taranmis")
     return n
 
 
@@ -420,12 +432,13 @@ def grup_isle(grup: str, sekme: int) -> None:
         f"yüklenen {o['yuklenen'] or 0} (+{o['eklenen'] or 0} / ~{o['guncellenen'] or 0} / red {o['reddedilen'] or 0})")
 
 
-def calis(sekme: int) -> None:
-    log(f"calis basladi: {len(GRUPLAR)} grup, {sekme} sekme")
+def calis(sekme: int, gruplar: list[str] | None = None) -> None:
+    gruplar = gruplar or list(GRUPLAR)
+    log(f"calis basladi: {len(gruplar)} grup ({','.join(gruplar)}), {sekme} sekme")
     if not os.environ.get("JOBFIND_HAVUZ_ANAHTAR", "").strip():
         log("JOBFIND_HAVUZ_ANAHTAR tanimsiz; cikiliyor"); return
     hatali = []
-    for g in GRUPLAR:
+    for g in gruplar:
         if (ZAYIF / "DUR-eposta").exists():
             log("DUR-eposta: durduruldu"); break
         conn = db(); r = conn.execute("SELECT durum FROM grup_ozet WHERE grup=?", (g,)).fetchone(); conn.close()
@@ -456,9 +469,10 @@ def main() -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("komut", choices=["calis", "rapor", "dene", "yukle"])
     p.add_argument("--sekme", type=int, default=SEKME); p.add_argument("--domain"); p.add_argument("--grup")
+    p.add_argument("--gruplar", help="virgullu grup listesi (varsayilan: hepsi, tanim sirasiyla)")
     a = p.parse_args()
     if a.komut == "calis":
-        calis(a.sekme)
+        calis(a.sekme, a.gruplar.split(",") if a.gruplar else None)
     elif a.komut == "dene":
         asyncio.run(dene(a.domain))
     elif a.komut == "yukle":
