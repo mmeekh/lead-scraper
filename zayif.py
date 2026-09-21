@@ -424,6 +424,14 @@ def sehir_bul(impressum: str) -> str:
     return ""
 
 
+def site_kisalt(url: str) -> str:
+    """Havuz siniri 500 karakter; sorgu dizili/uzun yonlendirmelerde (login vb.) yalniz kok adres."""
+    p = urlsplit(url)
+    if len(url) > 200 or p.query or "login" in p.path.lower() or "auth" in p.path.lower():
+        return f"{p.scheme}://{p.netloc}/"
+    return url[:500]
+
+
 def baslik_adi(html_: str, domain: str) -> str:
     m = TITLE_RE.search(html_)
     if m:
@@ -485,7 +493,7 @@ def site_tara(domain: str, meslekler: list[str]) -> dict:
             sonuc["note"] = f"yonlendirme: {ana_host}"
         if len(ana_metin) < 200 or PARK.search(ana_metin[:3000]) or PARK.search(ana_url):
             sonuc["durum"] = "park"; sonuc["note"] = "bos/park sayfa"; sonuc["website"] = ana_url; return sonuc
-        sonuc["website"] = ana_url
+        sonuc["website"] = site_kisalt(ana_url)
         adaylar = epostalari_cikar(ana)
         kaynak = {e: ana_url for e in adaylar}
         # Impressum / Kontakt baglantilari
@@ -595,7 +603,7 @@ def yukle(meslek: str) -> dict | None:
         w.writeheader()
         for r in satirlar:
             w.writerow({"company": r["company"] or r["osm_ad"], "city": r["city"] or r["osm_sehir"], "sector": MESLEKLER[meslek]["sektor"],
-                        "website": r["website"], "email": r["email"], "source_url": r["source_url"]})
+                        "website": site_kisalt(r["website"]), "email": r["email"], "source_url": site_kisalt(r["source_url"])[:500]})
     env = {**os.environ, "PYTHONIOENCODING": "utf-8"}
     p = subprocess.run([sys.executable, str(GONDER), str(dosya), "--etiket", f"pc-{meslek}"],
                        capture_output=True, text=True, encoding="utf-8", env=env, cwd=BASE)
